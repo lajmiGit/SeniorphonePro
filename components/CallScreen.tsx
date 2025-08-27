@@ -6,7 +6,8 @@ import {
   TouchableOpacity, 
   Dimensions,
   Vibration,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -70,9 +71,11 @@ export const CallScreen: React.FC<CallScreenProps> = ({
           {contact.photo ? (
             <View style={styles.contactPhotoWrapper}>
               <Text style={styles.photoLabel}>Photo du contact</Text>
-              <View style={styles.contactPhotoContainer}>
-                <Text style={styles.contactPhotoText}>📷</Text>
-              </View>
+              <Image 
+                source={{ uri: contact.photo }} 
+                style={styles.contactPhoto} 
+                resizeMode="cover"
+              />
             </View>
           ) : (
             <View style={styles.defaultPhotoWrapper}>
@@ -251,10 +254,25 @@ const styles = StyleSheet.create({
   contactPhotoWrapper: {
     alignItems: 'center',
   },
+  contactPhoto: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    borderWidth: 4,
+    borderColor: '#2196F3',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
   contactPhotoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
@@ -277,9 +295,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   defaultPhotoContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     backgroundColor: '#FFC107',
     justifyContent: 'center',
     alignItems: 'center',
