@@ -320,29 +320,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: height * 0.12, // 20% de la partie 2 (60% * 0.2 = 12%)
     justifyContent: 'center',
+    width: '100%',
+    paddingVertical: 10,
   },
   contactName: {
-    fontSize: Math.max(28, height * 0.035),
+    fontSize: Math.max(32, height * 0.04), // Taille augmentée
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    paddingHorizontal: 20,
+    lineHeight: Math.max(40, height * 0.05), // Hauteur de ligne adaptée
   },
   phoneContainer: {
     alignItems: 'center',
     height: height * 0.12, // 20% de la partie 2 (60% * 0.2 = 12%)
     justifyContent: 'center',
+    width: '100%',
+    paddingVertical: 10,
   },
   contactPhone: {
-    fontSize: Math.max(22, height * 0.028),
+    fontSize: Math.max(28, height * 0.035), // Taille augmentée
     color: '#4CAF50',
     fontWeight: 'bold',
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    paddingHorizontal: 20,
+    lineHeight: Math.max(36, height * 0.045), // Hauteur de ligne adaptée
   },
   callButton: {
     backgroundColor: '#4CAF50', // Vert pour le bouton appeler
