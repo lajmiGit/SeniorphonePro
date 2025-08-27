@@ -88,8 +88,17 @@ export const CallScreen: React.FC<CallScreenProps> = ({
 
         {/* Informations du contact */}
         <View style={styles.contactInfo}>
-          <Text style={styles.contactName}>{contact.name}</Text>
-          <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>
+          {/* Nom et prénom séparés */}
+          <View style={styles.nameContainer}>
+            <Text style={styles.nameLabel}>Nom complet</Text>
+            <Text style={styles.contactName}>{contact.name}</Text>
+          </View>
+          
+          {/* Numéro de téléphone */}
+          <View style={styles.phoneContainer}>
+            <Text style={styles.phoneLabel}>Numéro de téléphone</Text>
+            <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>
+          </View>
         </View>
       </View>
 
@@ -205,7 +214,6 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.8)',
     // Effet 3D avec bordures contrastées
     borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
     borderLeftColor: 'rgba(255, 255, 255, 1.0)',
     borderRightColor: 'rgba(255, 255, 255, 0.3)',
     borderBottomColor: 'rgba(255, 255, 255, 0.3)',
@@ -286,11 +294,37 @@ const styles = StyleSheet.create({
   contactInfo: {
     alignItems: 'center',
   },
+  nameContainer: {
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  nameLabel: {
+    fontSize: Math.max(18, height * 0.022),
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
   contactName: {
     fontSize: Math.max(28, height * 0.035),
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  phoneContainer: {
+    alignItems: 'center',
+  },
+  phoneLabel: {
+    fontSize: Math.max(18, height * 0.022),
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: { width: 1, height: 1 },
