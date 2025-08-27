@@ -100,15 +100,25 @@ export const CallScreen: React.FC<CallScreenProps> = ({
         </View>
       </View>
 
-      {/* Partie 3: Bouton Appeler - 30% de la hauteur */}
+      {/* Partie 3: Boutons Appeler et Annuler - 30% de la hauteur */}
       <View style={[styles.section, styles.callSection]}>
-        <TouchableOpacity
-          style={styles.callButton}
-          onPress={handleCall}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.callButtonText}>📞 Appeler</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.cancelButton]}
+            onPress={onCancel}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.cancelButtonText}>Annuler</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.actionButton, styles.callButton]}
+            onPress={handleCall}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.callButtonText}>📞 Appeler</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -318,9 +328,28 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   callButton: {
-    backgroundColor: '#4CAF50',
-    width: '80%',
-    height: '60%',
+    backgroundColor: '#4CAF50', // Vert pour le bouton appeler
+    borderColor: '#388E3C',
+  },
+  callButtonText: {
+    fontSize: Math.max(24, height * 0.03),
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 3,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+  },
+  actionButton: {
+    width: '45%',
+    height: '80%',
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -340,7 +369,11 @@ const styles = StyleSheet.create({
     borderRightColor: 'rgba(255, 255, 255, 0.3)',
     borderBottomColor: 'rgba(255, 255, 255, 0.3)',
   },
-  callButtonText: {
+  cancelButton: {
+    backgroundColor: '#F44336', // Rouge pour le bouton annuler
+    borderColor: '#D32F2F',
+  },
+  cancelButtonText: {
     fontSize: Math.max(24, height * 0.03),
     fontWeight: 'bold',
     color: '#FFFFFF',
