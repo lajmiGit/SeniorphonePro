@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   photoContainer: {
     alignItems: 'center',
     marginBottom: 20,
-    height: height * 0.24, // 40% de la partie 2 (60% * 0.4 = 24%)
+    height: height * 0.36, // 60% de la partie 2 (60% * 0.6 = 36%)
     justifyContent: 'center',
   },
   contactPhotoWrapper: {
@@ -247,9 +247,9 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   contactPhoto: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     borderWidth: 4,
     borderColor: '#2196F3',
     elevation: 8,
@@ -262,9 +262,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   contactPhotoContainer: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
@@ -289,9 +289,9 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   defaultPhotoContainer: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     backgroundColor: '#FFC107',
     justifyContent: 'center',
     alignItems: 'center',
@@ -313,12 +313,13 @@ const styles = StyleSheet.create({
   },
   contactInfo: {
     alignItems: 'center',
-    height: height * 0.36, // 60% de la partie 2 (60% * 0.6 = 36%)
-    justifyContent: 'space-around',
+    height: height * 0.24, // 40% de la partie 2 (60% * 0.4 = 24%)
+    justifyContent: 'space-between',
   },
   nameContainer: {
     alignItems: 'center',
-    marginBottom: 15,
+    height: height * 0.12, // 20% de la partie 2 (60% * 0.2 = 12%)
+    justifyContent: 'center',
   },
   contactName: {
     fontSize: Math.max(28, height * 0.035),
@@ -331,6 +332,8 @@ const styles = StyleSheet.create({
   },
   phoneContainer: {
     alignItems: 'center',
+    height: height * 0.12, // 20% de la partie 2 (60% * 0.2 = 12%)
+    justifyContent: 'center',
   },
   contactPhone: {
     fontSize: Math.max(22, height * 0.028),
