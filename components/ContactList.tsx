@@ -81,12 +81,13 @@ export const ContactList: React.FC<ContactListProps> = ({
     try {
       setLoading(true);
       
-      // Récupérer tous les contacts avec des noms et numéros de téléphone
+      // Récupérer tous les contacts avec des noms, numéros de téléphone et photos
       const { data } = await Contacts.getContactsAsync({
         fields: [
           Contacts.Fields.ID,
           Contacts.Fields.Name,
           Contacts.Fields.PhoneNumbers,
+          Contacts.Fields.Image, // Ajouter le champ Image pour récupérer les photos
         ],
         // Supprimer la limitation pour récupérer tous les contacts
         // pageSize: 100,
@@ -107,12 +108,13 @@ export const ContactList: React.FC<ContactListProps> = ({
             id: contact.id || `contact_${Date.now()}_${Math.random()}`,
             name: contact.name || 'Sans nom',
             phoneNumber: contact.phoneNumbers![0].number!,
-            photo: undefined, // Pas de photo pour l'instant - améliore les performances
+            photo: contact.image?.uri || undefined, // Récupérer l'URI de la photo si elle existe
             isFavorite: false,
           }))
           .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 
         console.log(`Contacts chargés: ${formattedContacts.length} sur ${data.length} total`);
+        console.log(`Contacts avec photos: ${formattedContacts.filter(c => c.photo).length}`);
         setContacts(formattedContacts);
       } else {
         setError('Aucun contact trouvé');
