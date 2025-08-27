@@ -70,7 +70,6 @@ export const CallScreen: React.FC<CallScreenProps> = ({
         <View style={styles.photoContainer}>
           {contact.photo ? (
             <View style={styles.contactPhotoWrapper}>
-              <Text style={styles.photoLabel}>Photo du contact</Text>
               <Image 
                 source={{ uri: contact.photo }} 
                 style={styles.contactPhoto} 
@@ -79,7 +78,6 @@ export const CallScreen: React.FC<CallScreenProps> = ({
             </View>
           ) : (
             <View style={styles.defaultPhotoWrapper}>
-              <Text style={styles.photoLabel}>Initiale</Text>
               <View style={styles.defaultPhotoContainer}>
                 <Text style={styles.defaultPhotoText}>
                   {contact.name.charAt(0).toUpperCase()}
@@ -239,25 +237,19 @@ const styles = StyleSheet.create({
   },
   photoContainer: {
     alignItems: 'center',
-    marginBottom: 30,
-  },
-  photoLabel: {
-    fontSize: Math.max(18, height * 0.022),
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+    marginBottom: 20,
+    height: height * 0.24, // 40% de la partie 2 (60% * 0.4 = 24%)
+    justifyContent: 'center',
   },
   contactPhotoWrapper: {
     alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
   },
   contactPhoto: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
     borderWidth: 4,
     borderColor: '#2196F3',
     elevation: 8,
@@ -270,9 +262,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   contactPhotoContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
@@ -293,11 +285,13 @@ const styles = StyleSheet.create({
   },
   defaultPhotoWrapper: {
     alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
   },
   defaultPhotoContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
     backgroundColor: '#FFC107',
     justifyContent: 'center',
     alignItems: 'center',
@@ -319,6 +313,8 @@ const styles = StyleSheet.create({
   },
   contactInfo: {
     alignItems: 'center',
+    height: height * 0.36, // 60% de la partie 2 (60% * 0.6 = 36%)
+    justifyContent: 'space-around',
   },
   nameContainer: {
     alignItems: 'center',
