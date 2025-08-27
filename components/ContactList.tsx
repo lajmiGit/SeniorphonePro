@@ -13,6 +13,7 @@ import {
   Platform
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
+import { CallScreen } from './CallScreen';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,6 +39,8 @@ export const ContactList: React.FC<ContactListProps> = ({
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [showCallScreen, setShowCallScreen] = useState(false);
 
   useEffect(() => {
     requestContactsPermission();
@@ -129,7 +132,8 @@ export const ContactList: React.FC<ContactListProps> = ({
 
   const handleContactPress = (contact: Contact) => {
     Vibration.vibrate(50);
-    onContactSelect(contact);
+    setSelectedContact(contact);
+    setShowCallScreen(true);
   };
 
   const handleCallPress = (contact: Contact) => {
@@ -148,6 +152,20 @@ export const ContactList: React.FC<ContactListProps> = ({
         }
       ]
     );
+  };
+
+  const handleCall = (contact: Contact) => {
+    Vibration.vibrate(200);
+    // Ici vous pouvez ajouter la logique d'appel réelle
+    Alert.alert('Appel', `Connexion en cours vers ${contact.name}...`);
+    // Retour à la liste des contacts après l'appel
+    setShowCallScreen(false);
+    setSelectedContact(null);
+  };
+
+  const handleBackToList = () => {
+    setShowCallScreen(false);
+    setSelectedContact(null);
   };
 
   const renderContactItem = ({ item }: { item: Contact }) => (
@@ -190,6 +208,18 @@ export const ContactList: React.FC<ContactListProps> = ({
       </TouchableOpacity>
     </TouchableOpacity>
   );
+
+  // Si l'écran d'appel est affiché
+  if (showCallScreen && selectedContact) {
+    return (
+      <CallScreen
+        contact={selectedContact}
+        onHomePress={onHomePress}
+        onCall={handleCall}
+        onCancel={handleBackToList}
+      />
+    );
+  }
 
   if (loading) {
     return (
