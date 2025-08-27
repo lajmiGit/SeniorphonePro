@@ -81,16 +81,16 @@ export const ContactList: React.FC<ContactListProps> = ({
     try {
       setLoading(true);
       
-      // Récupérer seulement les contacts avec des noms et numéros de téléphone
+      // Récupérer tous les contacts avec des noms et numéros de téléphone
       const { data } = await Contacts.getContactsAsync({
         fields: [
           Contacts.Fields.ID,
           Contacts.Fields.Name,
           Contacts.Fields.PhoneNumbers,
         ],
-        // Limiter le nombre de contacts pour améliorer les performances
-        pageSize: 100,
-        pageOffset: 0,
+        // Supprimer la limitation pour récupérer tous les contacts
+        // pageSize: 100,
+        // pageOffset: 0,
       });
 
       if (data.length > 0) {
@@ -112,6 +112,7 @@ export const ContactList: React.FC<ContactListProps> = ({
           }))
           .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 
+        console.log(`Contacts chargés: ${formattedContacts.length} sur ${data.length} total`);
         setContacts(formattedContacts);
       } else {
         setError('Aucun contact trouvé');
@@ -252,7 +253,7 @@ export const ContactList: React.FC<ContactListProps> = ({
       <View style={styles.header}>
         <Text style={styles.headerTitle}>📱 Contacts</Text>
         <Text style={styles.headerSubtitle}>
-          {contacts.length} contact{contacts.length > 1 ? 's' : ''}
+          {contacts.length} contact{contacts.length > 1 ? 's' : ''} chargé{contacts.length > 1 ? 's' : ''}
         </Text>
         
         {/* Bouton de création */}
@@ -273,6 +274,22 @@ export const ContactList: React.FC<ContactListProps> = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
+        // Optimisations pour de grandes listes
+        initialNumToRender={20}
+        maxToRenderPerBatch={10}
+        windowSize={10}
+        removeClippedSubviews={true}
+        getItemLayout={(data, index) => ({
+          length: 80, // Hauteur approximative de chaque item
+          offset: 80 * index,
+          index,
+        })}
+        // Indicateur de chargement en bas
+        ListFooterComponent={loading ? (
+          <View style={styles.loadingFooter}>
+            <Text style={styles.loadingFooterText}>Chargement...</Text>
+          </View>
+        ) : null}
       />
     </View>
   );
@@ -533,5 +550,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  loadingFooter: {
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  loadingFooterText: {
+    fontSize: 16,
+    color: '#666',
   },
 });
