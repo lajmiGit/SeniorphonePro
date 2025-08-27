@@ -88,15 +88,13 @@ export const CallScreen: React.FC<CallScreenProps> = ({
 
         {/* Informations du contact */}
         <View style={styles.contactInfo}>
-          {/* Nom et prénom séparés */}
+          {/* Nom et prénom */}
           <View style={styles.nameContainer}>
-            <Text style={styles.nameLabel}>Nom complet</Text>
             <Text style={styles.contactName}>{contact.name}</Text>
           </View>
           
           {/* Numéro de téléphone */}
           <View style={styles.phoneContainer}>
-            <Text style={styles.phoneLabel}>Numéro de téléphone</Text>
             <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>
           </View>
         </View>
@@ -298,16 +296,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15,
   },
-  nameLabel: {
-    fontSize: Math.max(18, height * 0.022),
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
   contactName: {
     fontSize: Math.max(28, height * 0.035),
     fontWeight: 'bold',
@@ -319,16 +307,6 @@ const styles = StyleSheet.create({
   },
   phoneContainer: {
     alignItems: 'center',
-  },
-  phoneLabel: {
-    fontSize: Math.max(18, height * 0.022),
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
   },
   contactPhone: {
     fontSize: Math.max(22, height * 0.028),
