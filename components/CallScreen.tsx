@@ -116,7 +116,7 @@ export const CallScreen: React.FC<CallScreenProps> = ({
             onPress={handleCall}
             activeOpacity={0.7}
           >
-            <Text style={styles.callButtonText}>📞 Appeler</Text>
+            <Text style={styles.callButtonText}>Appeler</Text>
           </TouchableOpacity>
         </View>
       </View>
