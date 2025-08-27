@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   homeButton: {
     width: '95%',
     height: '90%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 22,
     fontWeight: 'bold',
-    textShadowColor: 'rgba(0, 0, 255, 0.7)',
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 3,
   },
