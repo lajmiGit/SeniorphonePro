@@ -14,6 +14,9 @@ import { StatusBar } from 'expo-status-bar';
 import { SystemInfo } from './components/SystemInfo';
 import { PhoneDisplay } from './components/PhoneDisplay';
 import { DialPad } from './components/DialPad';
+import { ContactList } from './components/ContactList';
+import { NavigationScreen } from './components/NavigationScreen';
+import { CreateContactScreen } from './components/CreateContactScreen';
 
 const { height } = Dimensions.get('window');
 
@@ -21,6 +24,8 @@ export default function App() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [networkLevel, setNetworkLevel] = useState(4);
   const [batteryLevel, setBatteryLevel] = useState(85);
+  const [currentScreen, setCurrentScreen] = useState<'navigation' | 'contacts' | 'phone' | 'createContact'>('navigation');
+  const [selectedContact, setSelectedContact] = useState<any>(null);
   
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
@@ -57,7 +62,33 @@ export default function App() {
     // Vibration tactile
     Vibration.vibrate(100);
 
-    Alert.alert('Accueil', 'Retour à l\'écran d\'accueil');
+    // Retour à l'écran de navigation
+    setCurrentScreen('navigation');
+    setSelectedContact(null);
+  };
+
+  const handleContactSelect = (contact: any) => {
+    setSelectedContact(contact);
+    setPhoneNumber(contact.phoneNumber.replace(/\s/g, '')); // Supprime les espaces
+    setCurrentScreen('phone');
+    Vibration.vibrate(100);
+  };
+
+  const navigateToContacts = () => {
+    setCurrentScreen('contacts');
+  };
+
+  const navigateToPhone = () => {
+    setCurrentScreen('phone');
+  };
+
+  const navigateToCreateContact = () => {
+    setCurrentScreen('createContact');
+  };
+
+  const handleContactCreated = () => {
+    setCurrentScreen('contacts');
+    // Optionnel : recharger la liste des contacts
   };
 
   const makeCall = () => {
@@ -126,56 +157,90 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      {/* Partie 1: Bouton Accueil (10% de la hauteur) */}
-      <View style={[styles.section, styles.homeSection]}>
-        <TouchableOpacity 
-          style={styles.homeButton}
-          activeOpacity={0.8}
-          onPress={handleHomePress}
-        >
-          <Animated.View style={{ transform: [{ scale: homeButtonScale }] }}>
-            <Text style={styles.homeButtonText}>🏠 Accueil</Text>
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
+      {/* Écran de contacts */}
+      {currentScreen === 'contacts' && (
+        <View style={styles.contactsContainer}>
+          <ContactList 
+            onContactSelect={handleContactSelect}
+            onCreateContact={navigateToCreateContact}
+            onHomePress={() => setCurrentScreen('navigation')}
+          />
+        </View>
+      )}
 
-      {/* Partie 2: Informations système (15% de la hauteur) */}
-      <View style={[styles.section, styles.infoSection]}>
-        <SystemInfo 
-          networkLevel={networkLevel}
-          batteryLevel={batteryLevel}
+      {/* Écran principal du téléphone */}
+      {currentScreen === 'phone' && (
+        <>
+          {/* Partie 1: Bouton Accueil (10% de la hauteur) */}
+          <View style={[styles.section, styles.homeSection]}>
+            <TouchableOpacity 
+              style={styles.homeButton}
+              activeOpacity={0.8}
+              onPress={handleHomePress}
+            >
+              <Animated.View style={{ transform: [{ scale: homeButtonScale }] }}>
+                <Text style={styles.homeButtonText}>🏠 Accueil</Text>
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Partie 2: Informations système (15% de la hauteur) */}
+          <View style={[styles.section, styles.infoSection]}>
+            <SystemInfo 
+              networkLevel={networkLevel}
+              batteryLevel={batteryLevel}
+            />
+          </View>
+
+          {/* Partie 3: Champ téléphone (10% de la hauteur) */}
+          <View style={[styles.section, styles.phoneSection]}>
+            <PhoneDisplay 
+              phoneNumber={phoneNumber}
+              onClear={clearNumber}
+            />
+          </View>
+
+          {/* Partie 4: Pavé numérique (55% de la hauteur) */}
+          <View style={[styles.section, styles.dialPadSection]}>
+            <DialPad onNumberPress={addNumber} />
+          </View>
+
+          {/* Partie 5: Bouton Appeler (10% de la hauteur) */}
+          <View style={[styles.section, styles.callSection]}>
+            <TouchableOpacity 
+              style={[
+                styles.callButton, 
+                { opacity: phoneNumber.length > 0 ? 1 : 0.5 }
+              ]} 
+              onPress={makeCall}
+              disabled={phoneNumber.length === 0}
+              activeOpacity={0.8}
+            >
+              <Animated.View style={{ transform: [{ scale: callButtonScale }] }}>
+                <Text style={styles.callButtonText}>📞 Appeler</Text>
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
+
+      {/* Écran de navigation */}
+      {currentScreen === 'navigation' && (
+        <NavigationScreen 
+          onNavigateToContacts={navigateToContacts}
+          onNavigateToPhone={navigateToPhone}
+          onNavigateToCreateContact={navigateToCreateContact}
         />
-      </View>
+      )}
 
-      {/* Partie 3: Champ téléphone (10% de la hauteur) */}
-      <View style={[styles.section, styles.phoneSection]}>
-        <PhoneDisplay 
-          phoneNumber={phoneNumber}
-          onClear={clearNumber}
+      {/* Écran de création de contact */}
+      {currentScreen === 'createContact' && (
+        <CreateContactScreen
+          onContactCreated={handleContactCreated}
+          onCancel={() => setCurrentScreen('contacts')}
+          onHomePress={() => setCurrentScreen('navigation')}
         />
-      </View>
-
-      {/* Partie 4: Pavé numérique (55% de la hauteur) */}
-      <View style={[styles.section, styles.dialPadSection]}>
-        <DialPad onNumberPress={addNumber} />
-      </View>
-
-      {/* Partie 5: Bouton Appeler (10% de la hauteur) */}
-      <View style={[styles.section, styles.callSection]}>
-        <TouchableOpacity 
-          style={[
-            styles.callButton, 
-            { opacity: phoneNumber.length > 0 ? 1 : 0.5 }
-          ]} 
-          onPress={makeCall}
-          disabled={phoneNumber.length === 0}
-          activeOpacity={0.8}
-        >
-          <Animated.View style={{ transform: [{ scale: callButtonScale }] }}>
-            <Text style={styles.callButtonText}>📞 Appeler</Text>
-          </Animated.View>
-        </TouchableOpacity>
-      </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -251,7 +316,7 @@ const styles = StyleSheet.create({
     borderColor: '#FFA000',
   },
   dialPadSection: {
-    height: height * 0.55,
+    height: height * 0.55, // Hauteur originale restaurée
     backgroundColor: '#FF9800', // Orange principal - bon compromis visibilité/fatigue
     justifyContent: 'space-around',
     borderWidth: 2,
@@ -326,5 +391,10 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.7)', // Ombre plus prononcée
     textShadowOffset: { width: 2, height: 2 }, // Ombre plus décalée
     textShadowRadius: 3, // Ombre plus étendue
+  },
+  contactsContainer: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingTop: 20,
   },
 });

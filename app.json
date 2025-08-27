@@ -13,17 +13,31 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSContactsUsageDescription": "Cette application a besoin d'accéder à vos contacts pour afficher la liste et permettre la composition d'appels."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.READ_CONTACTS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-contacts",
+        {
+          "contactsPermission": "Permettre à SeniorPhonePro d'accéder à vos contacts."
+        }
+      ]
+    ]
   }
 }
