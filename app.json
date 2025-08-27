@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SeniorPhonePro-new",
-    "slug": "SeniorPhonePro-new",
+    "name": "SeniorPhonePro",
+    "slug": "SeniorPhonePro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
