@@ -306,10 +306,12 @@ const styles = StyleSheet.create({
   },
   time3DText: {
     color: 'white',
-    fontSize: Math.min(36, Math.max(16, width * 0.08)), // Taille adaptative entre 16 et 36
+    fontSize: Math.min(32, Math.max(14, width * 0.06)), // Taille réduite pour éviter le retour à la ligne
     fontWeight: 'bold',
     textAlign: 'center',
     includeFontPadding: false, // Évite le padding automatique
     textAlignVertical: 'center', // Centrage vertical parfait
+    numberOfLines: 1, // Force l'affichage sur une seule ligne
+    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
 });
