@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 import { Audio } from 'expo-av';
 import * as Speech from 'expo-speech';
 
@@ -15,9 +21,9 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
   // Configuration de la voix pour les seniors (claire et douce)
   const speechConfig = {
     language: 'fr-FR',
-    pitch: 1.0,        // Voix naturelle
-    rate: 0.7,         // Vitesse lente pour les seniors
-    volume: 0.8,       // Volume confortable
+    pitch: 1.0, // Voix naturelle
+    rate: 0.7, // Vitesse lente pour les seniors
+    volume: 0.8, // Volume confortable
     voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
   };
 
@@ -36,13 +42,13 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
     try {
       // Création d'un son synthétique simple et fiable
       const { sound: newSound } = await Audio.Sound.createAsync(
-        { 
-          uri: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' 
+        {
+          uri: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT',
         },
-        { 
+        {
           shouldPlay: false,
           volume: 0.7, // Volume adapté aux seniors
-          rate: 1.0    // Vitesse normale
+          rate: 1.0, // Vitesse normale
         }
       );
       setSound(newSound);
@@ -70,24 +76,50 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
   const speakNumber = (num: string) => {
     try {
       let textToSpeak = '';
-      
+
       // Conversion des chiffres et symboles en français
       switch (num) {
-        case '0': textToSpeak = 'Zéro'; break;
-        case '1': textToSpeak = 'Un'; break;
-        case '2': textToSpeak = 'Deux'; break;
-        case '3': textToSpeak = 'Trois'; break;
-        case '4': textToSpeak = 'Quatre'; break;
-        case '5': textToSpeak = 'Cinq'; break;
-        case '6': textToSpeak = 'Six'; break;
-        case '7': textToSpeak = 'Sept'; break;
-        case '8': textToSpeak = 'Huit'; break;
-        case '9': textToSpeak = 'Neuf'; break;
-        case '*': textToSpeak = 'Étoile'; break;
-        case '#': textToSpeak = 'Dièse'; break;
-        default: textToSpeak = num; break;
+        case '0':
+          textToSpeak = 'Zéro';
+          break;
+        case '1':
+          textToSpeak = 'Un';
+          break;
+        case '2':
+          textToSpeak = 'Deux';
+          break;
+        case '3':
+          textToSpeak = 'Trois';
+          break;
+        case '4':
+          textToSpeak = 'Quatre';
+          break;
+        case '5':
+          textToSpeak = 'Cinq';
+          break;
+        case '6':
+          textToSpeak = 'Six';
+          break;
+        case '7':
+          textToSpeak = 'Sept';
+          break;
+        case '8':
+          textToSpeak = 'Huit';
+          break;
+        case '9':
+          textToSpeak = 'Neuf';
+          break;
+        case '*':
+          textToSpeak = 'Étoile';
+          break;
+        case '#':
+          textToSpeak = 'Dièse';
+          break;
+        default:
+          textToSpeak = num;
+          break;
       }
-      
+
       console.log('🗣️ Lecture vocale:', textToSpeak);
       Speech.speak(textToSpeak, speechConfig);
     } catch (error) {
@@ -99,7 +131,7 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
   const handleNumberPress = async (num: string) => {
     // Jouer le son de touche
     await playTouchSound();
-    
+
     // Appeler la fonction de callback
     onNumberPress(num);
   };
@@ -108,12 +140,12 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
     ['1', '2', '3'],
     ['4', '5', '6'],
     ['7', '8', '9'],
-    ['*', '0', '#']
+    ['*', '0', '#'],
   ];
 
   // Calcul de la taille de police adaptative
   const getAdaptiveFontSize = () => {
-    const buttonSize = (height * 0.12) - 20; // Taille du bouton moins les marges
+    const buttonSize = height * 0.12 - 20; // Taille du bouton moins les marges
     return Math.max(24, Math.min(buttonSize * 0.6, 48)); // Entre 24px et 48px
   };
 
@@ -121,15 +153,22 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
     <View style={styles.container}>
       {dialPadNumbers.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.row}>
-          {row.map((num) => (
+          {row.map(num => (
             <TouchableOpacity
               key={num}
               style={styles.button}
               onPress={() => handleNumberPress(num)}
               activeOpacity={0.5}
-              pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
+              pressRetentionOffset={{
+                top: 20,
+                left: 20,
+                right: 20,
+                bottom: 20,
+              }}
             >
-              <Text style={[styles.buttonText, { fontSize: getAdaptiveFontSize() }]}>
+              <Text
+                style={[styles.buttonText, { fontSize: getAdaptiveFontSize() }]}
+              >
                 {num}
               </Text>
             </TouchableOpacity>
@@ -160,7 +199,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderWidth: 2,
     // Effet 3D avec petite élévation + ombres et bordures contrastées
-    elevation: 2,                              // Élévation très subtile pour Android
+    elevation: 2, // Élévation très subtile pour Android
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -170,9 +209,9 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     borderColor: 'rgba(255, 255, 255, 0.6)',
     // Effet 3D subtil avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 0.8)',    // Bordure supérieure plus claire
-    borderLeftColor: 'rgba(255, 255, 255, 0.8)',   // Bordure gauche plus claire
-    borderRightColor: 'rgba(255, 255, 255, 0.4)',  // Bordure droite plus sombre
+    borderTopColor: 'rgba(255, 255, 255, 0.8)', // Bordure supérieure plus claire
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)', // Bordure gauche plus claire
+    borderRightColor: 'rgba(255, 255, 255, 0.4)', // Bordure droite plus sombre
     borderBottomColor: 'rgba(255, 255, 255, 0.4)', // Bordure inférieure plus sombre
   },
   buttonText: {

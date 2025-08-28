@@ -1,14 +1,17 @@
 # SeniorPhonePro
 
 ## Description
+
 Projet SeniorPhonePro - Une application mobile moderne et intuitive.
 
 ## Fonctionnalités
+
 - Interface utilisateur intuitive
 - Design responsive
 - Performance optimisée
 
 ## Installation
+
 ```bash
 # Cloner le projet
 git clone [url-du-repo]
@@ -21,11 +24,13 @@ npm start
 ```
 
 ## Technologies utilisées
+
 - React Native
 - TypeScript
 - Expo
 
 ## Structure du projet
+
 ```
 SeniorPhonePro/
 ├── src/
@@ -38,6 +43,7 @@ SeniorPhonePro/
 ```
 
 ## Contribution
+
 1. Fork le projet
 2. Créer une branche pour votre fonctionnalité
 3. Commiter vos changements
@@ -45,8 +51,10 @@ SeniorPhonePro/
 5. Ouvrir une Pull Request
 
 ## Licence
+
 MIT
 
 ## Contact
+
 - Développeur: [Votre nom]
 - Email: [votre-email@example.com]

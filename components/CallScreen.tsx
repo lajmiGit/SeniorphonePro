@@ -1,13 +1,13 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Dimensions,
   Vibration,
   Alert,
-  Image
+  Image,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -27,28 +27,24 @@ interface CallScreenProps {
   onCancel: () => void;
 }
 
-export const CallScreen: React.FC<CallScreenProps> = ({ 
-  contact, 
-  onHomePress, 
-  onCall, 
-  onCancel 
+export const CallScreen: React.FC<CallScreenProps> = ({
+  contact,
+  onHomePress,
+  onCall,
+  onCancel,
 }) => {
   const handleCall = () => {
     Vibration.vibrate(100);
-    Alert.alert(
-      'Appel',
-      `Appeler ${contact.name} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { 
-          text: 'Appeler', 
-          onPress: () => {
-            Vibration.vibrate(200);
-            onCall(contact);
-          }
-        }
-      ]
-    );
+    Alert.alert('Appel', `Appeler ${contact.name} ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Appeler',
+        onPress: () => {
+          Vibration.vibrate(200);
+          onCall(contact);
+        },
+      },
+    ]);
   };
 
   return (
@@ -70,10 +66,10 @@ export const CallScreen: React.FC<CallScreenProps> = ({
         <View style={styles.photoContainer}>
           {contact.photo ? (
             <View style={styles.contactPhotoWrapper}>
-              <Image 
-                source={{ uri: contact.photo }} 
-                style={styles.contactPhoto} 
-                resizeMode="cover"
+              <Image
+                source={{ uri: contact.photo }}
+                style={styles.contactPhoto}
+                resizeMode='cover'
               />
             </View>
           ) : (
@@ -93,7 +89,7 @@ export const CallScreen: React.FC<CallScreenProps> = ({
           <View style={styles.nameContainer}>
             <Text style={styles.contactName}>{contact.name}</Text>
           </View>
-          
+
           {/* Numéro de téléphone */}
           <View style={styles.phoneContainer}>
             <Text style={styles.contactPhone}>{contact.phoneNumber}</Text>

@@ -1,5 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, Modal, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Modal,
+  Animated,
+} from 'react-native';
 import * as Speech from 'expo-speech';
 
 const { width, height } = Dimensions.get('window');
@@ -11,7 +20,12 @@ interface PhoneDisplayProps {
   onCall?: (phoneNumber: string) => void;
 }
 
-export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear, onDeleteDigit, onCall }) => {
+export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
+  phoneNumber,
+  onClear,
+  onDeleteDigit,
+  onCall,
+}) => {
   const [showPhoneZoom, setShowPhoneZoom] = useState(false);
   const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
   const phoneZoomScale = useRef(new Animated.Value(0)).current;
@@ -22,15 +36,17 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
   // Configuration de la voix pour les seniors (claire et douce)
   const speechConfig = {
     language: 'fr-FR',
-    pitch: 1.0,        // Voix naturelle
-    rate: 0.7,         // Vitesse lente pour les seniors
-    volume: 0.8,       // Volume confortable
+    pitch: 1.0, // Voix naturelle
+    rate: 0.7, // Vitesse lente pour les seniors
+    volume: 0.8, // Volume confortable
     voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
   };
 
   const formatPhoneNumber = (number: string) => {
-    if (number.length === 0) return '';
-    
+    if (number.length === 0) {
+      return '';
+    }
+
     // Formatage pour la lisibilité (ajout d'espaces tous les 2 chiffres)
     const formatted = number.replace(/(\d{2})(?=\d)/g, '$1 ');
     return formatted;
@@ -53,7 +69,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
           useNativeDriver: true,
         }),
       ]).start();
-      
+
       // Lecture automatique du numéro
       setTimeout(() => speakPhoneNumber(), 350);
     }
@@ -63,7 +79,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
   const closePhoneZoom = () => {
     // Arrêter la parole
     Speech.stop();
-    
+
     // Animation de sortie
     Animated.parallel([
       Animated.timing(phoneZoomScale, {
@@ -98,7 +114,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
           useNativeDriver: true,
         }),
       ]).start();
-      
+
       // Lecture automatique de la confirmation
       setTimeout(() => speakCallConfirm(), 350);
     }
@@ -108,7 +124,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
   const closeCallConfirmZoom = () => {
     // Arrêter la parole
     Speech.stop();
-    
+
     // Animation de sortie
     Animated.parallel([
       Animated.timing(callConfirmScale, {
@@ -146,12 +162,12 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
     try {
       const formattedNumber = formatPhoneNumber(phoneNumber);
       const message = `Numéro composé : ${formattedNumber}`;
-      
+
       console.log('📞 Fonction speakPhoneNumber appelée');
       console.log('📞 Numéro reçu:', phoneNumber);
       console.log('📞 Message généré:', message);
       console.log('📞 Configuration voix:', speechConfig);
-      
+
       Speech.speak(message, speechConfig);
       console.log('📞 Synthèse vocale lancée avec succès');
     } catch (error) {
@@ -164,43 +180,46 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
     try {
       const formattedNumber = formatPhoneNumber(phoneNumber);
       const message = `Voulez-vous lancer un appel vers ${formattedNumber} ?`;
-      
+
       console.log('📞 Fonction speakCallConfirm appelée');
       console.log('📞 Numéro reçu:', phoneNumber);
       console.log('📞 Message généré:', message);
       console.log('📞 Configuration voix:', speechConfig);
-      
+
       Speech.speak(message, speechConfig);
       console.log('📞 Synthèse vocale de confirmation lancée avec succès');
     } catch (error) {
-      console.error('📞 Erreur lors de la synthèse vocale de confirmation:', error);
+      console.error(
+        '📞 Erreur lors de la synthèse vocale de confirmation:',
+        error
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.inputContainer} 
+      <TouchableOpacity
+        style={styles.inputContainer}
         onPress={handlePhonePress}
         activeOpacity={0.8}
       >
         <TextInput
           style={styles.phoneInput}
           value={formatPhoneNumber(phoneNumber)}
-          placeholder="Numéro de téléphone"
-          placeholderTextColor="#999"
+          placeholder='Numéro de téléphone'
+          placeholderTextColor='#999'
           editable={false}
           multiline={false}
         />
-        <TouchableOpacity 
-          style={styles.clearButton} 
+        <TouchableOpacity
+          style={styles.clearButton}
           onPress={onDeleteDigit}
           activeOpacity={0.6}
         >
           <Text style={styles.clearButtonText}>⌫</Text>
         </TouchableOpacity>
       </TouchableOpacity>
-      
+
       {phoneNumber.length > 0 && (
         <View style={styles.numberInfo}>
           <Text style={styles.numberLength}>
@@ -213,46 +232,46 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
       <Modal
         visible={showPhoneZoom}
         transparent={true}
-        animationType="none"
+        animationType='none'
         onRequestClose={closePhoneZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closePhoneZoom}
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.zoomContainer,
               {
                 transform: [{ scale: phoneZoomScale }],
                 opacity: phoneZoomOpacity,
-              }
+              },
             ]}
           >
             <View style={styles.zoomPhoneCard}>
               {/* Titre du zoom */}
-              <Text style={styles.zoomPhoneTitle}>
-                📞
-              </Text>
-              
+              <Text style={styles.zoomPhoneTitle}>📞</Text>
+
               {/* Numéro de téléphone en grand */}
               <View style={styles.zoomPhoneNumberSection}>
                 <Text style={styles.zoomPhoneNumber}>
                   {formatPhoneNumber(phoneNumber)}
                 </Text>
               </View>
-              
+
               {/* Informations du numéro */}
               <View style={styles.zoomPhoneInfoSection}>
                 <Text style={styles.zoomPhoneInfo}>
-                  {phoneNumber.length} chiffre{phoneNumber.length > 1 ? 's' : ''} composé{phoneNumber.length > 1 ? 's' : ''}
+                  {phoneNumber.length} chiffre
+                  {phoneNumber.length > 1 ? 's' : ''} composé
+                  {phoneNumber.length > 1 ? 's' : ''}
                 </Text>
               </View>
-              
+
               {/* Bouton de lecture vocale */}
               <View style={styles.zoomPhoneButtonSection}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.zoomVoiceButton}
                   onPress={speakPhoneNumber}
                   activeOpacity={0.8}
@@ -262,7 +281,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Instructions de fermeture */}
               <View style={styles.zoomPhoneCloseSection}>
                 <Text style={styles.zoomInfoText}>
@@ -278,21 +297,21 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
       <Modal
         visible={showCallConfirmZoom}
         transparent={true}
-        animationType="none"
+        animationType='none'
         onRequestClose={closeCallConfirmZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closeCallConfirmZoom}
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.zoomContainer,
               {
                 transform: [{ scale: callConfirmScale }],
                 opacity: callConfirmOpacity,
-              }
+              },
             ]}
           >
             <View style={styles.zoomCallConfirmCard}>
@@ -303,41 +322,37 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
                   Confirmation d'appel
                 </Text>
               </View>
-              
+
               {/* Section Numéro (30% de la hauteur) */}
               <View style={styles.zoomCallConfirmNumberSection}>
                 <Text style={styles.zoomCallConfirmNumber}>
                   {formatPhoneNumber(phoneNumber)}
                 </Text>
               </View>
-              
+
               {/* Section Question (20% de la hauteur) */}
               <View style={styles.zoomCallConfirmQuestionSection}>
                 <Text style={styles.zoomCallConfirmQuestion}>
                   Voulez-vous lancer cet appel ?
                 </Text>
               </View>
-              
+
               {/* Section Boutons (20% de la hauteur) */}
               <View style={styles.zoomCallConfirmButtonsSection}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.zoomCallConfirmButton}
                   onPress={confirmCall}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.zoomCallConfirmButtonText}>
-                    Oui
-                  </Text>
+                  <Text style={styles.zoomCallConfirmButtonText}>Oui</Text>
                 </TouchableOpacity>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   style={styles.zoomCallCancelButton}
                   onPress={cancelCall}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.zoomCallCancelButtonText}>
-                    Non
-                  </Text>
+                  <Text style={styles.zoomCallCancelButtonText}>Non</Text>
                 </TouchableOpacity>
               </View>
             </View>

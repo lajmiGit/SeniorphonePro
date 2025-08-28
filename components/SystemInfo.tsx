@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Animated, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+  Animated,
+  Modal,
+} from 'react-native';
 import * as Speech from 'expo-speech';
 
 const { width, height } = Dimensions.get('window');
@@ -17,9 +25,9 @@ interface SystemInfoProps {
   batteryLevel?: number;
 }
 
-export const SystemInfo: React.FC<SystemInfoProps> = ({ 
-  networkLevel = 4, 
-  batteryLevel = 85 
+export const SystemInfo: React.FC<SystemInfoProps> = ({
+  networkLevel = 4,
+  batteryLevel = 85,
 }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showTimeZoom, setShowTimeZoom] = useState(false);
@@ -55,7 +63,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     // Lecture automatique de l'heure
     setTimeout(() => speakTime(), 350); // Délai pour laisser l'animation se terminer
   };
@@ -63,7 +71,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const closeTimeZoom = () => {
     // Arrêter la parole
     stopSpeaking();
-    
+
     // Animation de sortie
     Animated.parallel([
       Animated.timing(zoomScale, {
@@ -96,7 +104,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     // Lecture automatique des informations de réseau
     setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
   };
@@ -104,7 +112,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const closeNetworkZoom = () => {
     // Arrêter la parole
     stopSpeaking();
-    
+
     // Animation de sortie
     Animated.parallel([
       Animated.timing(networkZoomScale, {
@@ -137,7 +145,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         useNativeDriver: true,
       }),
     ]).start();
-    
+
     // Lecture automatique des informations de batterie
     setTimeout(() => speakBattery(), 350); // Délai pour laisser l'animation se terminer
   };
@@ -145,7 +153,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const closeBatteryZoom = () => {
     // Arrêter la parole
     stopSpeaking();
-    
+
     // Animation de sortie
     Animated.parallel([
       Animated.timing(batteryZoomScale, {
@@ -163,17 +171,23 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     });
   };
 
-
-
   const getBatteryColor = (level: number) => {
-    if (level > 50) return '#4CAF50';
-    if (level > 20) return '#FF9800';
+    if (level > 50) {
+      return '#4CAF50';
+    }
+    if (level > 20) {
+      return '#FF9800';
+    }
     return '#F44336';
   };
 
   const getNetworkColor = (level: number) => {
-    if (level > 3) return '#4CAF50';
-    if (level > 1) return '#FF9800';
+    if (level > 3) {
+      return '#4CAF50';
+    }
+    if (level > 1) {
+      return '#FF9800';
+    }
     return '#F44336';
   };
 
@@ -181,39 +195,37 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const renderNetworkLevel3D = (level: number) => {
     const maxBars = 5;
     const bars = [];
-    
+
     for (let i = 1; i <= maxBars; i++) {
       const isActive = i <= level;
-      const barHeight = 20 + (i * 8); // Hauteur encore plus grande pour remplir le cadre
+      const barHeight = 20 + i * 8; // Hauteur encore plus grande pour remplir le cadre
       const opacity = isActive ? 1 : 0.15;
       const color = getNetworkColor(level);
-      
+
       bars.push(
-        <View 
-          key={i} 
+        <View
+          key={i}
           style={[
-            styles.networkBar3D, 
-            { 
+            styles.networkBar3D,
+            {
               height: barHeight,
               backgroundColor: color,
               opacity: opacity,
               transform: [{ scaleY: isActive ? 1 : 0.2 }],
-            }
-          ]} 
+            },
+          ]}
         />
       );
     }
-    
+
     return (
-      <TouchableOpacity 
-        style={styles.network3DContainer} 
+      <TouchableOpacity
+        style={styles.network3DContainer}
         onPress={handleNetworkPress}
         activeOpacity={0.8}
       >
         {/* Barres de signal 3D seulement */}
-        <View style={styles.signalBars3D}>
-          {bars}
-        </View>
+        <View style={styles.signalBars3D}>{bars}</View>
       </TouchableOpacity>
     );
   };
@@ -221,30 +233,28 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   // Fonction pour afficher le niveau de batterie avec effet 3D
   const renderBatteryLevel3D = (level: number) => {
     const color = getBatteryColor(level);
-    
+
     return (
-      <TouchableOpacity 
-        style={styles.battery3DContainer} 
+      <TouchableOpacity
+        style={styles.battery3DContainer}
         onPress={handleBatteryPress}
         activeOpacity={0.8}
       >
         {/* Batterie 3D */}
         <View style={styles.battery3DOutline}>
-          <View 
+          <View
             style={[
-              styles.battery3DLevel, 
-              { 
+              styles.battery3DLevel,
+              {
                 height: `${level}%`,
                 backgroundColor: color,
-              }
-            ]} 
+              },
+            ]}
           />
         </View>
-        
+
         {/* Pourcentage en bas */}
-        <Text style={[styles.battery3DText, { color: color }]}>
-          {level}%
-        </Text>
+        <Text style={[styles.battery3DText, { color: color }]}>{level}%</Text>
       </TouchableOpacity>
     );
   };
@@ -252,15 +262,15 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   // Fonction pour afficher l'heure qui remplit tout le cadre
   const renderTime3D = () => {
     return (
-      <TouchableOpacity 
-        style={styles.time3DContainer} 
+      <TouchableOpacity
+        style={styles.time3DContainer}
         onPress={handleTimePress}
         activeOpacity={0.8}
       >
         <Text style={styles.time3DText}>
-          {currentTime.toLocaleTimeString('fr-FR', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
+          {currentTime.toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
           })}
         </Text>
       </TouchableOpacity>
@@ -268,13 +278,13 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   };
 
   // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
-  
+
   // Configuration de la voix pour les seniors (claire et douce)
   const speechConfig = {
     language: 'fr-FR',
-    pitch: 1.0,        // Voix naturelle
-    rate: 0.8,         // Vitesse lente pour les seniors
-    volume: 1.0,       // Volume maximum
+    pitch: 1.0, // Voix naturelle
+    rate: 0.8, // Vitesse lente pour les seniors
+    volume: 1.0, // Volume maximum
     voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
   };
 
@@ -282,16 +292,16 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const speakTime = () => {
     console.log('⏰ Fonction speakTime appelée');
     console.log('⏰ Heure actuelle:', currentTime);
-    
-    const timeString = currentTime.toLocaleTimeString('fr-FR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+
+    const timeString = currentTime.toLocaleTimeString('fr-FR', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
     const message = `Il est ${timeString}`;
-    
+
     console.log('⏰ Message généré:', message);
     console.log('⏰ Configuration voix:', speechConfig);
-    
+
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
@@ -305,11 +315,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const speakNetwork = () => {
     console.log(' Fonction speakNetwork appelée');
     console.log(' Niveau de réseau reçu:', networkLevel);
-    
+
     // Détermination de la qualité avec plus de détails
     let qualityText = '';
     let descriptionText = '';
-    
+
     if (networkLevel >= 4) {
       qualityText = 'excellente';
       descriptionText = 'signal très fort';
@@ -323,12 +333,12 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       qualityText = 'faible';
       descriptionText = 'signal faible';
     }
-    
+
     const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
-    
+
     console.log(' Message généré:', message);
     console.log(' Configuration voix:', speechConfig);
-    
+
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
@@ -342,11 +352,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const speakBattery = () => {
     console.log('🔋 Fonction speakBattery appelée');
     console.log('🔋 Niveau de batterie reçu:', batteryLevel);
-    
+
     // Détermination du niveau avec plus de détails
     let levelText = '';
     let statusText = '';
-    
+
     if (batteryLevel >= 80) {
       levelText = 'excellent';
       statusText = 'excellent';
@@ -363,12 +373,12 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       levelText = 'critique';
       statusText = 'critique';
     }
-    
+
     const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
-    
+
     console.log('🔋 Message généré:', message);
     console.log('🔋 Configuration voix:', speechConfig);
-    
+
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
@@ -390,12 +400,12 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         <View style={[styles.infoFrame, styles.networkFrame]}>
           {renderNetworkLevel3D(networkLevel)}
         </View>
-        
+
         {/* Cadre Heure - Couleur orange avec heure 3D */}
         <View style={[styles.infoFrame, styles.timeFrame]}>
           {renderTime3D()}
         </View>
-        
+
         {/* Cadre Batterie - Couleur verte avec modèle 3D */}
         <View style={[styles.infoFrame, styles.batteryFrame]}>
           {renderBatteryLevel3D(batteryLevel)}
@@ -406,21 +416,21 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       <Modal
         visible={showTimeZoom}
         transparent={true}
-        animationType="none"
+        animationType='none'
         onRequestClose={closeTimeZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closeTimeZoom}
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.zoomContainer,
               {
                 transform: [{ scale: zoomScale }],
                 opacity: zoomOpacity,
-              }
+              },
             ]}
           >
             <View style={styles.zoomTimeCard}>
@@ -428,48 +438,48 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
               <View style={styles.zoomTimeTitleSection}>
                 <Text style={styles.zoomTimeIcon}>🕐</Text>
                 <Text style={styles.zoomTimeText}>
-                  {currentTime.toLocaleTimeString('fr-FR', { 
-                    hour: '2-digit', 
+                  {currentTime.toLocaleTimeString('fr-FR', {
+                    hour: '2-digit',
                     minute: '2-digit',
-                    second: '2-digit'
+                    second: '2-digit',
                   })}
                 </Text>
               </View>
-              
+
               {/* Section Date complète (50% de la hauteur) */}
               <View style={styles.zoomTimeDateSection}>
                 <Text style={styles.zoomDateText}>
-                  {currentTime.toLocaleDateString('fr-FR', { 
+                  {currentTime.toLocaleDateString('fr-FR', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric'
+                    day: 'numeric',
                   })}
                 </Text>
               </View>
-              
+
               {/* Section Séparateur (10% de la hauteur) */}
               <View style={styles.zoomTimeSeparatorSection}>
                 <View style={styles.zoomDivider} />
               </View>
-              
+
               {/* Section Bouton relire (15% de la hauteur) */}
               <View style={styles.zoomTimeButtonSection}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.zoomVoiceButton}
                   onPress={speakTime}
                   activeOpacity={0.8}
                 >
-                  <Text 
+                  <Text
                     style={styles.zoomVoiceButtonText}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
+                    ellipsizeMode='tail'
                   >
                     🔊 Relire l'heure
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Section Instructions (15% de la hauteur) */}
               <View style={styles.zoomTimeCloseSection}>
                 <Text style={styles.zoomInfoText}>
@@ -485,84 +495,91 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       <Modal
         visible={showNetworkZoom}
         transparent={true}
-        animationType="none"
+        animationType='none'
         onRequestClose={closeNetworkZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closeNetworkZoom}
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.zoomContainer,
               {
                 transform: [{ scale: networkZoomScale }],
                 opacity: networkZoomOpacity,
-              }
+              },
             ]}
           >
             <View style={styles.zoomNetworkCard}>
               {/* Section Titre/Réseau (40% de la largeur) */}
               <View style={styles.zoomNetworkTitleSection}>
-                <Text style={styles.zoomNetworkTitle}>
-                  📶
-                </Text>
-                
+                <Text style={styles.zoomNetworkTitle}>📶</Text>
+
                 {/* Barres de réseau 3D parfaitement centrées */}
                 <View style={styles.zoomNetworkVisual}>
                   <View style={styles.zoomNetworkBars}>
                     {Array.from({ length: 5 }, (_, i) => {
                       const isActive = i < networkLevel;
-                      const barHeight = 20 + ((i + 1) * 8); // Même logique que dans l'écran phone
+                      const barHeight = 20 + (i + 1) * 8; // Même logique que dans l'écran phone
                       const opacity = isActive ? 1 : 0.15;
                       const color = getNetworkColor(networkLevel);
-                      
+
                       return (
-                        <View 
-                          key={i} 
+                        <View
+                          key={i}
                           style={[
-                            styles.zoomNetworkBar3D, 
-                            { 
+                            styles.zoomNetworkBar3D,
+                            {
                               height: barHeight,
                               backgroundColor: color,
                               opacity: opacity,
                               transform: [{ scaleY: isActive ? 1 : 0.2 }],
-                            }
-                          ]} 
+                            },
+                          ]}
                         />
                       );
                     })}
                   </View>
                 </View>
               </View>
-              
+
               {/* Section Qualité du réseau (40% de la hauteur) */}
               <View style={styles.zoomNetworkQualitySection}>
-                <Text style={[styles.zoomNetworkQualityText, { color: getNetworkColor(networkLevel) }]}>
-                  {networkLevel >= 4 ? 'Excellent' : 
-                   networkLevel >= 3 ? 'Bon' : 
-                   networkLevel >= 2 ? 'Moyen' : 'Faible'}
+                <Text
+                  style={[
+                    styles.zoomNetworkQualityText,
+                    { color: getNetworkColor(networkLevel) },
+                  ]}
+                >
+                  {networkLevel >= 4
+                    ? 'Excellent'
+                    : networkLevel >= 3
+                      ? 'Bon'
+                      : networkLevel >= 2
+                        ? 'Moyen'
+                        : 'Faible'}
                 </Text>
               </View>
-              
+
               {/* Section Bouton relire (25% de la hauteur) */}
               <View style={styles.zoomNetworkButtonSection}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.zoomVoiceButton}
                   onPress={speakNetwork}
                   activeOpacity={0.8}
                 >
-                  <Text 
+                  <Text
                     style={styles.zoomVoiceButtonText}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
+                    ellipsizeMode='tail'
                   >
                     🔊 Relire le réseau
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Section Instructions (25% de la hauteur) */}
               <View style={styles.zoomNetworkCloseSection}>
                 <Text style={styles.zoomInfoText}>
@@ -578,76 +595,89 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       <Modal
         visible={showBatteryZoom}
         transparent={true}
-        animationType="none"
+        animationType='none'
         onRequestClose={closeBatteryZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closeBatteryZoom}
         >
-          <Animated.View 
+          <Animated.View
             style={[
               styles.zoomContainer,
               {
                 transform: [{ scale: batteryZoomScale }],
                 opacity: batteryZoomOpacity,
-              }
+              },
             ]}
           >
             <View style={styles.zoomBatteryCard}>
               {/* Icône batterie - 15% de la hauteur */}
               <View style={styles.zoomBatteryIconSection}>
-                <Text style={styles.zoomBatteryTitle}>
-                  🔋
-                </Text>
+                <Text style={styles.zoomBatteryTitle}>🔋</Text>
               </View>
-              
+
               {/* Niveau batterie texte - 15% de la hauteur */}
               <View style={styles.zoomBatteryTextSection}>
-                <Text style={[styles.zoomBatteryStatus, { color: getBatteryColor(batteryLevel) }]}>
-                  {batteryLevel >= 80 ? 'Chargée' : 
-                   batteryLevel >= 60 ? 'Bonne' : 
-                   batteryLevel >= 40 ? 'Moyenne' : 
-                   batteryLevel >= 20 ? 'Faible' : 'Critique'}
+                <Text
+                  style={[
+                    styles.zoomBatteryStatus,
+                    { color: getBatteryColor(batteryLevel) },
+                  ]}
+                >
+                  {batteryLevel >= 80
+                    ? 'Chargée'
+                    : batteryLevel >= 60
+                      ? 'Bonne'
+                      : batteryLevel >= 40
+                        ? 'Moyenne'
+                        : batteryLevel >= 20
+                          ? 'Faible'
+                          : 'Critique'}
                 </Text>
               </View>
-              
+
               {/* Image batterie 3D - 40% de la hauteur */}
               <View style={styles.zoomBatteryVisualSection}>
                 <View style={styles.zoomBatteryOutline}>
-                  <View 
+                  <View
                     style={[
-                      styles.zoomBatteryLevel, 
-                      { 
+                      styles.zoomBatteryLevel,
+                      {
                         height: `${batteryLevel}%`,
                         backgroundColor: getBatteryColor(batteryLevel),
-                      }
-                    ]} 
+                      },
+                    ]}
                   />
                 </View>
-                <Text style={[styles.zoomBatteryPercentage, { color: getBatteryColor(batteryLevel) }]}>
+                <Text
+                  style={[
+                    styles.zoomBatteryPercentage,
+                    { color: getBatteryColor(batteryLevel) },
+                  ]}
+                >
                   {batteryLevel}%
                 </Text>
               </View>
-              
+
               {/* Bouton relire - 10% de la hauteur */}
               <View style={styles.zoomBatteryButtonSection}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.zoomVoiceButton}
                   onPress={speakBattery}
                   activeOpacity={0.8}
                 >
-                  <Text 
+                  <Text
                     style={styles.zoomVoiceButtonText}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
+                    ellipsizeMode='tail'
                   >
                     🔊 Relire la batterie
                   </Text>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Appuyer pour fermer - 10% de la hauteur */}
               <View style={styles.zoomBatteryCloseSection}>
                 <Text style={styles.zoomInfoText}>
@@ -658,7 +688,6 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
           </Animated.View>
         </TouchableOpacity>
       </Modal>
-
     </>
   );
 };

@@ -1,11 +1,11 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Dimensions,
-  Vibration
+  Vibration,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -16,10 +16,10 @@ interface NavigationScreenProps {
   onNavigateToCreateContact: () => void;
 }
 
-export const NavigationScreen: React.FC<NavigationScreenProps> = ({ 
-  onNavigateToContacts, 
+export const NavigationScreen: React.FC<NavigationScreenProps> = ({
+  onNavigateToContacts,
   onNavigateToPhone,
-  onNavigateToCreateContact
+  onNavigateToCreateContact,
 }) => {
   return (
     <View style={styles.container}>
@@ -73,9 +73,7 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({
         <Text style={styles.infoText}>
           Application optimisée pour les seniors
         </Text>
-        <Text style={styles.infoText}>
-          Interface 3D et couleurs adaptées
-        </Text>
+        <Text style={styles.infoText}>Interface 3D et couleurs adaptées</Text>
       </View>
     </View>
   );

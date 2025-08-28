@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  FlatList, 
-  TouchableOpacity, 
-  Image, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
   Dimensions,
   Vibration,
   Alert,
   PermissionsAndroid,
-  Platform
+  Platform,
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
 import { CallScreen } from './CallScreen';
@@ -31,10 +31,10 @@ interface ContactListProps {
   onHomePress: () => void;
 }
 
-export const ContactList: React.FC<ContactListProps> = ({ 
-  onContactSelect, 
-  onCreateContact, 
-  onHomePress 
+export const ContactList: React.FC<ContactListProps> = ({
+  onContactSelect,
+  onCreateContact,
+  onHomePress,
 }) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,8 +52,9 @@ export const ContactList: React.FC<ContactListProps> = ({
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
           {
-            title: 'Permission d\'accès aux contacts',
-            message: 'Cette application a besoin d\'accéder à vos contacts pour afficher la liste.',
+            title: "Permission d'accès aux contacts",
+            message:
+              "Cette application a besoin d'accéder à vos contacts pour afficher la liste.",
             buttonNeutral: 'Demander plus tard',
             buttonNegative: 'Annuler',
             buttonPositive: 'OK',
@@ -83,7 +84,7 @@ export const ContactList: React.FC<ContactListProps> = ({
   const loadContacts = async () => {
     try {
       setLoading(true);
-      
+
       // Récupérer tous les contacts avec des noms, numéros de téléphone et photos
       const { data } = await Contacts.getContactsAsync({
         fields: [
@@ -102,10 +103,12 @@ export const ContactList: React.FC<ContactListProps> = ({
         const formattedContacts: Contact[] = data
           .filter(contact => {
             // Filtrage plus strict et rapide
-            return contact.name && 
-                   contact.phoneNumbers && 
-                   contact.phoneNumbers.length > 0 &&
-                   contact.phoneNumbers[0]?.number;
+            return (
+              contact.name &&
+              contact.phoneNumbers &&
+              contact.phoneNumbers.length > 0 &&
+              contact.phoneNumbers[0]?.number
+            );
           })
           .map(contact => ({
             id: contact.id || `contact_${Date.now()}_${Math.random()}`,
@@ -116,8 +119,12 @@ export const ContactList: React.FC<ContactListProps> = ({
           }))
           .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 
-        console.log(`Contacts chargés: ${formattedContacts.length} sur ${data.length} total`);
-        console.log(`Contacts avec photos: ${formattedContacts.filter(c => c.photo).length}`);
+        console.log(
+          `Contacts chargés: ${formattedContacts.length} sur ${data.length} total`
+        );
+        console.log(
+          `Contacts avec photos: ${formattedContacts.filter(c => c.photo).length}`
+        );
         setContacts(formattedContacts);
       } else {
         setError('Aucun contact trouvé');
@@ -138,20 +145,16 @@ export const ContactList: React.FC<ContactListProps> = ({
 
   const handleCallPress = (contact: Contact) => {
     Vibration.vibrate(100);
-    Alert.alert(
-      'Appel',
-      `Appeler ${contact.name} ?`,
-      [
-        { text: 'Annuler', style: 'cancel' },
-        { 
-          text: 'Appeler', 
-          onPress: () => {
-            // Ici vous pouvez ajouter la logique d'appel réelle
-            Alert.alert('Appel', `Connexion en cours vers ${contact.name}...`);
-          }
-        }
-      ]
-    );
+    Alert.alert('Appel', `Appeler ${contact.name} ?`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Appeler',
+        onPress: () => {
+          // Ici vous pouvez ajouter la logique d'appel réelle
+          Alert.alert('Appel', `Connexion en cours vers ${contact.name}...`);
+        },
+      },
+    ]);
   };
 
   const handleCall = (contact: Contact) => {
@@ -239,10 +242,12 @@ export const ContactList: React.FC<ContactListProps> = ({
           <Text style={styles.headerTitle}>📱 Contacts</Text>
           <Text style={styles.headerSubtitle}>Chargement en cours...</Text>
         </View>
-        
+
         <View style={styles.loadingContainer}>
           <Text style={styles.loadingText}>⏳ Chargement des contacts...</Text>
-          <Text style={styles.loadingSubtext}>Cela peut prendre quelques secondes</Text>
+          <Text style={styles.loadingSubtext}>
+            Cela peut prendre quelques secondes
+          </Text>
         </View>
       </View>
     );
@@ -257,10 +262,7 @@ export const ContactList: React.FC<ContactListProps> = ({
         </View>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
-          <TouchableOpacity 
-            style={styles.retryButton}
-            onPress={loadContacts}
-          >
+          <TouchableOpacity style={styles.retryButton} onPress={loadContacts}>
             <Text style={styles.retryButtonText}>Réessayer</Text>
           </TouchableOpacity>
         </View>
@@ -285,9 +287,10 @@ export const ContactList: React.FC<ContactListProps> = ({
       <View style={styles.header}>
         <Text style={styles.headerTitle}>📱 Contacts</Text>
         <Text style={styles.headerSubtitle}>
-          {contacts.length} contact{contacts.length > 1 ? 's' : ''} chargé{contacts.length > 1 ? 's' : ''}
+          {contacts.length} contact{contacts.length > 1 ? 's' : ''} chargé
+          {contacts.length > 1 ? 's' : ''}
         </Text>
-        
+
         {/* Bouton de création */}
         <TouchableOpacity
           style={styles.createButton}
@@ -302,7 +305,7 @@ export const ContactList: React.FC<ContactListProps> = ({
       <FlatList
         data={contacts}
         renderItem={renderContactItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -317,11 +320,13 @@ export const ContactList: React.FC<ContactListProps> = ({
           index,
         })}
         // Indicateur de chargement en bas
-        ListFooterComponent={loading ? (
-          <View style={styles.loadingFooter}>
-            <Text style={styles.loadingFooterText}>Chargement...</Text>
-          </View>
-        ) : null}
+        ListFooterComponent={
+          loading ? (
+            <View style={styles.loadingFooter}>
+              <Text style={styles.loadingFooterText}>Chargement...</Text>
+            </View>
+          ) : null
+        }
       />
     </View>
   );

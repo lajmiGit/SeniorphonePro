@@ -24,9 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": [
-        "android.permission.READ_CONTACTS"
-      ]
+      "permissions": ["android.permission.READ_CONTACTS"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

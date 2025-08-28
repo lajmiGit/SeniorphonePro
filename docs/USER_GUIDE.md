@@ -11,6 +11,7 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Fonction :** Retour à l'écran d'accueil principal
 
 **Comment utiliser :**
+
 - Appuyez sur le bouton vert "🏠 Accueil"
 - Une vibration confirmera votre action
 - Vous retournerez à l'écran principal
@@ -24,6 +25,7 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Fonction :** Affiche les informations importantes de votre téléphone
 
 **Contenu :**
+
 - **Réseau :** Niveau de signal (1 à 4 barres)
   - 🟢 4 barres : Signal excellent
   - 🟡 2-3 barres : Signal moyen
@@ -45,6 +47,7 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Fonction :** Affiche le numéro que vous composez
 
 **Fonctionnalités :**
+
 - Le numéro s'affiche en temps réel
 - Formatage automatique avec espaces pour une meilleure lisibilité
 - Bouton "Effacer" pour supprimer tout le numéro
@@ -59,12 +62,14 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Fonction :** Composition du numéro de téléphone
 
 **Organisation :**
+
 - **Ligne 1 :** 1 - 2 - 3
 - **Ligne 2 :** 4 - 5 - 6
 - **Ligne 3 :** 7 - 8 - 9
-- **Ligne 4 :** * - 0 - #
+- **Ligne 4 :** \* - 0 - #
 
 **Comment utiliser :**
+
 - Appuyez sur les chiffres pour composer
 - Chaque appui génère une vibration de confirmation
 - Les boutons sont suffisamment grands pour un usage facile
@@ -79,6 +84,7 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Fonction :** Lancer l'appel téléphonique
 
 **Fonctionnalités :**
+
 - Bouton actif uniquement quand un numéro est saisi
 - Confirmation avant appel avec popup de validation
 - Vibration de confirmation lors de l'appui
@@ -91,16 +97,19 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 ## 🎯 Fonctionnalités Spéciales
 
 ### 🔴 Numéro d'Urgence
+
 - Appuyez sur **#** pour composer rapidement le 112
 - Vibration spéciale pour confirmer l'action
 
 ### 📱 Accessibilité
+
 - **Boutons surdimensionnés** pour faciliter l'utilisation
 - **Contraste élevé** pour une meilleure visibilité
 - **Vibrations haptiques** pour confirmer les actions
 - **Police grande** pour une lecture facile
 
 ### 🌙 Mode Nuit
+
 - Adaptation automatique de la luminosité
 - Support des couleurs adaptées à la vision nocturne
 
@@ -109,12 +118,14 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 ## ⚙️ Paramètres Recommandés
 
 ### 📱 Téléphone
+
 - **Taille de police :** Grande ou très grande
 - **Luminosité :** Automatique
 - **Vibrations :** Activées
 - **Son :** Volume à 80% minimum
 
 ### 🔧 Application
+
 - **Mode contraste élevé :** Activé
 - **Vibrations haptiques :** Activées
 - **Interface simplifiée :** Activée
@@ -124,16 +135,19 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 ## 🚨 Dépannage
 
 ### Le numéro ne s'affiche pas ?
+
 - Vérifiez que vous appuyez bien sur les touches
 - Une vibration confirme chaque appui
 - Le bouton "Effacer" permet de recommencer
 
 ### L'appel ne se lance pas ?
+
 - Vérifiez qu'un numéro est saisi
 - Le bouton "Appeler" doit être rouge vif
 - Confirmez l'appel dans le popup
 
 ### Problème de visibilité ?
+
 - Activez le mode contraste élevé
 - Augmentez la luminosité de l'écran
 - Vérifiez la taille de police dans les paramètres
@@ -152,10 +166,11 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 ## 🆘 Support
 
 Pour toute question ou problème :
+
 - Consultez ce guide
 - Contactez le support technique
 - Demandez l'aide d'un proche
 
 ---
 
-*SeniorPhonePro - Une application conçue avec soin pour les seniors* 🧡
+_SeniorPhonePro - Une application conçue avec soin pour les seniors_ 🧡

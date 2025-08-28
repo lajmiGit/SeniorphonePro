@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
   Dimensions,
   Vibration,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -19,23 +19,22 @@ interface VirtualKeyboardProps {
   currentText: string;
 }
 
-export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ 
-  onKeyPress, 
-  onBackspace, 
-  onValidate, 
+export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
+  onKeyPress,
+  onBackspace,
+  onValidate,
   onClose,
-  currentText 
+  currentText,
 }) => {
-  
   const [showNumbers, setShowNumbers] = useState(false);
-  
+
   // Définition des caractères du clavier - Lettres
   const letterRows = [
     ['A', 'B', 'C', 'D', 'E', 'F'],
     ['G', 'H', 'I', 'J', 'K', 'L'],
     ['M', 'N', 'O', 'P', 'Q', 'R'],
     ['S', 'T', 'U', 'V', 'W', 'X'],
-    ['Y', 'Z']
+    ['Y', 'Z'],
   ];
 
   // Définition des caractères du clavier - Chiffres et caractères spéciaux
@@ -44,7 +43,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
     ['7', '8', '9', '0', '-', '_'],
     ['@', '.', ',', '!', '?', '&'],
     ['(', ')', '[', ']', '{', '}'],
-    ['#', '$', '%', '+', '=', '/']
+    ['#', '$', '%', '+', '=', '/'],
   ];
 
   const keyboardRows = showNumbers ? numberRows : letterRows;
@@ -82,71 +81,95 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         {/* Bouton fermer en haut à droite */}
         <View style={styles.headerTop}>
           <TouchableOpacity
-            style={[styles.closeButton, { width: keySize * 0.8, height: keySize * 0.8 }]}
+            style={[
+              styles.closeButton,
+              { width: keySize * 0.8, height: keySize * 0.8 },
+            ]}
             onPress={handleClose}
             activeOpacity={0.7}
           >
-            <Text style={[styles.closeButtonText, { fontSize: keySize * 0.3 }]}>❌</Text>
+            <Text style={[styles.closeButtonText, { fontSize: keySize * 0.3 }]}>
+              ❌
+            </Text>
           </TouchableOpacity>
         </View>
-        
+
         {/* Affichage du texte saisi */}
         <View style={styles.textDisplay}>
-          <Text style={[styles.currentTextLabel, { fontSize: Math.max(16, width * 0.04) }]}>
+          <Text
+            style={[
+              styles.currentTextLabel,
+              { fontSize: Math.max(16, width * 0.04) },
+            ]}
+          >
             Texte saisi :
           </Text>
-          <Text style={[styles.currentText, { fontSize: Math.max(20, width * 0.05) }]}>
+          <Text
+            style={[
+              styles.currentText,
+              { fontSize: Math.max(20, width * 0.05) },
+            ]}
+          >
             {currentText || 'Aucun texte'}
           </Text>
         </View>
-        
+
         {/* Boutons de basculement ABC/123 */}
-        <View style={[styles.toggleContainer, { 
-          padding: keySize * 0.15,
-          borderRadius: keySize * 0.2
-        }]}>
+        <View
+          style={[
+            styles.toggleContainer,
+            {
+              padding: keySize * 0.15,
+              borderRadius: keySize * 0.2,
+            },
+          ]}
+        >
           <TouchableOpacity
             style={[
-              styles.toggleButton, 
+              styles.toggleButton,
               !showNumbers && styles.toggleButtonActive,
-              { 
+              {
                 paddingVertical: keySize * 0.12,
                 paddingHorizontal: keySize * 0.2,
                 borderRadius: keySize * 0.15,
-                marginHorizontal: keySize * 0.05
-              }
+                marginHorizontal: keySize * 0.05,
+              },
             ]}
             onPress={() => setShowNumbers(false)}
             activeOpacity={0.7}
           >
-            <Text style={[
-              styles.toggleButtonText, 
-              !showNumbers && styles.toggleButtonTextActive,
-              { fontSize: Math.max(18, keySize * 0.25) }
-            ]}>
+            <Text
+              style={[
+                styles.toggleButtonText,
+                !showNumbers && styles.toggleButtonTextActive,
+                { fontSize: Math.max(18, keySize * 0.25) },
+              ]}
+            >
               ABC
             </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[
-              styles.toggleButton, 
+              styles.toggleButton,
               showNumbers && styles.toggleButtonActive,
-              { 
+              {
                 paddingVertical: keySize * 0.12,
                 paddingHorizontal: keySize * 0.2,
                 borderRadius: keySize * 0.15,
-                marginHorizontal: keySize * 0.05
-              }
+                marginHorizontal: keySize * 0.05,
+              },
             ]}
             onPress={() => setShowNumbers(true)}
             activeOpacity={0.7}
           >
-            <Text style={[
-              styles.toggleButtonText, 
-              showNumbers && styles.toggleButtonTextActive,
-              { fontSize: Math.max(18, keySize * 0.25) }
-            ]}>
+            <Text
+              style={[
+                styles.toggleButtonText,
+                showNumbers && styles.toggleButtonTextActive,
+                { fontSize: Math.max(18, keySize * 0.25) },
+              ]}
+            >
               123
             </Text>
           </TouchableOpacity>
@@ -156,8 +179,11 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       {/* Clavier principal responsive */}
       <View style={[styles.keyboardContainer, { padding: keyboardPadding }]}>
         {keyboardRows.map((row, rowIndex) => (
-          <View key={rowIndex} style={[styles.keyboardRow, { marginBottom: keySpacing }]}>
-            {row.map((key) => (
+          <View
+            key={rowIndex}
+            style={[styles.keyboardRow, { marginBottom: keySpacing }]}
+          >
+            {row.map(key => (
               <TouchableOpacity
                 key={key}
                 style={[
@@ -169,16 +195,18 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                     borderRadius: keySize * 0.2,
                     borderWidth: Math.max(3, keySize * 0.05),
                     elevation: Math.max(8, keySize * 0.12),
-                    shadowRadius: Math.max(8, keySize * 0.12)
-                  }
+                    shadowRadius: Math.max(8, keySize * 0.12),
+                  },
                 ]}
                 onPress={() => handleKeyPress(key)}
                 activeOpacity={0.6}
               >
-                <Text style={[
-                  styles.keyText,
-                  { fontSize: Math.max(24, keySize * 0.4) }
-                ]}>
+                <Text
+                  style={[
+                    styles.keyText,
+                    { fontSize: Math.max(24, keySize * 0.4) },
+                  ]}
+                >
                   {key}
                 </Text>
               </TouchableOpacity>
@@ -190,7 +218,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         <View style={[styles.specialRow, { marginTop: keySpacing * 1.5 }]}>
           <TouchableOpacity
             style={[
-              styles.specialButton, 
+              styles.specialButton,
               styles.spaceButton,
               {
                 height: keySize,
@@ -199,23 +227,25 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                 marginRight: keySpacing * 2,
                 borderWidth: Math.max(3, keySize * 0.05),
                 elevation: Math.max(8, keySize * 0.12),
-                shadowRadius: Math.max(8, keySize * 0.12)
-              }
+                shadowRadius: Math.max(8, keySize * 0.12),
+              },
             ]}
             onPress={() => handleKeyPress(' ')}
             activeOpacity={0.6}
           >
-            <Text style={[
-              styles.specialButtonText,
-              { fontSize: Math.max(18, keySize * 0.25) }
-            ]}>
+            <Text
+              style={[
+                styles.specialButtonText,
+                { fontSize: Math.max(18, keySize * 0.25) },
+              ]}
+            >
               Espace
             </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={[
-              styles.specialButton, 
+              styles.specialButton,
               styles.backspaceButton,
               {
                 height: keySize,
@@ -223,16 +253,18 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                 borderRadius: keySize * 0.2,
                 borderWidth: Math.max(3, keySize * 0.05),
                 elevation: Math.max(8, keySize * 0.12),
-                shadowRadius: Math.max(8, keySize * 0.12)
-              }
+                shadowRadius: Math.max(8, keySize * 0.12),
+              },
             ]}
             onPress={handleBackspace}
             activeOpacity={0.6}
           >
-            <Text style={[
-              styles.specialButtonText,
-              { fontSize: Math.max(20, keySize * 0.3) }
-            ]}>
+            <Text
+              style={[
+                styles.specialButtonText,
+                { fontSize: Math.max(20, keySize * 0.3) },
+              ]}
+            >
               ⌫
             </Text>
           </TouchableOpacity>
@@ -249,16 +281,18 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
               borderRadius: keySize * 0.2,
               borderWidth: Math.max(4, keySize * 0.06),
               elevation: Math.max(12, keySize * 0.18),
-              shadowRadius: Math.max(10, keySize * 0.15)
-            }
+              shadowRadius: Math.max(10, keySize * 0.15),
+            },
           ]}
           onPress={handleValidate}
           activeOpacity={0.7}
         >
-          <Text style={[
-            styles.validateButtonText,
-            { fontSize: Math.max(24, keySize * 0.35) }
-          ]}>
+          <Text
+            style={[
+              styles.validateButtonText,
+              { fontSize: Math.max(24, keySize * 0.35) },
+            ]}
+          >
             ✅ Valider
           </Text>
         </TouchableOpacity>

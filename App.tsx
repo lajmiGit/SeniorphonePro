@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  SafeAreaView, 
-  StatusBar, 
-  Dimensions, 
-  Animated, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+  Dimensions,
+  Animated,
   Vibration,
   Modal,
   Alert,
-  Platform
+  Platform,
 } from 'react-native';
 import * as Battery from 'expo-battery';
 import * as Contacts from 'expo-contacts';
@@ -30,15 +30,18 @@ export default function App() {
   const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
   const [networkLevel, setNetworkLevel] = useState(4);
   const [batteryLevel, setBatteryLevel] = useState(85);
-  const [currentScreen, setCurrentScreen] = useState<'navigation' | 'contacts' | 'phone' | 'createContact'>('navigation');
+  const [currentScreen, setCurrentScreen] = useState<
+    'navigation' | 'contacts' | 'phone' | 'createContact'
+  >('navigation');
   const [selectedContact, setSelectedContact] = useState<any>(null);
-  
+
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
   const homeButtonScale = useRef(new Animated.Value(1)).current;
 
   const addNumber = (num: string) => {
-    if (phoneNumber.length < 15) { // Limite à 15 chiffres
+    if (phoneNumber.length < 15) {
+      // Limite à 15 chiffres
       setPhoneNumber(prev => prev + num);
       // Vibration tactile pour feedback
       Vibration.vibrate(50);
@@ -49,7 +52,7 @@ export default function App() {
   const deleteDigit = () => {
     if (phoneNumber.length > 0) {
       setPhoneNumber(phoneNumber.slice(0, -1));
-      
+
       // Animation de clic
       Animated.sequence([
         Animated.timing(callButtonScale, {
@@ -152,27 +155,26 @@ export default function App() {
     console.log('Numéro à appeler:', phoneNumber);
     console.log('Type du numéro:', typeof phoneNumber);
     console.log('Longueur du numéro:', phoneNumber.length);
-    
+
     setShowCallConfirmZoom(false);
-    
+
     // Lancement simple et efficace de l'appel
     try {
       const phoneUrl = `tel:${phoneNumber}`;
       console.log('URL téléphone générée:', phoneUrl);
-      
-      console.log('Tentative de lancement de l\'appel...');
+
+      console.log("Tentative de lancement de l'appel...");
       Linking.openURL(phoneUrl);
       console.log('✅ Appel lancé vers:', phoneNumber);
-      
     } catch (error) {
-      console.error('❌ Erreur lors du lancement de l\'appel:', error);
+      console.error("❌ Erreur lors du lancement de l'appel:", error);
       Alert.alert(
         'Erreur',
-        'Impossible de lancer l\'appel. Vérifiez que votre téléphone peut passer des appels.',
+        "Impossible de lancer l'appel. Vérifiez que votre téléphone peut passer des appels.",
         [{ text: 'OK' }]
       );
     }
-    
+
     console.log('=== FIN CONFIRMATION APPEL ===');
   };
 
@@ -192,7 +194,10 @@ export default function App() {
         const batteryLevel = await Battery.getBatteryLevelAsync();
         setBatteryLevel(Math.round(batteryLevel * 100)); // Convertit en pourcentage (0-100)
       } catch (error) {
-        console.log('Erreur lors de la récupération initiale de la batterie:', error);
+        console.log(
+          'Erreur lors de la récupération initiale de la batterie:',
+          error
+        );
       }
     };
 
@@ -226,16 +231,16 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-        barStyle="light-content" 
-        backgroundColor="transparent"
+      <StatusBar
+        barStyle='light-content'
+        backgroundColor='transparent'
         translucent={true}
       />
-      
+
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (
         <View style={styles.contactsContainer}>
-          <ContactList 
+          <ContactList
             onContactSelect={handleContactSelect}
             onCreateContact={navigateToCreateContact}
             onHomePress={() => setCurrentScreen('navigation')}
@@ -248,12 +253,14 @@ export default function App() {
         <>
           {/* Partie 1: Bouton Accueil (10% de la hauteur) */}
           <View style={[styles.section, styles.homeSection]}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.homeButton}
               activeOpacity={0.8}
               onPress={handleHomePress}
             >
-              <Animated.View style={{ transform: [{ scale: homeButtonScale }] }}>
+              <Animated.View
+                style={{ transform: [{ scale: homeButtonScale }] }}
+              >
                 <Text style={styles.homeButtonText}>🏠 Accueil</Text>
               </Animated.View>
             </TouchableOpacity>
@@ -261,7 +268,7 @@ export default function App() {
 
           {/* Partie 2: Informations système (15% de la hauteur) */}
           <View style={[styles.section, styles.infoSection]}>
-            <SystemInfo 
+            <SystemInfo
               networkLevel={networkLevel}
               batteryLevel={batteryLevel}
             />
@@ -269,7 +276,7 @@ export default function App() {
 
           {/* Partie 3: Champ téléphone (10% de la hauteur) */}
           <View style={[styles.section, styles.phoneSection]}>
-            <PhoneDisplay 
+            <PhoneDisplay
               phoneNumber={phoneNumber}
               onClear={clearNumber}
               onDeleteDigit={deleteDigit}
@@ -283,16 +290,18 @@ export default function App() {
 
           {/* Partie 5: Bouton Appeler (10% de la hauteur) */}
           <View style={[styles.section, styles.callSection]}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.callButton, 
-                { opacity: phoneNumber.length > 0 ? 1 : 0.5 }
-              ]} 
+                styles.callButton,
+                { opacity: phoneNumber.length > 0 ? 1 : 0.5 },
+              ]}
               onPress={makeCall}
               disabled={phoneNumber.length === 0}
               activeOpacity={0.8}
             >
-              <Animated.View style={{ transform: [{ scale: callButtonScale }] }}>
+              <Animated.View
+                style={{ transform: [{ scale: callButtonScale }] }}
+              >
                 <Text style={styles.callButtonText}>📞 Appeler</Text>
               </Animated.View>
             </TouchableOpacity>
@@ -305,19 +314,21 @@ export default function App() {
         <Modal
           visible={showCallConfirmZoom}
           transparent={true}
-          animationType="none"
+          animationType='none'
           onRequestClose={cancelCall}
         >
-          <TouchableOpacity 
-            style={styles.zoomOverlay} 
-            activeOpacity={1} 
+          <TouchableOpacity
+            style={styles.zoomOverlay}
+            activeOpacity={1}
             onPress={cancelCall}
           >
             <View style={styles.zoomCallConfirmCard}>
               {/* Section Titre */}
               <View style={styles.zoomCallConfirmTitleSection}>
                 <Text style={styles.zoomCallConfirmIcon}>📞</Text>
-                <Text style={styles.zoomCallConfirmTitle}>Confirmation d'appel</Text>
+                <Text style={styles.zoomCallConfirmTitle}>
+                  Confirmation d'appel
+                </Text>
               </View>
 
               {/* Section Numéro */}
@@ -335,26 +346,32 @@ export default function App() {
               {/* Section Boutons */}
               <View style={styles.zoomCallConfirmButtonsSection}>
                 <TouchableOpacity
-                  style={[styles.zoomCallConfirmButton, { backgroundColor: '#F44336' }]}
+                  style={[
+                    styles.zoomCallConfirmButton,
+                    { backgroundColor: '#F44336' },
+                  ]}
                   onPress={cancelCall}
                 >
-                  <Text 
+                  <Text
                     style={styles.zoomCallConfirmButtonText}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
+                    ellipsizeMode='tail'
                   >
                     Non
                   </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
-                  style={[styles.zoomCallConfirmButton, { backgroundColor: '#4CAF50' }]}
+                  style={[
+                    styles.zoomCallConfirmButton,
+                    { backgroundColor: '#4CAF50' },
+                  ]}
                   onPress={confirmCall}
                 >
-                  <Text 
+                  <Text
                     style={styles.zoomCallConfirmButtonText}
                     numberOfLines={1}
-                    ellipsizeMode="tail"
+                    ellipsizeMode='tail'
                   >
                     Oui
                   </Text>
@@ -374,7 +391,7 @@ export default function App() {
 
       {/* Écran de navigation */}
       {currentScreen === 'navigation' && (
-        <NavigationScreen 
+        <NavigationScreen
           onNavigateToContacts={navigateToContacts}
           onNavigateToPhone={navigateToPhone}
           onNavigateToCreateContact={navigateToCreateContact}
@@ -651,7 +668,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   zoomInfoText: {
-    fontSize: Math.min(18, Math.max(14, Dimensions.get('window').width * 0.045)),
+    fontSize: Math.min(
+      18,
+      Math.max(14, Dimensions.get('window').width * 0.045)
+    ),
     color: '#999',
     textAlign: 'center',
     fontStyle: 'italic',

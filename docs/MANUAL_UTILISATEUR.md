@@ -9,22 +9,27 @@ SeniorPhonePro est une application téléphonique spécialement conçue pour les
 ## 🏠 Écran d'Accueil (Navigation)
 
 ### 📍 Où vous êtes
+
 C'est le premier écran qui s'affiche quand vous ouvrez l'application.
 
 ### 🎮 Que pouvez-vous faire ?
+
 Vous avez **3 boutons principaux** :
 
 #### 1. 📋 **Contacts**
+
 - **À quoi ça sert** : Voir tous vos contacts enregistrés
 - **Comment faire** : Appuyez sur le bouton "Contacts"
 - **Ce qui se passe** : Vous allez à la liste de vos contacts
 
 #### 2. ➕ **Nouveau Contact**
+
 - **À quoi ça sert** : Ajouter une nouvelle personne à vos contacts
 - **Comment faire** : Appuyez sur le bouton "Nouveau Contact"
 - **Ce qui se passe** : Vous allez à l'écran de création de contact
 
 #### 3. 📞 **Téléphone**
+
 - **À quoi ça sert** : Utiliser le téléphone comme un téléphone classique
 - **Comment faire** : Appuyez sur le bouton "Téléphone"
 - **Ce qui se passe** : Vous allez à l'écran téléphone avec le pavé numérique
@@ -34,32 +39,39 @@ Vous avez **3 boutons principaux** :
 ## 📋 Écran des Contacts
 
 ### 📍 Où vous êtes
+
 Vous voyez la liste de tous vos contacts enregistrés sur votre téléphone.
 
 ### 🎮 Que pouvez-vous faire ?
 
 #### 🏠 **Retour à l'accueil**
+
 - **Bouton** : "🏠 Accueil" (en haut, vert)
 - **À quoi ça sert** : Revenir à l'écran principal
 - **Comment faire** : Appuyez sur le bouton vert
 
 #### ➕ **Créer un nouveau contact**
+
 - **Bouton** : "➕ Nouveau" (en haut à droite)
 - **À quoi ça sert** : Ajouter un nouveau contact
 - **Comment faire** : Appuyez sur le bouton avec le plus
 
 #### 👤 **Voir un contact**
+
 - **À quoi ça sert** : Voir les détails d'un contact et l'appeler
 - **Comment faire** : Appuyez sur le nom d'un contact dans la liste
 - **Ce qui se passe** : Vous allez à l'écran d'appel
 
 #### 📞 **Appeler directement**
+
 - **À quoi ça sert** : Appeler un contact sans voir ses détails
 - **Comment faire** : Appuyez sur le bouton vert "📞" à droite du contact
 - **Ce qui se passe** : Une confirmation d'appel s'affiche
 
 ### 📱 **Affichage des contacts**
+
 Chaque contact montre :
+
 - **Photo** : Image de profil ou initiale du nom
 - **Nom** : Nom complet de la personne
 - **Téléphone** : Numéro de téléphone
@@ -70,15 +82,18 @@ Chaque contact montre :
 ## ➕ Écran de Création de Contact
 
 ### 📍 Où vous êtes
+
 Vous êtes dans l'écran pour créer un nouveau contact.
 
 ### 🎮 Que pouvez-vous faire ?
 
 #### 🏠 **Retour à l'accueil**
+
 - **Bouton** : "🏠 Accueil" (en haut, vert)
 - **À quoi ça sert** : Revenir à l'écran principal
 
 #### ✏️ **Remplir le formulaire**
+
 L'écran est divisé en **5 parties** :
 
 **Partie 1 (10%)** : Bouton Accueil
@@ -88,11 +103,13 @@ L'écran est divisé en **5 parties** :
 **Partie 5 (15%)** : Boutons d'action
 
 ##### **Champs à remplir :**
+
 1. **Prénom** : Appuyez sur le champ pour ouvrir le clavier
 2. **Nom** : Appuyez sur le champ pour ouvrir le clavier
 3. **Numéro de téléphone** : Appuyez sur le champ pour ouvrir le clavier
 
 #### ⌨️ **Utiliser le clavier virtuel**
+
 - **Comment faire** : Appuyez sur un champ (Prénom, Nom, ou Téléphone)
 - **Ce qui se passe** : Un clavier plein écran s'affiche
 - **Boutons du clavier** :
@@ -103,17 +120,20 @@ L'écran est divisé en **5 parties** :
   - **✅ Valider** : Pour confirmer la saisie
 
 #### 📸 **Ajouter une photo**
+
 - **Bouton** : "📸 Ajouter une photo"
 - **À quoi ça sert** : Prendre ou choisir une photo pour le contact
 - **Comment faire** : Appuyez sur le bouton photo
 
 #### 💾 **Sauvegarder le contact**
+
 - **Bouton** : "💾 Sauvegarder" (vert)
 - **À quoi ça sert** : Enregistrer le nouveau contact
 - **Comment faire** : Appuyez sur le bouton vert
 - **Important** : Vous devez remplir au moins le prénom OU le nom ET le téléphone
 
 #### ❌ **Annuler**
+
 - **Bouton** : "❌ Annuler" (rouge)
 - **À quoi ça sert** : Annuler la création et revenir à la liste
 - **Comment faire** : Appuyez sur le bouton rouge
@@ -123,15 +143,18 @@ L'écran est divisé en **5 parties** :
 ## 📞 Écran d'Appel
 
 ### 📍 Où vous êtes
+
 Vous voyez les informations d'un contact que vous voulez appeler.
 
 ### 🎮 Que pouvez-vous faire ?
 
 #### 🏠 **Retour à l'accueil**
+
 - **Bouton** : "🏠 Accueil" (en haut, vert)
 - **À quoi ça sert** : Revenir à l'écran principal
 
 #### 📱 **Voir les informations du contact**
+
 L'écran est divisé en **3 parties** :
 
 **Partie 1 (10%)** : Bouton Accueil
@@ -139,17 +162,20 @@ L'écran est divisé en **3 parties** :
 **Partie 3 (30%)** : Boutons d'action
 
 ##### **Informations affichées :**
+
 - **Photo** : Photo du contact (60% de la partie 2)
 - **Nom** : Nom complet (20% de la partie 2)
 - **Téléphone** : Numéro de téléphone (20% de la partie 2)
 
 #### 📞 **Appeler le contact**
+
 - **Bouton** : "Appeler" (vert)
 - **À quoi ça sert** : Lancer l'appel vers le contact
 - **Comment faire** : Appuyez sur le bouton vert
 - **Ce qui se passe** : Une confirmation s'affiche "Appeler [Nom] ?"
 
 #### ❌ **Annuler l'appel**
+
 - **Bouton** : "Annuler" (rouge)
 - **À quoi ça sert** : Revenir à la liste des contacts
 - **Comment faire** : Appuyez sur le bouton rouge
@@ -159,15 +185,18 @@ L'écran est divisé en **3 parties** :
 ## 📞 Écran Téléphone
 
 ### 📍 Où vous êtes
+
 Vous êtes dans l'écran téléphone principal avec le pavé numérique.
 
 ### 🎮 Que pouvez-vous faire ?
 
 #### 🏠 **Retour à l'accueil**
+
 - **Bouton** : "🏠 Accueil" (en haut, vert)
 - **À quoi ça sert** : Revenir à l'écran principal
 
 #### 📱 **Composer un numéro**
+
 L'écran est divisé en **5 parties** :
 
 **Partie 1 (10%)** : Bouton Accueil
@@ -177,30 +206,36 @@ L'écran est divisé en **5 parties** :
 **Partie 5 (10%)** : Bouton Appeler
 
 ##### **Pavé numérique :**
+
 - **Chiffres** : 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 - **Comment faire** : Appuyez sur les chiffres pour composer
 - **Affichage** : Le numéro s'affiche en haut de l'écran
 - **Effet 3D** : Les boutons ont un effet de profondeur subtil et élégant
 
 #### 🗑️ **Effacer le numéro (NOUVEAU !)**
+
 - **Bouton** : "⌫" (bouton rond rouge à côté du numéro)
 - **À quoi ça sert** : Effacer le dernier chiffre composé (un à la fois)
 - **Comment faire** : Appuyez sur le bouton rouge avec l'icône ⌫
 - **Avantage** : Plus besoin d'effacer tout le numéro, juste le dernier chiffre !
 
 #### 📞 **Appeler le numéro composé**
+
 - **Bouton** : "Appeler" (vert, en bas)
 - **À quoi ça sert** : Lancer l'appel vers le numéro composé
 - **Comment faire** : Appuyez sur le bouton vert
 - **Important** : Vous devez composer un numéro avant de pouvoir appeler
 
 #### 📊 **Voir les informations système**
+
 En haut de l'écran, vous voyez :
+
 - **📶 Réseau** : Niveau de signal mobile (barres vertes)
 - **🔋 Batterie** : Niveau de batterie avec pourcentage
 - **🕐 Heure** : Heure actuelle
 
 #### 🔍 **Zoom sur les informations (NOUVEAU !)**
+
 - **Comment faire** : Appuyez sur l'une des informations (réseau, batterie, heure)
 - **Ce qui se passe** : Un zoom s'affiche avec plus de détails
 - **Fermer** : Appuyez n'importe où sur le zoom pour le fermer
@@ -210,24 +245,28 @@ En haut de l'écran, vous voyez :
 ## 🆕 Nouvelles Fonctionnalités
 
 ### 🗑️ **Bouton Supprimer Intelligent**
+
 - **Icône** : ⌫ (retour arrière) au lieu de ×
 - **Couleur** : Rouge pour une meilleure visibilité
 - **Fonction** : Supprime un seul chiffre à la fois
 - **Avantage** : Plus pratique pour corriger des erreurs
 
 ### 🎨 **Effet 3D des Boutons**
+
 - **Pavé numérique** : Boutons avec effet de profondeur subtil
 - **Android** : Effet 3D natif optimisé
 - **iOS** : Ombres douces et naturelles
 - **Résultat** : Interface moderne et élégante
 
 ### 🔇 **Plus de Voix Automatique**
+
 - **Avant** : Chaque chiffre était lu automatiquement
 - **Maintenant** : Plus de lecture vocale automatique
 - **Conservé** : Le son de touche reste pour le feedback
 - **Avantage** : Interface plus silencieuse et discrète
 
 ### 📱 **Status Bar Optimisée**
+
 - **Problème résolu** : Le contenu n'est plus caché par la barre de statut
 - **Adaptatif** : S'ajuste automatiquement à votre téléphone
 - **Résultat** : Toute l'interface est parfaitement visible
@@ -237,6 +276,7 @@ En haut de l'écran, vous voyez :
 ## 🔧 Conseils d'Utilisation
 
 ### 💡 **Pour une meilleure expérience :**
+
 1. **Utilisez le bouton Accueil** pour revenir à l'écran principal
 2. **Appuyez doucement** sur les boutons (pas besoin d'appuyer fort)
 3. **Regardez les couleurs** : vert = action, rouge = annuler
@@ -245,12 +285,14 @@ En haut de l'écran, vous voyez :
 6. **Appuyez sur les informations système** pour voir plus de détails
 
 ### ⚠️ **En cas de problème :**
+
 - **L'application ne répond pas** : Fermez et rouvrez l'application
 - **Les contacts ne se chargent pas** : Vérifiez que vous avez donné l'autorisation d'accès aux contacts
 - **Vous êtes perdu** : Appuyez sur le bouton "🏠 Accueil" pour revenir au début
 - **Le contenu est caché** : L'application s'adapte automatiquement à votre téléphone
 
 ### 📱 **Adaptation à votre téléphone :**
+
 - L'application s'adapte automatiquement à la taille de votre écran
 - Les boutons sont suffisamment grands pour être faciles à utiliser
 - Les couleurs sont choisies pour une bonne lisibilité
@@ -261,11 +303,13 @@ En haut de l'écran, vous voyez :
 ## 🆘 Besoin d'Aide ?
 
 ### 📞 **Support technique :**
+
 - Vérifiez que votre téléphone est à jour
 - Assurez-vous d'avoir donné les permissions nécessaires
 - Redémarrez l'application si nécessaire
 
 ### 🔐 **Permissions nécessaires :**
+
 - **Contacts** : Pour voir et gérer vos contacts
 - **Téléphone** : Pour passer des appels (selon votre téléphone)
 
@@ -284,6 +328,6 @@ En haut de l'écran, vous voyez :
 
 ---
 
-*Manuel utilisateur - SeniorPhonePro v1.1*
-*Dernière mise à jour : Bouton supprimer intelligent, effet 3D des boutons, Status Bar optimisée*
-*Conçu pour offrir une expérience simple et accessible aux seniors*
+_Manuel utilisateur - SeniorPhonePro v1.1_
+_Dernière mise à jour : Bouton supprimer intelligent, effet 3D des boutons, Status Bar optimisée_
+_Conçu pour offrir une expérience simple et accessible aux seniors_

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TextInput, 
-  TouchableOpacity, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
   Dimensions,
   Vibration,
   Alert,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
 import { VirtualKeyboard } from './VirtualKeyboard';
@@ -23,10 +23,10 @@ interface CreateContactScreenProps {
   onHomePress: () => void;
 }
 
-export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({ 
-  onContactCreated, 
+export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
+  onContactCreated,
   onCancel,
-  onHomePress
+  onHomePress,
 }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -34,7 +34,9 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
-  const [activeField, setActiveField] = useState<'firstName' | 'lastName' | 'phoneNumber' | null>(null);
+  const [activeField, setActiveField] = useState<
+    'firstName' | 'lastName' | 'phoneNumber' | null
+  >(null);
 
   const handleSave = async () => {
     if (!firstName.trim() && !lastName.trim()) {
@@ -62,28 +64,27 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
         phoneNumbers: [
           {
             number: phoneNumber.trim(),
-            label: 'mobile'
-          }
+            label: 'mobile',
+          },
         ],
-        image: photoUri ? { uri: photoUri } : undefined
+        image: photoUri ? { uri: photoUri } : undefined,
       };
 
       await Contacts.addContactAsync(newContact);
-      
+
       Vibration.vibrate(200);
-      Alert.alert(
-        'Succès', 
-        'Contact créé avec succès !',
-        [
-          {
-            text: 'OK',
-            onPress: onContactCreated
-          }
-        ]
-      );
+      Alert.alert('Succès', 'Contact créé avec succès !', [
+        {
+          text: 'OK',
+          onPress: onContactCreated,
+        },
+      ]);
     } catch (error) {
       Vibration.vibrate(300);
-      Alert.alert('Erreur', 'Impossible de créer le contact. Vérifiez les permissions.');
+      Alert.alert(
+        'Erreur',
+        'Impossible de créer le contact. Vérifiez les permissions.'
+      );
     } finally {
       setIsCreating(false);
     }
@@ -91,13 +92,9 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
 
   const handleTakePhoto = () => {
     Vibration.vibrate(50);
-    Alert.alert(
-      'Photo',
-      'Fonctionnalité photo à implémenter',
-      [
-        { text: 'OK' }
-      ]
-    );
+    Alert.alert('Photo', 'Fonctionnalité photo à implémenter', [
+      { text: 'OK' },
+    ]);
     // Ici vous pourrez ajouter la logique pour prendre une photo
     // setPhotoUri('uri_de_la_photo');
   };
@@ -143,8 +140,8 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {showKeyboard ? (
@@ -154,9 +151,13 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
           onValidate={handleKeyboardValidate}
           onClose={handleKeyboardClose}
           currentText={
-            activeField === 'firstName' ? firstName : 
-            activeField === 'lastName' ? lastName : 
-            activeField === 'phoneNumber' ? phoneNumber : ''
+            activeField === 'firstName'
+              ? firstName
+              : activeField === 'lastName'
+                ? lastName
+                : activeField === 'phoneNumber'
+                  ? phoneNumber
+                  : ''
           }
         />
       ) : (
@@ -188,7 +189,12 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
                 onPress={() => openKeyboard('firstName')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.inputText, !firstName && styles.placeholderText]}>
+                <Text
+                  style={[
+                    styles.inputText,
+                    !firstName && styles.placeholderText,
+                  ]}
+                >
                   {firstName || 'Appuyez pour saisir'}
                 </Text>
               </TouchableOpacity>
@@ -202,7 +208,12 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
                 onPress={() => openKeyboard('lastName')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.inputText, !lastName && styles.placeholderText]}>
+                <Text
+                  style={[
+                    styles.inputText,
+                    !lastName && styles.placeholderText,
+                  ]}
+                >
                   {lastName || 'Appuyez pour saisir'}
                 </Text>
               </TouchableOpacity>
@@ -216,7 +227,12 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
                 onPress={() => openKeyboard('phoneNumber')}
                 activeOpacity={0.7}
               >
-                <Text style={[styles.inputText, !phoneNumber && styles.placeholderText]}>
+                <Text
+                  style={[
+                    styles.inputText,
+                    !phoneNumber && styles.placeholderText,
+                  ]}
+                >
                   {phoneNumber || 'Appuyez pour saisir'}
                 </Text>
               </TouchableOpacity>
@@ -249,23 +265,38 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
                 onPress={handleCancel}
                 activeOpacity={0.7}
               >
-                <Text style={styles.cancelButtonText} numberOfLines={1}>Annuler</Text>
+                <Text style={styles.cancelButtonText} numberOfLines={1}>
+                  Annuler
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[
-                  styles.actionButton, 
+                  styles.actionButton,
                   styles.saveButton,
-                  (!firstName.trim() && !lastName.trim()) || !phoneNumber.trim() ? styles.disabledButton : {}
+                  (!firstName.trim() && !lastName.trim()) || !phoneNumber.trim()
+                    ? styles.disabledButton
+                    : {},
                 ]}
                 onPress={handleSave}
                 activeOpacity={0.7}
-                disabled={(!firstName.trim() && !lastName.trim()) || !phoneNumber.trim() || isCreating}
+                disabled={
+                  (!firstName.trim() && !lastName.trim()) ||
+                  !phoneNumber.trim() ||
+                  isCreating
+                }
               >
-                <Text style={[
-                  styles.saveButtonText,
-                  ((!firstName.trim() && !lastName.trim()) || !phoneNumber.trim() || isCreating) ? styles.disabledButtonText : {}
-                ]} numberOfLines={1}>
+                <Text
+                  style={[
+                    styles.saveButtonText,
+                    (!firstName.trim() && !lastName.trim()) ||
+                    !phoneNumber.trim() ||
+                    isCreating
+                      ? styles.disabledButtonText
+                      : {},
+                  ]}
+                  numberOfLines={1}
+                >
                   {isCreating ? 'Création...' : 'Sauvegarder'}
                 </Text>
               </TouchableOpacity>

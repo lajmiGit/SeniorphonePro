@@ -1,13 +1,13 @@
 export const Colors = {
   // Couleurs principales des sections
   primary: {
-    home: '#4CAF50',      // Vert pour l'accueil
-    info: '#2196F3',      // Bleu pour les informations
-    phone: '#FF9800',     // Orange pour le téléphone
-    dialPad: '#9C27B0',   // Violet pour le pavé numérique
-    call: '#F44336',      // Rouge pour l'appel
+    home: '#4CAF50', // Vert pour l'accueil
+    info: '#2196F3', // Bleu pour les informations
+    phone: '#FF9800', // Orange pour le téléphone
+    dialPad: '#9C27B0', // Violet pour le pavé numérique
+    call: '#F44336', // Rouge pour l'appel
   },
-  
+
   // Couleurs secondaires
   secondary: {
     white: '#FFFFFF',
@@ -16,37 +16,37 @@ export const Colors = {
     lightGray: '#F0F0F0',
     darkGray: '#333333',
   },
-  
+
   // Couleurs d'état
   status: {
-    success: '#4CAF50',   // Vert pour succès
-    warning: '#FF9800',   // Orange pour avertissement
-    error: '#F44336',     // Rouge pour erreur
-    info: '#2196F3',      // Bleu pour information
+    success: '#4CAF50', // Vert pour succès
+    warning: '#FF9800', // Orange pour avertissement
+    error: '#F44336', // Rouge pour erreur
+    info: '#2196F3', // Bleu pour information
   },
-  
+
   // Couleurs de batterie
   battery: {
-    high: '#4CAF50',      // Vert pour batterie haute
-    medium: '#FF9800',    // Orange pour batterie moyenne
-    low: '#F44336',       // Rouge pour batterie faible
+    high: '#4CAF50', // Vert pour batterie haute
+    medium: '#FF9800', // Orange pour batterie moyenne
+    low: '#F44336', // Rouge pour batterie faible
   },
-  
+
   // Couleurs de réseau
   network: {
     excellent: '#4CAF50', // Vert pour excellent signal
-    good: '#8BC34A',      // Vert clair pour bon signal
-    fair: '#FF9800',      // Orange pour signal moyen
-    poor: '#F44336',      // Rouge pour mauvais signal
+    good: '#8BC34A', // Vert clair pour bon signal
+    fair: '#FF9800', // Orange pour signal moyen
+    poor: '#F44336', // Rouge pour mauvais signal
   },
-  
+
   // Transparences
   transparency: {
     light: 'rgba(255, 255, 255, 0.2)',
     medium: 'rgba(255, 255, 255, 0.25)',
     dark: 'rgba(0, 0, 0, 0.1)',
   },
-  
+
   // Ombres
   shadows: {
     light: {
@@ -76,7 +76,7 @@ export const Theme = {
     xl: 20,
     xxl: 25,
   },
-  
+
   // Rayons de bordure
   borderRadius: {
     small: 6,
@@ -84,7 +84,7 @@ export const Theme = {
     large: 12,
     xl: 16,
   },
-  
+
   // Tailles de police
   fontSize: {
     small: 12,
@@ -94,7 +94,7 @@ export const Theme = {
     xxl: 22,
     xxxl: 28,
   },
-  
+
   // Poids de police
   fontWeight: {
     normal: '400',
