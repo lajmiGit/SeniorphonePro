@@ -22,25 +22,18 @@ import { DialPad } from './components/DialPad';
 import { LoadingSpinner } from './components/LoadingSpinner';
 
 // Lazy Loading des composants lourds
-const ContactList = React.lazy(() =>
-  import('./components/ContactList').then(module => ({
-    default: module.ContactList,
-  }))
+const ContactList = React.lazy(() => 
+  import('./components/ContactList').then(module => ({ default: module.ContactList }))
 );
-const NavigationScreen = React.lazy(() =>
-  import('./components/NavigationScreen').then(module => ({
-    default: module.NavigationScreen,
-  }))
-);
-const CreateContactScreen = React.lazy(() =>
-  import('./components/CreateContactScreen').then(module => ({
-    default: module.CreateContactScreen,
-  }))
+const NavigationScreen = React.lazy(() => import('./components/NavigationScreen'));
+const CreateContactScreen = React.lazy(() => 
+  import('./components/CreateContactScreen').then(module => ({ default: module.CreateContactScreen }))
 );
 
 const { height } = Dimensions.get('window');
 
 export default function App() {
+  // État de l'application
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
   const [networkLevel, setNetworkLevel] = useState(4);
@@ -86,8 +79,7 @@ export default function App() {
     }
   };
 
-
-
+  // Gérer le retour à l'accueil
   const handleHomePress = () => {
     // Animation de clic pour le bouton accueil
     Animated.sequence([
@@ -170,10 +162,10 @@ export default function App() {
     try {
       const phoneUrl = `tel:${phoneNumber}`;
       console.log('URL téléphone générée:', phoneUrl);
-
       console.log("Tentative de lancement de l'appel...");
       Linking.openURL(phoneUrl);
       console.log('✅ Appel lancé vers:', phoneNumber);
+      
     } catch (error) {
       console.error("❌ Erreur lors du lancement de l'appel:", error);
       Alert.alert(
@@ -236,6 +228,11 @@ export default function App() {
       clearInterval(batteryTimer);
     };
   }, []);
+
+  // Surveiller les changements de showFloatingButton pour déboguer
+  // useEffect(() => {
+  //   console.log('🔍 État showFloatingButton changé:', showFloatingButton); // Supprimé
+  // }, []); // Supprimé
 
   return (
     <SafeAreaView style={styles.container}>
@@ -321,7 +318,7 @@ export default function App() {
         </>
       )}
 
-      {/* Modal de confirmation d'appel */}
+      {/* Zoom de confirmation d'appel */}
       {showCallConfirmZoom && (
         <Modal
           visible={showCallConfirmZoom}
@@ -424,6 +421,7 @@ export default function App() {
           />
         </Suspense>
       )}
+      
     </SafeAreaView>
   );
 }

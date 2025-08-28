@@ -70,6 +70,8 @@ export const NavigationScreen: React.FC<NavigationScreenProps> = ({
   );
 };
 
+export default NavigationScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

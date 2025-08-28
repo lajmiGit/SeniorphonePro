@@ -1,14 +1,4 @@
 // Mock des modules Expo
-jest.mock('expo-av', () => ({
-  Audio: {
-    Sound: jest.fn().mockImplementation(() => ({
-      loadAsync: jest.fn(),
-      playAsync: jest.fn(),
-      unloadAsync: jest.fn(),
-    })),
-  },
-}));
-
 jest.mock('expo-speech', () => ({
   speak: jest.fn(),
   stop: jest.fn(),
@@ -38,16 +28,6 @@ jest.mock('expo-linking', () => ({
   openURL: jest.fn(),
 }));
 
-// Mock des modules React Native
-jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
-  get: jest.fn().mockReturnValue({
-    width: 375,
-    height: 812,
-    scale: 3,
-    fontScale: 1,
-  }),
-}));
-
 // Mock de Vibration
 jest.mock('react-native/Libraries/Vibration/Vibration', () => ({
   vibrate: jest.fn(),
@@ -57,6 +37,16 @@ jest.mock('react-native/Libraries/Vibration/Vibration', () => ({
 jest.mock('expo-status-bar', () => ({
   StatusBar: 'StatusBar',
 }));
+
+// Mock global de Dimensions
+global.Dimensions = {
+  get: jest.fn().mockReturnValue({
+    width: 375,
+    height: 812,
+    scale: 3,
+    fontScale: 1,
+  }),
+};
 
 // Configuration globale
 global.console = {

@@ -1,19 +1,22 @@
 module.exports = {
   preset: 'jest-expo',
-  testMatch: [
-    '**/__tests__/**/*.test.(ts|tsx|js|jsx)',
-    '**/*.(test|spec).(ts|tsx|js|jsx)',
-  ],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jsdom',
-  collectCoverage: false,
-  testTimeout: 10000,
-  verbose: true,
   transformIgnorePatterns: [
-    'node_modules/(?!(expo|@expo|react-native|@react-native|@react-navigation|expo-modules-core)/)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)',
   ],
-  moduleNameMapper: {
-    '^react-native$': 'react-native-web',
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
+  testEnvironment: 'jsdom',
+  testMatch: ['**/__tests__/**/*.(ts|tsx|js)', '**/*.(test|spec).(ts|tsx|js)'],
+  testPathIgnorePatterns: ['babel.config.test.js'],
+  collectCoverageFrom: [
+    'components/**/*.{ts,tsx}',
+    '!components/**/*.stories.{ts,tsx}',
+    '!**/node_modules/**',
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  // Configuration Babel spécifique pour Jest
+  transform: {
+    '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { configFile: './babel.config.test.js' }],
   },
 };
