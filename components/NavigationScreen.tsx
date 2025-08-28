@@ -4,11 +4,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
-  Vibration,
 } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+
 
 interface NavigationScreenProps {
   onNavigateToContacts: () => void;

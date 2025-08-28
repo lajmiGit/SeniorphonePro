@@ -10,15 +10,17 @@ import {
 } from 'react-native';
 import * as Speech from 'expo-speech';
 
+// Déclaration des types globaux pour setTimeout et setInterval
+declare global {
+  function setTimeout(callback: (...args: any[]) => void, ms: number): number;
+  function clearTimeout(id: number): void;
+  function setInterval(callback: (...args: any[]) => void, ms: number): number;
+  function clearInterval(id: number): void;
+}
+
 const { width, height } = Dimensions.get('window');
 
-// Log des dimensions pour vérification
-console.log('=== DIMENSIONS ÉCRAN ===');
-console.log('Largeur écran:', width, 'px');
-console.log('Hauteur écran:', height, 'px');
-console.log('Largeur zoom (90%):', Math.round(width * 0.9), 'px');
-console.log('Hauteur zoom (80%):', Math.round(height * 0.8), 'px');
-console.log('========================');
+
 
 interface SystemInfoProps {
   networkLevel?: number;
@@ -290,32 +292,22 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
   // Fonction pour lire l'heure
   const speakTime = () => {
-    console.log('⏰ Fonction speakTime appelée');
-    console.log('⏰ Heure actuelle:', currentTime);
-
     const timeString = currentTime.toLocaleTimeString('fr-FR', {
       hour: '2-digit',
       minute: '2-digit',
     });
     const message = `Il est ${timeString}`;
 
-    console.log('⏰ Message généré:', message);
-    console.log('⏰ Configuration voix:', speechConfig);
-
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
-      console.log('⏰ Synthèse vocale lancée avec succès');
     } catch (error) {
-      console.error('⏰ Erreur lors de la synthèse vocale:', error);
+      // Gestion silencieuse des erreurs
     }
   };
 
   // Fonction pour lire les informations du réseau
   const speakNetwork = () => {
-    console.log(' Fonction speakNetwork appelée');
-    console.log(' Niveau de réseau reçu:', networkLevel);
-
     // Détermination de la qualité avec plus de détails
     let qualityText = '';
     let descriptionText = '';
@@ -327,7 +319,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       qualityText = 'bonne';
       descriptionText = 'signal fort';
     } else if (networkLevel >= 2) {
-      qualityText = 'moyenne';
+      qualityText = 'même';
       descriptionText = 'signal moyen';
     } else {
       qualityText = 'faible';
@@ -336,23 +328,16 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
     const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
 
-    console.log(' Message généré:', message);
-    console.log(' Configuration voix:', speechConfig);
-
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
-      console.log(' Synthèse vocale lancée avec succès');
     } catch (error) {
-      console.error(' Erreur lors de la synthèse vocale:', error);
+      // Gestion silencieuse des erreurs
     }
   };
 
   // Fonction pour lire les informations de la batterie
   const speakBattery = () => {
-    console.log('🔋 Fonction speakBattery appelée');
-    console.log('🔋 Niveau de batterie reçu:', batteryLevel);
-
     // Détermination du niveau avec plus de détails
     let levelText = '';
     let statusText = '';
@@ -367,8 +352,8 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       levelText = 'moyen';
       statusText = 'moyen';
     } else if (batteryLevel >= 20) {
-      levelText = 'faible';
-      statusText = 'faible';
+      levelText = 'faign';
+      statusText = 'faign';
     } else {
       levelText = 'critique';
       statusText = 'critique';
@@ -376,15 +361,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
     const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
 
-    console.log('🔋 Message généré:', message);
-    console.log('🔋 Configuration voix:', speechConfig);
-
     // Lecture avec gestion d'erreur
     try {
       Speech.speak(message, speechConfig);
-      console.log('🔋 Synthèse vocale lancée avec succès');
     } catch (error) {
-      console.error('🔋 Erreur lors de la synthèse vocale:', error);
+      // Gestion silencieuse des erreurs
     }
   };
 

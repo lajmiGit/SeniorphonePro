@@ -11,13 +11,7 @@ import {
 
 const { width, height } = Dimensions.get('window');
 
-interface VirtualKeyboardProps {
-  onKeyPress: (key: string) => void;
-  onBackspace: () => void;
-  onValidate: () => void;
-  onClose: () => void;
-  currentText: string;
-}
+import { VirtualKeyboardProps } from '../types';
 
 export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   onKeyPress,

@@ -13,16 +13,10 @@ import * as Speech from 'expo-speech';
 
 const { width, height } = Dimensions.get('window');
 
-interface PhoneDisplayProps {
-  phoneNumber: string;
-  onClear: () => void;
-  onDeleteDigit: () => void; // Nouvelle fonction pour supprimer un seul chiffre
-  onCall?: (phoneNumber: string) => void;
-}
+import { PhoneDisplayProps } from '../types';
 
 export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
   phoneNumber,
-  onClear,
   onDeleteDigit,
   onCall,
 }) => {
@@ -97,28 +91,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
     });
   };
 
-  // Ouvrir le zoom de confirmation d'appel
-  const handleCallPress = () => {
-    if (phoneNumber.length > 0) {
-      setShowCallConfirmZoom(true);
-      // Animation d'entrée avec zoom et fade
-      Animated.parallel([
-        Animated.timing(callConfirmScale, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(callConfirmOpacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
 
-      // Lecture automatique de la confirmation
-      setTimeout(() => speakCallConfirm(), 350);
-    }
-  };
 
   // Fermer le zoom de confirmation d'appel
   const closeCallConfirmZoom = () => {
@@ -175,26 +148,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
     }
   };
 
-  // Lire la confirmation d'appel
-  const speakCallConfirm = () => {
-    try {
-      const formattedNumber = formatPhoneNumber(phoneNumber);
-      const message = `Voulez-vous lancer un appel vers ${formattedNumber} ?`;
 
-      console.log('📞 Fonction speakCallConfirm appelée');
-      console.log('📞 Numéro reçu:', phoneNumber);
-      console.log('📞 Message généré:', message);
-      console.log('📞 Configuration voix:', speechConfig);
-
-      Speech.speak(message, speechConfig);
-      console.log('📞 Synthèse vocale de confirmation lancée avec succès');
-    } catch (error) {
-      console.error(
-        '📞 Erreur lors de la synthèse vocale de confirmation:',
-        error
-      );
-    }
-  };
 
   return (
     <View style={styles.container}>

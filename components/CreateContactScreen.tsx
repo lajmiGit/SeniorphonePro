@@ -3,12 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   Dimensions,
   Vibration,
   Alert,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -31,7 +29,7 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoUri] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [showKeyboard, setShowKeyboard] = useState(false);
   const [activeField, setActiveField] = useState<
@@ -67,10 +65,10 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
             label: 'mobile',
           },
         ],
-        image: photoUri ? { uri: photoUri } : undefined,
+        image: photoUri ? { uri: photoUri } : null,
       };
 
-      await Contacts.addContactAsync(newContact);
+      await Contacts.addContactAsync(newContact as any);
 
       Vibration.vibrate(200);
       Alert.alert('Succès', 'Contact créé avec succès !', [
@@ -79,7 +77,7 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
           onPress: onContactCreated,
         },
       ]);
-    } catch (error) {
+    } catch {
       Vibration.vibrate(300);
       Alert.alert(
         'Erreur',

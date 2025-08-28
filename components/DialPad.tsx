@@ -7,7 +7,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { Audio } from 'expo-av';
-import * as Speech from 'expo-speech';
+
 
 const { height } = Dimensions.get('window');
 
@@ -18,14 +18,7 @@ interface DialPadProps {
 export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-  // Configuration de la voix pour les seniors (claire et douce)
-  const speechConfig = {
-    language: 'fr-FR',
-    pitch: 1.0, // Voix naturelle
-    rate: 0.7, // Vitesse lente pour les seniors
-    volume: 0.8, // Volume confortable
-    voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
-  };
+
 
   // Initialisation du son au chargement du composant
   useEffect(() => {
@@ -72,60 +65,7 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
     }
   };
 
-  // Lire le chiffre/symbole en français
-  const speakNumber = (num: string) => {
-    try {
-      let textToSpeak = '';
 
-      // Conversion des chiffres et symboles en français
-      switch (num) {
-        case '0':
-          textToSpeak = 'Zéro';
-          break;
-        case '1':
-          textToSpeak = 'Un';
-          break;
-        case '2':
-          textToSpeak = 'Deux';
-          break;
-        case '3':
-          textToSpeak = 'Trois';
-          break;
-        case '4':
-          textToSpeak = 'Quatre';
-          break;
-        case '5':
-          textToSpeak = 'Cinq';
-          break;
-        case '6':
-          textToSpeak = 'Six';
-          break;
-        case '7':
-          textToSpeak = 'Sept';
-          break;
-        case '8':
-          textToSpeak = 'Huit';
-          break;
-        case '9':
-          textToSpeak = 'Neuf';
-          break;
-        case '*':
-          textToSpeak = 'Étoile';
-          break;
-        case '#':
-          textToSpeak = 'Dièse';
-          break;
-        default:
-          textToSpeak = num;
-          break;
-      }
-
-      console.log('🗣️ Lecture vocale:', textToSpeak);
-      Speech.speak(textToSpeak, speechConfig);
-    } catch (error) {
-      console.log('❌ Erreur lors de la lecture vocale:', error);
-    }
-  };
 
   // Gestion de la pression sur une touche avec son et lecture vocale
   const handleNumberPress = async (num: string) => {

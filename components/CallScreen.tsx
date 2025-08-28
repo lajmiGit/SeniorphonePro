@@ -10,15 +10,9 @@ import {
   Image,
 } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
-interface Contact {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  photo?: string;
-  isFavorite: boolean;
-}
+import { Contact } from '../types';
 
 interface CallScreenProps {
   contact: Contact;

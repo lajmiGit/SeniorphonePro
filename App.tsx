@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import {
   View,
   Text,
@@ -14,14 +14,17 @@ import {
   Platform,
 } from 'react-native';
 import * as Battery from 'expo-battery';
-import * as Contacts from 'expo-contacts';
+
 import * as Linking from 'expo-linking';
 import { SystemInfo } from './components/SystemInfo';
 import { PhoneDisplay } from './components/PhoneDisplay';
 import { DialPad } from './components/DialPad';
-import { ContactList } from './components/ContactList';
-import { NavigationScreen } from './components/NavigationScreen';
-import { CreateContactScreen } from './components/CreateContactScreen';
+import { LoadingSpinner } from './components/LoadingSpinner';
+
+// Lazy Loading des composants lourds
+const ContactList = React.lazy(() => import('./components/ContactList').then(module => ({ default: module.ContactList })));
+const NavigationScreen = React.lazy(() => import('./components/NavigationScreen').then(module => ({ default: module.NavigationScreen })));
+const CreateContactScreen = React.lazy(() => import('./components/CreateContactScreen').then(module => ({ default: module.CreateContactScreen })));
 
 const { height } = Dimensions.get('window');
 
@@ -33,7 +36,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<
     'navigation' | 'contacts' | 'phone' | 'createContact'
   >('navigation');
-  const [selectedContact, setSelectedContact] = useState<any>(null);
+
 
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
@@ -98,11 +101,9 @@ export default function App() {
 
     // Retour à l'écran de navigation
     setCurrentScreen('navigation');
-    setSelectedContact(null);
   };
 
   const handleContactSelect = (contact: any) => {
-    setSelectedContact(contact);
     setPhoneNumber(contact.phoneNumber.replace(/\s/g, '')); // Supprime les espaces
     setCurrentScreen('phone');
     Vibration.vibrate(100);
@@ -240,11 +241,13 @@ export default function App() {
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (
         <View style={styles.contactsContainer}>
-          <ContactList
-            onContactSelect={handleContactSelect}
-            onCreateContact={navigateToCreateContact}
-            onHomePress={() => setCurrentScreen('navigation')}
-          />
+          <Suspense fallback={<LoadingSpinner message="Chargement des contacts..." />}>
+            <ContactList
+              onContactSelect={handleContactSelect}
+              onCreateContact={navigateToCreateContact}
+              onHomePress={() => setCurrentScreen('navigation')}
+            />
+          </Suspense>
         </View>
       )}
 
@@ -391,20 +394,24 @@ export default function App() {
 
       {/* Écran de navigation */}
       {currentScreen === 'navigation' && (
-        <NavigationScreen
-          onNavigateToContacts={navigateToContacts}
-          onNavigateToPhone={navigateToPhone}
-          onNavigateToCreateContact={navigateToCreateContact}
-        />
+        <Suspense fallback={<LoadingSpinner message="Chargement du menu..." />}>
+          <NavigationScreen
+            onNavigateToContacts={navigateToContacts}
+            onNavigateToPhone={navigateToPhone}
+            onNavigateToCreateContact={navigateToCreateContact}
+          />
+        </Suspense>
       )}
 
       {/* Écran de création de contact */}
       {currentScreen === 'createContact' && (
-        <CreateContactScreen
-          onContactCreated={handleContactCreated}
-          onCancel={() => setCurrentScreen('contacts')}
-          onHomePress={() => setCurrentScreen('navigation')}
-        />
+        <Suspense fallback={<LoadingSpinner message="Chargement du formulaire..." />}>
+          <CreateContactScreen
+            onContactCreated={handleContactCreated}
+            onCancel={() => setCurrentScreen('contacts')}
+            onHomePress={() => setCurrentScreen('navigation')}
+          />
+        </Suspense>
       )}
     </SafeAreaView>
   );

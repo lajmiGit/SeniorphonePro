@@ -14,25 +14,11 @@ import {
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
 import { CallScreen } from './CallScreen';
+import { Contact, ContactListProps } from '../types';
 
-const { width, height } = Dimensions.get('window');
-
-interface Contact {
-  id: string;
-  name: string;
-  phoneNumber: string;
-  photo?: string;
-  isFavorite: boolean;
-}
-
-interface ContactListProps {
-  onContactSelect: (contact: Contact) => void;
-  onCreateContact: () => void;
-  onHomePress: () => void;
-}
+const { height } = Dimensions.get('window');
 
 export const ContactList: React.FC<ContactListProps> = ({
-  onContactSelect,
   onCreateContact,
   onHomePress,
 }) => {
@@ -113,8 +99,8 @@ export const ContactList: React.FC<ContactListProps> = ({
           .map(contact => ({
             id: contact.id || `contact_${Date.now()}_${Math.random()}`,
             name: contact.name || 'Sans nom',
-            phoneNumber: contact.phoneNumbers![0].number!,
-            photo: contact.image?.uri || undefined, // Récupérer l'URI de la photo si elle existe
+            phoneNumber: contact.phoneNumbers?.[0]?.number || 'Numéro inconnu',
+            photo: contact.image?.uri, // Récupérer l'URI de la photo si elle existe
             isFavorite: false,
           }))
           .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
@@ -314,7 +300,7 @@ export const ContactList: React.FC<ContactListProps> = ({
         maxToRenderPerBatch={10}
         windowSize={10}
         removeClippedSubviews={true}
-        getItemLayout={(data, index) => ({
+        getItemLayout={(_, index) => ({
           length: 80, // Hauteur approximative de chaque item
           offset: 80 * index,
           index,
