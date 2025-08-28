@@ -7,10 +7,11 @@ const { width, height } = Dimensions.get('window');
 interface PhoneDisplayProps {
   phoneNumber: string;
   onClear: () => void;
+  onDeleteDigit: () => void; // Nouvelle fonction pour supprimer un seul chiffre
   onCall?: (phoneNumber: string) => void;
 }
 
-export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear, onCall }) => {
+export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear, onDeleteDigit, onCall }) => {
   const [showPhoneZoom, setShowPhoneZoom] = useState(false);
   const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
   const phoneZoomScale = useRef(new Animated.Value(0)).current;
@@ -193,10 +194,10 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({ phoneNumber, onClear
         />
         <TouchableOpacity 
           style={styles.clearButton} 
-          onPress={onClear}
+          onPress={onDeleteDigit}
           activeOpacity={0.6}
         >
-          <Text style={styles.clearButtonText}>×</Text>
+          <Text style={styles.clearButtonText}>⌫</Text>
         </TouchableOpacity>
       </TouchableOpacity>
       
@@ -378,7 +379,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2.22,
   },
   clearButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    backgroundColor: '#F44336', // Rouge pour le bouton supprimer
     width: 36,
     height: 36,
     borderRadius: 18,

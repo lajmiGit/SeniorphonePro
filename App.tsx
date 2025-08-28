@@ -44,6 +44,31 @@ export default function App() {
     }
   };
 
+  // Supprimer le dernier chiffre composé
+  const deleteDigit = () => {
+    if (phoneNumber.length > 0) {
+      setPhoneNumber(phoneNumber.slice(0, -1));
+      
+      // Animation de clic
+      Animated.sequence([
+        Animated.timing(callButtonScale, {
+          toValue: 0.95,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+        Animated.timing(callButtonScale, {
+          toValue: 1,
+          duration: 100,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
+      // Vibration tactile
+      Vibration.vibrate(100);
+    }
+  };
+
+  // Supprimer tout le numéro
   const clearNumber = () => {
     setPhoneNumber('');
     Vibration.vibrate(100);
@@ -242,6 +267,7 @@ export default function App() {
             <PhoneDisplay 
               phoneNumber={phoneNumber}
               onClear={clearNumber}
+              onDeleteDigit={deleteDigit}
             />
           </View>
 

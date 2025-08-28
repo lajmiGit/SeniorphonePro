@@ -100,9 +100,6 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
     // Jouer le son de touche
     await playTouchSound();
     
-    // Lire le chiffre/symbole
-    speakNumber(num);
-    
     // Appeler la fonction de callback
     onNumberPress(num);
   };
