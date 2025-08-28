@@ -11,6 +11,7 @@ import {
   Animated
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Battery from 'expo-battery';
 import { SystemInfo } from './components/SystemInfo';
 import { PhoneDisplay } from './components/PhoneDisplay';
 import { DialPad } from './components/DialPad';
@@ -132,6 +133,21 @@ export default function App() {
   };
 
   // Simulation des changements de niveau réseau et batterie
+  // Récupération initiale de la batterie
+  useEffect(() => {
+    const getInitialBattery = async () => {
+      try {
+        const batteryLevel = await Battery.getBatteryLevelAsync();
+        setBatteryLevel(Math.round(batteryLevel * 100)); // Convertit en pourcentage (0-100)
+      } catch (error) {
+        console.log('Erreur lors de la récupération initiale de la batterie:', error);
+      }
+    };
+
+    // Récupération immédiate de la batterie
+    getInitialBattery();
+  }, []);
+
   useEffect(() => {
     const networkTimer = setInterval(() => {
       setNetworkLevel(prev => {
@@ -140,12 +156,15 @@ export default function App() {
       });
     }, 10000);
 
-    const batteryTimer = setInterval(() => {
-      setBatteryLevel(prev => {
-        const newLevel = prev + (Math.random() > 0.5 ? 1 : -1);
-        return Math.max(0, Math.min(100, newLevel));
-      });
-    }, 30000);
+    const batteryTimer = setInterval(async () => {
+      try {
+        const batteryLevel = await Battery.getBatteryLevelAsync();
+        setBatteryLevel(Math.round(batteryLevel * 100)); // Convertit en pourcentage (0-100)
+      } catch (error) {
+        console.log('Erreur lors de la récupération de la batterie:', error);
+        // En cas d'erreur, on garde la valeur précédente
+      }
+    }, 10000); // Mise à jour toutes les 10 secondes
 
     return () => {
       clearInterval(networkTimer);
