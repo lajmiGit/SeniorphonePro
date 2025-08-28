@@ -9,8 +9,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = 'Chargement...' 
 }) => {
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#4CAF50" />
+    <View testID="loading-container" style={styles.container}>
+      <ActivityIndicator testID="loading-spinner" size="large" color="#4CAF50" />
       <Text style={styles.message}>{message}</Text>
     </View>
   );

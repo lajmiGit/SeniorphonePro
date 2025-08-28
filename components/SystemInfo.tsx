@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,7 @@ interface SystemInfoProps {
   batteryLevel?: number;
 }
 
-export const SystemInfo: React.FC<SystemInfoProps> = ({
+export const SystemInfo: React.FC<SystemInfoProps> = React.memo(({
   networkLevel = 4,
   batteryLevel = 85,
 }) => {
@@ -50,7 +50,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  const handleTimePress = () => {
+  const handleTimePress = useCallback(() => {
     setShowTimeZoom(true);
     // Animation d'entrée avec zoom et fade
     Animated.parallel([
@@ -68,9 +68,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
     // Lecture automatique de l'heure
     setTimeout(() => speakTime(), 350); // Délai pour laisser l'animation se terminer
-  };
+  }, [zoomScale, zoomOpacity]);
 
-  const closeTimeZoom = () => {
+  const closeTimeZoom = useCallback(() => {
     // Arrêter la parole
     stopSpeaking();
 
@@ -89,9 +89,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     ]).start(() => {
       setShowTimeZoom(false);
     });
-  };
+  }, [zoomScale, zoomOpacity]);
 
-  const handleNetworkPress = () => {
+  const handleNetworkPress = useCallback(() => {
     setShowNetworkZoom(true);
     // Animation d'entrée avec zoom et fade
     Animated.parallel([
@@ -109,9 +109,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
     // Lecture automatique des informations de réseau
     setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
-  };
+  }, [networkZoomScale, networkZoomOpacity]);
 
-  const closeNetworkZoom = () => {
+  const closeNetworkZoom = useCallback(() => {
     // Arrêter la parole
     stopSpeaking();
 
@@ -130,9 +130,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     ]).start(() => {
       setShowNetworkZoom(false);
     });
-  };
+  }, [networkZoomScale, networkZoomOpacity]);
 
-  const handleBatteryPress = () => {
+  const handleBatteryPress = useCallback(() => {
     setShowBatteryZoom(true);
     // Animation d'entrée avec zoom et fade
     Animated.parallel([
@@ -150,9 +150,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
 
     // Lecture automatique des informations de batterie
     setTimeout(() => speakBattery(), 350); // Délai pour laisser l'animation se terminer
-  };
+  }, [batteryZoomScale, batteryZoomOpacity]);
 
-  const closeBatteryZoom = () => {
+  const closeBatteryZoom = useCallback(() => {
     // Arrêter la parole
     stopSpeaking();
 
@@ -171,9 +171,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     ]).start(() => {
       setShowBatteryZoom(false);
     });
-  };
+  }, [batteryZoomScale, batteryZoomOpacity]);
 
-  const getBatteryColor = (level: number) => {
+  const getBatteryColor = useMemo(() => (level: number) => {
     if (level > 50) {
       return '#4CAF50';
     }
@@ -181,9 +181,9 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       return '#FF9800';
     }
     return '#F44336';
-  };
+  }, []);
 
-  const getNetworkColor = (level: number) => {
+  const getNetworkColor = useMemo(() => (level: number) => {
     if (level > 3) {
       return '#4CAF50';
     }
@@ -191,10 +191,10 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       return '#FF9800';
     }
     return '#F44336';
-  };
+  }, []);
 
   // Fonction pour afficher le niveau de réseau avec effet 3D
-  const renderNetworkLevel3D = (level: number) => {
+  const renderNetworkLevel3D = useCallback((level: number) => {
     const maxBars = 5;
     const bars = [];
 
@@ -230,10 +230,10 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         <View style={styles.signalBars3D}>{bars}</View>
       </TouchableOpacity>
     );
-  };
+  }, [getNetworkColor, handleNetworkPress]);
 
   // Fonction pour afficher le niveau de batterie avec effet 3D
-  const renderBatteryLevel3D = (level: number) => {
+  const renderBatteryLevel3D = useCallback((level: number) => {
     const color = getBatteryColor(level);
 
     return (
@@ -259,10 +259,10 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         <Text style={[styles.battery3DText, { color: color }]}>{level}%</Text>
       </TouchableOpacity>
     );
-  };
+  }, [getBatteryColor, handleBatteryPress]);
 
   // Fonction pour afficher l'heure qui remplit tout le cadre
-  const renderTime3D = () => {
+  const renderTime3D = useCallback(() => {
     return (
       <TouchableOpacity
         style={styles.time3DContainer}
@@ -277,7 +277,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
         </Text>
       </TouchableOpacity>
     );
-  };
+  }, [currentTime, handleTimePress]);
 
   // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
 
@@ -291,7 +291,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   };
 
   // Fonction pour lire l'heure
-  const speakTime = () => {
+  const speakTime = useCallback(() => {
     const timeString = currentTime.toLocaleTimeString('fr-FR', {
       hour: '2-digit',
       minute: '2-digit',
@@ -304,10 +304,10 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     } catch (error) {
       // Gestion silencieuse des erreurs
     }
-  };
+  }, [currentTime]);
 
   // Fonction pour lire les informations du réseau
-  const speakNetwork = () => {
+  const speakNetwork = useCallback(() => {
     // Détermination de la qualité avec plus de détails
     let qualityText = '';
     let descriptionText = '';
@@ -334,10 +334,10 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     } catch (error) {
       // Gestion silencieuse des erreurs
     }
-  };
+  }, [networkLevel]);
 
   // Fonction pour lire les informations de la batterie
-  const speakBattery = () => {
+  const speakBattery = useCallback(() => {
     // Détermination du niveau avec plus de détails
     let levelText = '';
     let statusText = '';
@@ -367,12 +367,12 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
     } catch (error) {
       // Gestion silencieuse des erreurs
     }
-  };
+  }, [batteryLevel]);
 
   // Fonction pour arrêter la parole
-  const stopSpeaking = () => {
+  const stopSpeaking = useCallback(() => {
     Speech.stop();
-  };
+  }, []);
 
   return (
     <>
@@ -671,7 +671,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       </Modal>
     </>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
