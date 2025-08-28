@@ -22,9 +22,21 @@ import { DialPad } from './components/DialPad';
 import { LoadingSpinner } from './components/LoadingSpinner';
 
 // Lazy Loading des composants lourds
-const ContactList = React.lazy(() => import('./components/ContactList').then(module => ({ default: module.ContactList })));
-const NavigationScreen = React.lazy(() => import('./components/NavigationScreen').then(module => ({ default: module.NavigationScreen })));
-const CreateContactScreen = React.lazy(() => import('./components/CreateContactScreen').then(module => ({ default: module.CreateContactScreen })));
+const ContactList = React.lazy(() =>
+  import('./components/ContactList').then(module => ({
+    default: module.ContactList,
+  }))
+);
+const NavigationScreen = React.lazy(() =>
+  import('./components/NavigationScreen').then(module => ({
+    default: module.NavigationScreen,
+  }))
+);
+const CreateContactScreen = React.lazy(() =>
+  import('./components/CreateContactScreen').then(module => ({
+    default: module.CreateContactScreen,
+  }))
+);
 
 const { height } = Dimensions.get('window');
 
@@ -36,7 +48,6 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<
     'navigation' | 'contacts' | 'phone' | 'createContact'
   >('navigation');
-
 
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
@@ -241,7 +252,9 @@ export default function App() {
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (
         <View style={styles.contactsContainer}>
-          <Suspense fallback={<LoadingSpinner message="Chargement des contacts..." />}>
+          <Suspense
+            fallback={<LoadingSpinner message='Chargement des contacts...' />}
+          >
             <ContactList
               onContactSelect={handleContactSelect}
               onCreateContact={navigateToCreateContact}
@@ -294,6 +307,7 @@ export default function App() {
           {/* Partie 5: Bouton Appeler (10% de la hauteur) */}
           <View style={[styles.section, styles.callSection]}>
             <TouchableOpacity
+              testID='call-button'
               style={[
                 styles.callButton,
                 { opacity: phoneNumber.length > 0 ? 1 : 0.5 },
@@ -394,7 +408,7 @@ export default function App() {
 
       {/* Écran de navigation */}
       {currentScreen === 'navigation' && (
-        <Suspense fallback={<LoadingSpinner message="Chargement du menu..." />}>
+        <Suspense fallback={<LoadingSpinner message='Chargement du menu...' />}>
           <NavigationScreen
             onNavigateToContacts={navigateToContacts}
             onNavigateToPhone={navigateToPhone}
@@ -405,7 +419,9 @@ export default function App() {
 
       {/* Écran de création de contact */}
       {currentScreen === 'createContact' && (
-        <Suspense fallback={<LoadingSpinner message="Chargement du formulaire..." />}>
+        <Suspense
+          fallback={<LoadingSpinner message='Chargement du formulaire...' />}
+        >
           <CreateContactScreen
             onContactCreated={handleContactCreated}
             onCancel={() => setCurrentScreen('contacts')}

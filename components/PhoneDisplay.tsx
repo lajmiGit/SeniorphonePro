@@ -15,6 +15,32 @@ const { width, height } = Dimensions.get('window');
 
 import { PhoneDisplayProps } from '../types';
 
+/**
+ * Composant PhoneDisplay - Affichage du numéro de téléphone composé avec fonctionnalités
+ * de zoom, confirmation d'appel et synthèse vocale, optimisé pour l'accessibilité seniors.
+ *
+ * @component
+ * @param {PhoneDisplayProps} props - Propriétés du composant
+ * @returns {JSX.Element} Composant PhoneDisplay rendu
+ *
+ * @example
+ * ```tsx
+ * <PhoneDisplay
+ *   phoneNumber="0123456789"
+ *   onDeleteDigit={() => setPhoneNumber(prev => prev.slice(0, -1))}
+ *   onCall={(num) => console.log('Appel vers:', num)}
+ * />
+ * ```
+ *
+ * @features
+ * - Affichage du numéro de téléphone avec formatage automatique
+ * - Bouton de suppression de chiffre avec icône intuitive
+ * - Modal de zoom pour visualiser le numéro en grand
+ * - Modal de confirmation d'appel avec synthèse vocale
+ * - Interface responsive et accessible aux seniors
+ * - Animations fluides pour les modals
+ * - Synthèse vocale pour l'accessibilité
+ */
 export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
   phoneNumber,
   onDeleteDigit,
@@ -91,8 +117,6 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
     });
   };
 
-
-
   // Fermer le zoom de confirmation d'appel
   const closeCallConfirmZoom = () => {
     // Arrêter la parole
@@ -148,16 +172,15 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
     }
   };
 
-
-
   return (
-    <View style={styles.container}>
+    <View testID='phone-display-container' style={styles.container}>
       <TouchableOpacity
         style={styles.inputContainer}
         onPress={handlePhonePress}
         activeOpacity={0.8}
       >
         <TextInput
+          testID='phone-number-display'
           style={styles.phoneInput}
           value={formatPhoneNumber(phoneNumber)}
           placeholder='Numéro de téléphone'
@@ -166,6 +189,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
           multiline={false}
         />
         <TouchableOpacity
+          testID='delete-button'
           style={styles.clearButton}
           onPress={onDeleteDigit}
           activeOpacity={0.6}

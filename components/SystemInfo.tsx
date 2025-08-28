@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import {
   View,
   Text,
@@ -20,658 +26,735 @@ declare global {
 
 const { width, height } = Dimensions.get('window');
 
-
-
+/**
+ * Interface des propriétés du composant SystemInfo
+ * @interface SystemInfoProps
+ * @property {number} [networkLevel] - Niveau de signal réseau (0-5, défaut: 4)
+ * @property {number} [batteryLevel] - Niveau de batterie (0-100, défaut: 85)
+ */
 interface SystemInfoProps {
   networkLevel?: number;
   batteryLevel?: number;
 }
 
-export const SystemInfo: React.FC<SystemInfoProps> = React.memo(({
-  networkLevel = 4,
-  batteryLevel = 85,
-}) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [showTimeZoom, setShowTimeZoom] = useState(false);
-  const [showNetworkZoom, setShowNetworkZoom] = useState(false);
-  const [showBatteryZoom, setShowBatteryZoom] = useState(false);
-  const zoomScale = useRef(new Animated.Value(0)).current;
-  const zoomOpacity = useRef(new Animated.Value(0)).current;
-  const networkZoomScale = useRef(new Animated.Value(0)).current;
-  const networkZoomOpacity = useRef(new Animated.Value(0)).current;
-  const batteryZoomScale = useRef(new Animated.Value(0)).current;
-  const batteryZoomOpacity = useRef(new Animated.Value(0)).current;
+/**
+ * Composant SystemInfo - Affiche les informations système (réseau, batterie, heure)
+ * avec des modals de zoom interactifs et synthèse vocale pour l'accessibilité seniors.
+ *
+ * @component
+ * @param {SystemInfoProps} props - Propriétés du composant
+ * @returns {JSX.Element} Composant SystemInfo rendu
+ *
+ * @example
+ * ```tsx
+ * <SystemInfo networkLevel={3} batteryLevel={75} />
+ * ```
+ *
+ * @features
+ * - Affichage en temps réel de l'heure
+ * - Indicateurs visuels 3D pour réseau et batterie
+ * - Modals de zoom avec informations détaillées
+ * - Synthèse vocale pour l'accessibilité
+ * - Optimisé avec React.memo, useCallback et useMemo
+ */
+export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
+  ({ networkLevel = 4, batteryLevel = 85 }) => {
+    const [currentTime, setCurrentTime] = useState(new Date());
+    const [showTimeZoom, setShowTimeZoom] = useState(false);
+    const [showNetworkZoom, setShowNetworkZoom] = useState(false);
+    const [showBatteryZoom, setShowBatteryZoom] = useState(false);
+    const zoomScale = useRef(new Animated.Value(0)).current;
+    const zoomOpacity = useRef(new Animated.Value(0)).current;
+    const networkZoomScale = useRef(new Animated.Value(0)).current;
+    const networkZoomOpacity = useRef(new Animated.Value(0)).current;
+    const batteryZoomScale = useRef(new Animated.Value(0)).current;
+    const batteryZoomOpacity = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+      return () => clearInterval(timer);
+    }, []);
 
-  const handleTimePress = useCallback(() => {
-    setShowTimeZoom(true);
-    // Animation d'entrée avec zoom et fade
-    Animated.parallel([
-      Animated.timing(zoomScale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(zoomOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    const handleTimePress = useCallback(() => {
+      setShowTimeZoom(true);
+      // Animation d'entrée avec zoom et fade
+      Animated.parallel([
+        Animated.timing(zoomScale, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(zoomOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-    // Lecture automatique de l'heure
-    setTimeout(() => speakTime(), 350); // Délai pour laisser l'animation se terminer
-  }, [zoomScale, zoomOpacity]);
+      // Lecture automatique de l'heure
+      setTimeout(() => speakTime(), 350); // Délai pour laisser l'animation se terminer
+    }, [zoomScale, zoomOpacity]);
 
-  const closeTimeZoom = useCallback(() => {
-    // Arrêter la parole
-    stopSpeaking();
+    const closeTimeZoom = useCallback(() => {
+      // Arrêter la parole
+      stopSpeaking();
 
-    // Animation de sortie
-    Animated.parallel([
-      Animated.timing(zoomScale, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(zoomOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setShowTimeZoom(false);
-    });
-  }, [zoomScale, zoomOpacity]);
+      // Animation de sortie
+      Animated.parallel([
+        Animated.timing(zoomScale, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(zoomOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowTimeZoom(false);
+      });
+    }, [zoomScale, zoomOpacity]);
 
-  const handleNetworkPress = useCallback(() => {
-    setShowNetworkZoom(true);
-    // Animation d'entrée avec zoom et fade
-    Animated.parallel([
-      Animated.timing(networkZoomScale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(networkZoomOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    const handleNetworkPress = useCallback(() => {
+      setShowNetworkZoom(true);
+      // Animation d'entrée avec zoom et fade
+      Animated.parallel([
+        Animated.timing(networkZoomScale, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(networkZoomOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-    // Lecture automatique des informations de réseau
-    setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
-  }, [networkZoomScale, networkZoomOpacity]);
+      // Lecture automatique des informations de réseau
+      setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
+    }, [networkZoomScale, networkZoomOpacity]);
 
-  const closeNetworkZoom = useCallback(() => {
-    // Arrêter la parole
-    stopSpeaking();
+    const closeNetworkZoom = useCallback(() => {
+      // Arrêter la parole
+      stopSpeaking();
 
-    // Animation de sortie
-    Animated.parallel([
-      Animated.timing(networkZoomScale, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(networkZoomOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setShowNetworkZoom(false);
-    });
-  }, [networkZoomScale, networkZoomOpacity]);
+      // Animation de sortie
+      Animated.parallel([
+        Animated.timing(networkZoomScale, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(networkZoomOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowNetworkZoom(false);
+      });
+    }, [networkZoomScale, networkZoomOpacity]);
 
-  const handleBatteryPress = useCallback(() => {
-    setShowBatteryZoom(true);
-    // Animation d'entrée avec zoom et fade
-    Animated.parallel([
-      Animated.timing(batteryZoomScale, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(batteryZoomOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    const handleBatteryPress = useCallback(() => {
+      setShowBatteryZoom(true);
+      // Animation d'entrée avec zoom et fade
+      Animated.parallel([
+        Animated.timing(batteryZoomScale, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(batteryZoomOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
 
-    // Lecture automatique des informations de batterie
-    setTimeout(() => speakBattery(), 350); // Délai pour laisser l'animation se terminer
-  }, [batteryZoomScale, batteryZoomOpacity]);
+      // Lecture automatique des informations de batterie
+      setTimeout(() => speakBattery(), 350); // Délai pour laisser l'animation se terminer
+    }, [batteryZoomScale, batteryZoomOpacity]);
 
-  const closeBatteryZoom = useCallback(() => {
-    // Arrêter la parole
-    stopSpeaking();
+    const closeBatteryZoom = useCallback(() => {
+      // Arrêter la parole
+      stopSpeaking();
 
-    // Animation de sortie
-    Animated.parallel([
-      Animated.timing(batteryZoomScale, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(batteryZoomOpacity, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setShowBatteryZoom(false);
-    });
-  }, [batteryZoomScale, batteryZoomOpacity]);
+      // Animation de sortie
+      Animated.parallel([
+        Animated.timing(batteryZoomScale, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(batteryZoomOpacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShowBatteryZoom(false);
+      });
+    }, [batteryZoomScale, batteryZoomOpacity]);
 
-  const getBatteryColor = useMemo(() => (level: number) => {
-    if (level > 50) {
-      return '#4CAF50';
-    }
-    if (level > 20) {
-      return '#FF9800';
-    }
-    return '#F44336';
-  }, []);
-
-  const getNetworkColor = useMemo(() => (level: number) => {
-    if (level > 3) {
-      return '#4CAF50';
-    }
-    if (level > 1) {
-      return '#FF9800';
-    }
-    return '#F44336';
-  }, []);
-
-  // Fonction pour afficher le niveau de réseau avec effet 3D
-  const renderNetworkLevel3D = useCallback((level: number) => {
-    const maxBars = 5;
-    const bars = [];
-
-    for (let i = 1; i <= maxBars; i++) {
-      const isActive = i <= level;
-      const barHeight = 20 + i * 8; // Hauteur encore plus grande pour remplir le cadre
-      const opacity = isActive ? 1 : 0.15;
-      const color = getNetworkColor(level);
-
-      bars.push(
-        <View
-          key={i}
-          style={[
-            styles.networkBar3D,
-            {
-              height: barHeight,
-              backgroundColor: color,
-              opacity: opacity,
-              transform: [{ scaleY: isActive ? 1 : 0.2 }],
-            },
-          ]}
-        />
-      );
-    }
-
-    return (
-      <TouchableOpacity
-        style={styles.network3DContainer}
-        onPress={handleNetworkPress}
-        activeOpacity={0.8}
-      >
-        {/* Barres de signal 3D seulement */}
-        <View style={styles.signalBars3D}>{bars}</View>
-      </TouchableOpacity>
+    /**
+     * Détermine la couleur appropriée pour le niveau de batterie
+     * @function getBatteryColor
+     * @param {number} level - Niveau de batterie (0-100)
+     * @returns {string} Code couleur hexadécimal
+     *
+     * @example
+     * const color = getBatteryColor(75); // Retourne '#4CAF50'
+     *
+     * @colorMapping
+     * - >50%: Vert (#4CAF50)
+     * - 21-50%: Orange (#FF9800)
+     * - 0-20%: Rouge (#F44336)
+     */
+    const getBatteryColor = useMemo(
+      () => (level: number) => {
+        if (level > 50) {
+          return '#4CAF50';
+        }
+        if (level > 20) {
+          return '#FF9800';
+        }
+        return '#F44336';
+      },
+      []
     );
-  }, [getNetworkColor, handleNetworkPress]);
 
-  // Fonction pour afficher le niveau de batterie avec effet 3D
-  const renderBatteryLevel3D = useCallback((level: number) => {
-    const color = getBatteryColor(level);
-
-    return (
-      <TouchableOpacity
-        style={styles.battery3DContainer}
-        onPress={handleBatteryPress}
-        activeOpacity={0.8}
-      >
-        {/* Batterie 3D */}
-        <View style={styles.battery3DOutline}>
-          <View
-            style={[
-              styles.battery3DLevel,
-              {
-                height: `${level}%`,
-                backgroundColor: color,
-              },
-            ]}
-          />
-        </View>
-
-        {/* Pourcentage en bas */}
-        <Text style={[styles.battery3DText, { color: color }]}>{level}%</Text>
-      </TouchableOpacity>
+    /**
+     * Détermine la couleur appropriée pour le niveau de signal réseau
+     * @function getNetworkColor
+     * @param {number} level - Niveau de signal réseau (0-5)
+     * @returns {string} Code couleur hexadécimal
+     *
+     * @example
+     * const color = getNetworkColor(4); // Retourne '#4CAF50'
+     *
+     * @colorMapping
+     * - >3: Vert (#4CAF50) - Signal fort
+     * - 2-3: Orange (#FF9800) - Signal moyen
+     * - 0-1: Rouge (#F44336) - Signal faible
+     */
+    const getNetworkColor = useMemo(
+      () => (level: number) => {
+        if (level > 3) {
+          return '#4CAF50';
+        }
+        if (level > 1) {
+          return '#FF9800';
+        }
+        return '#F44336';
+      },
+      []
     );
-  }, [getBatteryColor, handleBatteryPress]);
 
-  // Fonction pour afficher l'heure qui remplit tout le cadre
-  const renderTime3D = useCallback(() => {
-    return (
-      <TouchableOpacity
-        style={styles.time3DContainer}
-        onPress={handleTimePress}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.time3DText}>
-          {currentTime.toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </Text>
-      </TouchableOpacity>
-    );
-  }, [currentTime, handleTimePress]);
+    // Fonction pour afficher le niveau de réseau avec effet 3D
+    const renderNetworkLevel3D = useCallback(
+      (level: number) => {
+        const maxBars = 5;
+        const bars = [];
 
-  // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
+        for (let i = 1; i <= maxBars; i++) {
+          const isActive = i <= level;
+          const barHeight = 20 + i * 8; // Hauteur encore plus grande pour remplir le cadre
+          const opacity = isActive ? 1 : 0.15;
+          const color = getNetworkColor(level);
 
-  // Configuration de la voix pour les seniors (claire et douce)
-  const speechConfig = {
-    language: 'fr-FR',
-    pitch: 1.0, // Voix naturelle
-    rate: 0.8, // Vitesse lente pour les seniors
-    volume: 1.0, // Volume maximum
-    voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
-  };
+          bars.push(
+            <View
+              key={i}
+              style={[
+                styles.networkBar3D,
+                {
+                  height: barHeight,
+                  backgroundColor: color,
+                  opacity: opacity,
+                  transform: [{ scaleY: isActive ? 1 : 0.2 }],
+                },
+              ]}
+            />
+          );
+        }
 
-  // Fonction pour lire l'heure
-  const speakTime = useCallback(() => {
-    const timeString = currentTime.toLocaleTimeString('fr-FR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const message = `Il est ${timeString}`;
-
-    // Lecture avec gestion d'erreur
-    try {
-      Speech.speak(message, speechConfig);
-    } catch (error) {
-      // Gestion silencieuse des erreurs
-    }
-  }, [currentTime]);
-
-  // Fonction pour lire les informations du réseau
-  const speakNetwork = useCallback(() => {
-    // Détermination de la qualité avec plus de détails
-    let qualityText = '';
-    let descriptionText = '';
-
-    if (networkLevel >= 4) {
-      qualityText = 'excellente';
-      descriptionText = 'signal très fort';
-    } else if (networkLevel >= 3) {
-      qualityText = 'bonne';
-      descriptionText = 'signal fort';
-    } else if (networkLevel >= 2) {
-      qualityText = 'même';
-      descriptionText = 'signal moyen';
-    } else {
-      qualityText = 'faible';
-      descriptionText = 'signal faible';
-    }
-
-    const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
-
-    // Lecture avec gestion d'erreur
-    try {
-      Speech.speak(message, speechConfig);
-    } catch (error) {
-      // Gestion silencieuse des erreurs
-    }
-  }, [networkLevel]);
-
-  // Fonction pour lire les informations de la batterie
-  const speakBattery = useCallback(() => {
-    // Détermination du niveau avec plus de détails
-    let levelText = '';
-    let statusText = '';
-
-    if (batteryLevel >= 80) {
-      levelText = 'excellent';
-      statusText = 'excellent';
-    } else if (batteryLevel >= 60) {
-      levelText = 'bon';
-      statusText = 'bon';
-    } else if (batteryLevel >= 40) {
-      levelText = 'moyen';
-      statusText = 'moyen';
-    } else if (batteryLevel >= 20) {
-      levelText = 'faign';
-      statusText = 'faign';
-    } else {
-      levelText = 'critique';
-      statusText = 'critique';
-    }
-
-    const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
-
-    // Lecture avec gestion d'erreur
-    try {
-      Speech.speak(message, speechConfig);
-    } catch (error) {
-      // Gestion silencieuse des erreurs
-    }
-  }, [batteryLevel]);
-
-  // Fonction pour arrêter la parole
-  const stopSpeaking = useCallback(() => {
-    Speech.stop();
-  }, []);
-
-  return (
-    <>
-      <View style={styles.container}>
-        {/* Cadre Réseau - Couleur bleue avec modèle 3D étendu */}
-        <View style={[styles.infoFrame, styles.networkFrame]}>
-          {renderNetworkLevel3D(networkLevel)}
-        </View>
-
-        {/* Cadre Heure - Couleur orange avec heure 3D */}
-        <View style={[styles.infoFrame, styles.timeFrame]}>
-          {renderTime3D()}
-        </View>
-
-        {/* Cadre Batterie - Couleur verte avec modèle 3D */}
-        <View style={[styles.infoFrame, styles.batteryFrame]}>
-          {renderBatteryLevel3D(batteryLevel)}
-        </View>
-      </View>
-
-      {/* Modal de zoom de l'heure */}
-      <Modal
-        visible={showTimeZoom}
-        transparent={true}
-        animationType='none'
-        onRequestClose={closeTimeZoom}
-      >
-        <TouchableOpacity
-          style={styles.zoomOverlay}
-          activeOpacity={1}
-          onPress={closeTimeZoom}
-        >
-          <Animated.View
-            style={[
-              styles.zoomContainer,
-              {
-                transform: [{ scale: zoomScale }],
-                opacity: zoomOpacity,
-              },
-            ]}
+        return (
+          <TouchableOpacity
+            style={styles.network3DContainer}
+            onPress={handleNetworkPress}
+            activeOpacity={0.8}
           >
-            <View style={styles.zoomTimeCard}>
-              {/* Section Titre/Heure (20% de la hauteur) */}
-              <View style={styles.zoomTimeTitleSection}>
-                <Text style={styles.zoomTimeIcon}>🕐</Text>
-                <Text style={styles.zoomTimeText}>
-                  {currentTime.toLocaleTimeString('fr-FR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                  })}
-                </Text>
-              </View>
+            {/* Barres de signal 3D seulement */}
+            <View style={styles.signalBars3D}>{bars}</View>
+          </TouchableOpacity>
+        );
+      },
+      [getNetworkColor, handleNetworkPress]
+    );
 
-              {/* Section Date complète (50% de la hauteur) */}
-              <View style={styles.zoomTimeDateSection}>
-                <Text style={styles.zoomDateText}>
-                  {currentTime.toLocaleDateString('fr-FR', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </Text>
-              </View>
+    // Fonction pour afficher le niveau de batterie avec effet 3D
+    const renderBatteryLevel3D = useCallback(
+      (level: number) => {
+        const color = getBatteryColor(level);
 
-              {/* Section Séparateur (10% de la hauteur) */}
-              <View style={styles.zoomTimeSeparatorSection}>
-                <View style={styles.zoomDivider} />
-              </View>
-
-              {/* Section Bouton relire (15% de la hauteur) */}
-              <View style={styles.zoomTimeButtonSection}>
-                <TouchableOpacity
-                  style={styles.zoomVoiceButton}
-                  onPress={speakTime}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={styles.zoomVoiceButtonText}
-                    numberOfLines={1}
-                    ellipsizeMode='tail'
-                  >
-                    🔊 Relire l'heure
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Section Instructions (15% de la hauteur) */}
-              <View style={styles.zoomTimeCloseSection}>
-                <Text style={styles.zoomInfoText}>
-                  Appuyez n'importe où pour fermer
-                </Text>
-              </View>
+        return (
+          <TouchableOpacity
+            style={styles.battery3DContainer}
+            onPress={handleBatteryPress}
+            activeOpacity={0.8}
+          >
+            {/* Batterie 3D */}
+            <View style={styles.battery3DOutline}>
+              <View
+                style={[
+                  styles.battery3DLevel,
+                  {
+                    height: `${level}%`,
+                    backgroundColor: color,
+                  },
+                ]}
+              />
             </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </Modal>
 
-      {/* Modal de zoom du réseau */}
-      <Modal
-        visible={showNetworkZoom}
-        transparent={true}
-        animationType='none'
-        onRequestClose={closeNetworkZoom}
-      >
+            {/* Pourcentage en bas */}
+            <Text style={[styles.battery3DText, { color: color }]}>
+              {level}%
+            </Text>
+          </TouchableOpacity>
+        );
+      },
+      [getBatteryColor, handleBatteryPress]
+    );
+
+    // Fonction pour afficher l'heure qui remplit tout le cadre
+    const renderTime3D = useCallback(() => {
+      return (
         <TouchableOpacity
-          style={styles.zoomOverlay}
-          activeOpacity={1}
-          onPress={closeNetworkZoom}
+          style={styles.time3DContainer}
+          onPress={handleTimePress}
+          activeOpacity={0.8}
         >
-          <Animated.View
-            style={[
-              styles.zoomContainer,
-              {
-                transform: [{ scale: networkZoomScale }],
-                opacity: networkZoomOpacity,
-              },
-            ]}
+          <Text style={styles.time3DText}>
+            {currentTime.toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        </TouchableOpacity>
+      );
+    }, [currentTime, handleTimePress]);
+
+    // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
+
+    // Configuration de la voix pour les seniors (claire et douce)
+    const speechConfig = {
+      language: 'fr-FR',
+      pitch: 1.0, // Voix naturelle
+      rate: 0.8, // Vitesse lente pour les seniors
+      volume: 1.0, // Volume maximum
+      voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
+    };
+
+    // Fonction pour lire l'heure
+    const speakTime = useCallback(() => {
+      const timeString = currentTime.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const message = `Il est ${timeString}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch (error) {
+        // Gestion silencieuse des erreurs
+      }
+    }, [currentTime]);
+
+    // Fonction pour lire les informations du réseau
+    const speakNetwork = useCallback(() => {
+      // Détermination de la qualité avec plus de détails
+      let qualityText = '';
+      let descriptionText = '';
+
+      if (networkLevel >= 4) {
+        qualityText = 'excellente';
+        descriptionText = 'signal très fort';
+      } else if (networkLevel >= 3) {
+        qualityText = 'bonne';
+        descriptionText = 'signal fort';
+      } else if (networkLevel >= 2) {
+        qualityText = 'même';
+        descriptionText = 'signal moyen';
+      } else {
+        qualityText = 'faible';
+        descriptionText = 'signal faible';
+      }
+
+      const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch (error) {
+        // Gestion silencieuse des erreurs
+      }
+    }, [networkLevel]);
+
+    // Fonction pour lire les informations de la batterie
+    const speakBattery = useCallback(() => {
+      // Détermination du niveau avec plus de détails
+      let levelText = '';
+      let statusText = '';
+
+      if (batteryLevel >= 80) {
+        levelText = 'excellent';
+        statusText = 'excellent';
+      } else if (batteryLevel >= 60) {
+        levelText = 'bon';
+        statusText = 'bon';
+      } else if (batteryLevel >= 40) {
+        levelText = 'moyen';
+        statusText = 'moyen';
+      } else if (batteryLevel >= 20) {
+        levelText = 'faign';
+        statusText = 'faign';
+      } else {
+        levelText = 'critique';
+        statusText = 'critique';
+      }
+
+      const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch (error) {
+        // Gestion silencieuse des erreurs
+      }
+    }, [batteryLevel]);
+
+    // Fonction pour arrêter la parole
+    const stopSpeaking = useCallback(() => {
+      Speech.stop();
+    }, []);
+
+    return (
+      <>
+        <View testID='system-info-container' style={styles.container}>
+          {/* Cadre Réseau - Couleur bleue avec modèle 3D étendu */}
+          <View
+            testID='network-section'
+            style={[styles.infoFrame, styles.networkFrame]}
           >
-            <View style={styles.zoomNetworkCard}>
-              {/* Section Titre/Réseau (40% de la largeur) */}
-              <View style={styles.zoomNetworkTitleSection}>
-                <Text style={styles.zoomNetworkTitle}>📶</Text>
+            {renderNetworkLevel3D(networkLevel)}
+          </View>
 
-                {/* Barres de réseau 3D parfaitement centrées */}
-                <View style={styles.zoomNetworkVisual}>
-                  <View style={styles.zoomNetworkBars}>
-                    {Array.from({ length: 5 }, (_, i) => {
-                      const isActive = i < networkLevel;
-                      const barHeight = 20 + (i + 1) * 8; // Même logique que dans l'écran phone
-                      const opacity = isActive ? 1 : 0.15;
-                      const color = getNetworkColor(networkLevel);
+          {/* Cadre Heure - Couleur orange avec heure 3D */}
+          <View
+            testID='time-section'
+            style={[styles.infoFrame, styles.timeFrame]}
+          >
+            {renderTime3D()}
+          </View>
 
-                      return (
-                        <View
-                          key={i}
-                          style={[
-                            styles.zoomNetworkBar3D,
-                            {
-                              height: barHeight,
-                              backgroundColor: color,
-                              opacity: opacity,
-                              transform: [{ scaleY: isActive ? 1 : 0.2 }],
-                            },
-                          ]}
-                        />
-                      );
+          {/* Cadre Batterie - Couleur verte avec modèle 3D */}
+          <View
+            testID='battery-section'
+            style={[styles.infoFrame, styles.batteryFrame]}
+          >
+            {renderBatteryLevel3D(batteryLevel)}
+          </View>
+        </View>
+
+        {/* Modal de zoom de l'heure */}
+        <Modal
+          visible={showTimeZoom}
+          transparent={true}
+          animationType='none'
+          onRequestClose={closeTimeZoom}
+        >
+          <TouchableOpacity
+            testID='time-zoom-modal'
+            style={styles.zoomOverlay}
+            activeOpacity={1}
+            onPress={closeTimeZoom}
+          >
+            <Animated.View
+              style={[
+                styles.zoomContainer,
+                {
+                  transform: [{ scale: zoomScale }],
+                  opacity: zoomOpacity,
+                },
+              ]}
+            >
+              <View style={styles.zoomTimeCard}>
+                {/* Section Titre/Heure (20% de la hauteur) */}
+                <View style={styles.zoomTimeTitleSection}>
+                  <Text style={styles.zoomTimeIcon}>🕐</Text>
+                  <Text style={styles.zoomTimeText}>
+                    {currentTime.toLocaleTimeString('fr-FR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
                     })}
+                  </Text>
+                </View>
+
+                {/* Section Date complète (50% de la hauteur) */}
+                <View style={styles.zoomTimeDateSection}>
+                  <Text style={styles.zoomDateText}>
+                    {currentTime.toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </Text>
+                </View>
+
+                {/* Section Séparateur (10% de la hauteur) */}
+                <View style={styles.zoomTimeSeparatorSection}>
+                  <View style={styles.zoomDivider} />
+                </View>
+
+                {/* Section Bouton relire (15% de la hauteur) */}
+                <View style={styles.zoomTimeButtonSection}>
+                  <TouchableOpacity
+                    style={styles.zoomVoiceButton}
+                    onPress={speakTime}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={styles.zoomVoiceButtonText}
+                      numberOfLines={1}
+                      ellipsizeMode='tail'
+                    >
+                      🔊 Relire l'heure
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Section Instructions (15% de la hauteur) */}
+                <View style={styles.zoomTimeCloseSection}>
+                  <Text style={styles.zoomInfoText}>
+                    Appuyez n'importe où pour fermer
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* Modal de zoom du réseau */}
+        <Modal
+          visible={showNetworkZoom}
+          transparent={true}
+          animationType='none'
+          onRequestClose={closeNetworkZoom}
+        >
+          <TouchableOpacity
+            testID='network-zoom-modal'
+            style={styles.zoomOverlay}
+            activeOpacity={1}
+            onPress={closeNetworkZoom}
+          >
+            <Animated.View
+              style={[
+                styles.zoomContainer,
+                {
+                  transform: [{ scale: networkZoomScale }],
+                  opacity: networkZoomOpacity,
+                },
+              ]}
+            >
+              <View style={styles.zoomNetworkCard}>
+                {/* Section Titre/Réseau (40% de la largeur) */}
+                <View style={styles.zoomNetworkTitleSection}>
+                  <Text style={styles.zoomNetworkTitle}>📶</Text>
+
+                  {/* Barres de réseau 3D parfaitement centrées */}
+                  <View style={styles.zoomNetworkVisual}>
+                    <View style={styles.zoomNetworkBars}>
+                      {Array.from({ length: 5 }, (_, i) => {
+                        const isActive = i < networkLevel;
+                        const barHeight = 20 + (i + 1) * 8; // Même logique que dans l'écran phone
+                        const opacity = isActive ? 1 : 0.15;
+                        const color = getNetworkColor(networkLevel);
+
+                        return (
+                          <View
+                            key={i}
+                            style={[
+                              styles.zoomNetworkBar3D,
+                              {
+                                height: barHeight,
+                                backgroundColor: color,
+                                opacity: opacity,
+                                transform: [{ scaleY: isActive ? 1 : 0.2 }],
+                              },
+                            ]}
+                          />
+                        );
+                      })}
+                    </View>
                   </View>
                 </View>
-              </View>
 
-              {/* Section Qualité du réseau (40% de la hauteur) */}
-              <View style={styles.zoomNetworkQualitySection}>
-                <Text
-                  style={[
-                    styles.zoomNetworkQualityText,
-                    { color: getNetworkColor(networkLevel) },
-                  ]}
-                >
-                  {networkLevel >= 4
-                    ? 'Excellent'
-                    : networkLevel >= 3
-                      ? 'Bon'
-                      : networkLevel >= 2
-                        ? 'Moyen'
-                        : 'Faible'}
-                </Text>
-              </View>
-
-              {/* Section Bouton relire (25% de la hauteur) */}
-              <View style={styles.zoomNetworkButtonSection}>
-                <TouchableOpacity
-                  style={styles.zoomVoiceButton}
-                  onPress={speakNetwork}
-                  activeOpacity={0.8}
-                >
+                {/* Section Qualité du réseau (40% de la hauteur) */}
+                <View style={styles.zoomNetworkQualitySection}>
                   <Text
-                    style={styles.zoomVoiceButtonText}
-                    numberOfLines={1}
-                    ellipsizeMode='tail'
-                  >
-                    🔊 Relire le réseau
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Section Instructions (25% de la hauteur) */}
-              <View style={styles.zoomNetworkCloseSection}>
-                <Text style={styles.zoomInfoText}>
-                  Appuyez n'importe où pour fermer
-                </Text>
-              </View>
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </Modal>
-
-      {/* Modal de zoom de la batterie */}
-      <Modal
-        visible={showBatteryZoom}
-        transparent={true}
-        animationType='none'
-        onRequestClose={closeBatteryZoom}
-      >
-        <TouchableOpacity
-          style={styles.zoomOverlay}
-          activeOpacity={1}
-          onPress={closeBatteryZoom}
-        >
-          <Animated.View
-            style={[
-              styles.zoomContainer,
-              {
-                transform: [{ scale: batteryZoomScale }],
-                opacity: batteryZoomOpacity,
-              },
-            ]}
-          >
-            <View style={styles.zoomBatteryCard}>
-              {/* Icône batterie - 15% de la hauteur */}
-              <View style={styles.zoomBatteryIconSection}>
-                <Text style={styles.zoomBatteryTitle}>🔋</Text>
-              </View>
-
-              {/* Niveau batterie texte - 15% de la hauteur */}
-              <View style={styles.zoomBatteryTextSection}>
-                <Text
-                  style={[
-                    styles.zoomBatteryStatus,
-                    { color: getBatteryColor(batteryLevel) },
-                  ]}
-                >
-                  {batteryLevel >= 80
-                    ? 'Chargée'
-                    : batteryLevel >= 60
-                      ? 'Bonne'
-                      : batteryLevel >= 40
-                        ? 'Moyenne'
-                        : batteryLevel >= 20
-                          ? 'Faible'
-                          : 'Critique'}
-                </Text>
-              </View>
-
-              {/* Image batterie 3D - 40% de la hauteur */}
-              <View style={styles.zoomBatteryVisualSection}>
-                <View style={styles.zoomBatteryOutline}>
-                  <View
                     style={[
-                      styles.zoomBatteryLevel,
-                      {
-                        height: `${batteryLevel}%`,
-                        backgroundColor: getBatteryColor(batteryLevel),
-                      },
+                      styles.zoomNetworkQualityText,
+                      { color: getNetworkColor(networkLevel) },
                     ]}
-                  />
-                </View>
-                <Text
-                  style={[
-                    styles.zoomBatteryPercentage,
-                    { color: getBatteryColor(batteryLevel) },
-                  ]}
-                >
-                  {batteryLevel}%
-                </Text>
-              </View>
-
-              {/* Bouton relire - 10% de la hauteur */}
-              <View style={styles.zoomBatteryButtonSection}>
-                <TouchableOpacity
-                  style={styles.zoomVoiceButton}
-                  onPress={speakBattery}
-                  activeOpacity={0.8}
-                >
-                  <Text
-                    style={styles.zoomVoiceButtonText}
-                    numberOfLines={1}
-                    ellipsizeMode='tail'
                   >
-                    🔊 Relire la batterie
+                    {networkLevel >= 4
+                      ? 'Excellent'
+                      : networkLevel >= 3
+                        ? 'Bon'
+                        : networkLevel >= 2
+                          ? 'Moyen'
+                          : 'Faible'}
                   </Text>
-                </TouchableOpacity>
-              </View>
+                </View>
 
-              {/* Appuyer pour fermer - 10% de la hauteur */}
-              <View style={styles.zoomBatteryCloseSection}>
-                <Text style={styles.zoomInfoText}>
-                  Appuyez n'importe où pour fermer
-                </Text>
+                {/* Section Bouton relire (25% de la hauteur) */}
+                <View style={styles.zoomNetworkButtonSection}>
+                  <TouchableOpacity
+                    style={styles.zoomVoiceButton}
+                    onPress={speakNetwork}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={styles.zoomVoiceButtonText}
+                      numberOfLines={1}
+                      ellipsizeMode='tail'
+                    >
+                      🔊 Relire le réseau
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Section Instructions (25% de la hauteur) */}
+                <View style={styles.zoomNetworkCloseSection}>
+                  <Text style={styles.zoomInfoText}>
+                    Appuyez n'importe où pour fermer
+                  </Text>
+                </View>
               </View>
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
-      </Modal>
-    </>
-  );
-});
+            </Animated.View>
+          </TouchableOpacity>
+        </Modal>
+
+        {/* Modal de zoom de la batterie */}
+        <Modal
+          visible={showBatteryZoom}
+          transparent={true}
+          animationType='none'
+          onRequestClose={closeBatteryZoom}
+        >
+          <TouchableOpacity
+            testID='battery-zoom-modal'
+            style={styles.zoomOverlay}
+            activeOpacity={1}
+            onPress={closeBatteryZoom}
+          >
+            <Animated.View
+              style={[
+                styles.zoomContainer,
+                {
+                  transform: [{ scale: batteryZoomScale }],
+                  opacity: batteryZoomOpacity,
+                },
+              ]}
+            >
+              <View style={styles.zoomBatteryCard}>
+                {/* Icône batterie - 15% de la hauteur */}
+                <View style={styles.zoomBatteryIconSection}>
+                  <Text style={styles.zoomBatteryTitle}>🔋</Text>
+                </View>
+
+                {/* Niveau batterie texte - 15% de la hauteur */}
+                <View style={styles.zoomBatteryTextSection}>
+                  <Text
+                    style={[
+                      styles.zoomBatteryStatus,
+                      { color: getBatteryColor(batteryLevel) },
+                    ]}
+                  >
+                    {batteryLevel >= 80
+                      ? 'Chargée'
+                      : batteryLevel >= 60
+                        ? 'Bonne'
+                        : batteryLevel >= 40
+                          ? 'Moyenne'
+                          : batteryLevel >= 20
+                            ? 'Faible'
+                            : 'Critique'}
+                  </Text>
+                </View>
+
+                {/* Image batterie 3D - 40% de la hauteur */}
+                <View style={styles.zoomBatteryVisualSection}>
+                  <View style={styles.zoomBatteryOutline}>
+                    <View
+                      style={[
+                        styles.zoomBatteryLevel,
+                        {
+                          height: `${batteryLevel}%`,
+                          backgroundColor: getBatteryColor(batteryLevel),
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text
+                    style={[
+                      styles.zoomBatteryPercentage,
+                      { color: getBatteryColor(batteryLevel) },
+                    ]}
+                  >
+                    {batteryLevel}%
+                  </Text>
+                </View>
+
+                {/* Bouton relire - 10% de la hauteur */}
+                <View style={styles.zoomBatteryButtonSection}>
+                  <TouchableOpacity
+                    style={styles.zoomVoiceButton}
+                    onPress={speakBattery}
+                    activeOpacity={0.8}
+                  >
+                    <Text
+                      style={styles.zoomVoiceButtonText}
+                      numberOfLines={1}
+                      ellipsizeMode='tail'
+                    >
+                      🔊 Relire la batterie
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Appuyer pour fermer - 10% de la hauteur */}
+                <View style={styles.zoomBatteryCloseSection}>
+                  <Text style={styles.zoomInfoText}>
+                    Appuyez n'importe où pour fermer
+                  </Text>
+                </View>
+              </View>
+            </Animated.View>
+          </TouchableOpacity>
+        </Modal>
+      </>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   container: {

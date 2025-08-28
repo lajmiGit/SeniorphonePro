@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,71 +6,61 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native';
-import { Audio } from 'expo-av';
-
+import { Vibration, Platform } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
+/**
+ * Interface des propriétés du composant DialPad
+ * @interface DialPadProps
+ * @property {(num: string) => void} onNumberPress - Callback appelé quand un bouton est pressé
+ */
 interface DialPadProps {
   onNumberPress: (num: string) => void;
 }
 
+/**
+ * Composant DialPad - Pavé numérique tactile avec retour haptique
+ * optimisé pour les seniors avec des boutons 3D et une interface intuitive.
+ *
+ * @component
+ * @param {DialPadProps} props - Propriétés du composant
+ * @returns {JSX.Element} Composant DialPad rendu
+ *
+ * @example
+ * ```tsx
+ * <DialPad onNumberPress={(num) => console.log('Numéro pressé:', num)} />
+ * ```
+ *
+ * @features
+ * - Boutons numériques 0-9 avec symboles * et #
+ * - Retour haptique (vibration) lors de la pression
+ * - Effets visuels 3D avec ombres et bordures
+ * - Taille de police adaptative selon l'écran
+ * - Interface responsive et accessible
+ * - Optimisé pour l'usage tactile
+ */
 export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-
-
-
-  // Initialisation du son au chargement du composant
-  useEffect(() => {
-    loadSound();
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, []);
-
-  // Chargement du son de touche
-  const loadSound = async () => {
+  // Retour haptique simple et fiable
+  const playHapticFeedback = () => {
     try {
-      // Création d'un son synthétique simple et fiable
-      const { sound: newSound } = await Audio.Sound.createAsync(
-        {
-          uri: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT',
-        },
-        {
-          shouldPlay: false,
-          volume: 0.7, // Volume adapté aux seniors
-          rate: 1.0, // Vitesse normale
-        }
-      );
-      setSound(newSound);
-      console.log('🎵 Son de touche chargé avec succès');
+      if (Platform.OS === 'ios') {
+        // Vibration courte pour iOS
+        Vibration.vibrate(50);
+      } else if (Platform.OS === 'android') {
+        // Vibration courte pour Android
+        Vibration.vibrate(50);
+      }
+      console.log('📳 Retour haptique activé');
     } catch (error) {
-      console.log('❌ Erreur lors du chargement du son:', error);
+      console.log('❌ Erreur lors de la vibration:', error);
     }
   };
 
-  // Jouer le son de touche
-  const playTouchSound = async () => {
-    try {
-      if (sound) {
-        console.log('🔊 Lecture du son de touche');
-        await sound.replayAsync();
-      } else {
-        console.log('⚠️ Son non disponible');
-      }
-    } catch (error) {
-      console.log('❌ Erreur lors de la lecture du son:', error);
-    }
-  };
-
-
-
-  // Gestion de la pression sur une touche avec son et lecture vocale
-  const handleNumberPress = async (num: string) => {
-    // Jouer le son de touche
-    await playTouchSound();
+  // Gestion de la pression sur une touche avec retour haptique
+  const handleNumberPress = (num: string) => {
+    // Activer le retour haptique
+    playHapticFeedback();
 
     // Appeler la fonction de callback
     onNumberPress(num);
@@ -90,12 +80,13 @@ export const DialPad: React.FC<DialPadProps> = ({ onNumberPress }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View testID='dial-pad-container' style={styles.container}>
       {dialPadNumbers.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.row}>
           {row.map(num => (
             <TouchableOpacity
               key={num}
+              testID={`dial-button-${num === '*' ? 'star' : num === '#' ? 'hash' : num}`}
               style={styles.button}
               onPress={() => handleNumberPress(num)}
               activeOpacity={0.5}

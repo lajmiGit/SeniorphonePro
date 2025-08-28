@@ -1,22 +1,19 @@
 module.exports = {
-  // Configuration de base
   preset: 'jest-expo',
-  
-  // Dossiers à tester
   testMatch: [
-    '**/__tests__/**/*.(ts|tsx|js)',
-    '**/*.(test|spec).(ts|tsx|js)'
+    '**/__tests__/**/*.test.(ts|tsx|js|jsx)',
+    '**/*.(test|spec).(ts|tsx|js|jsx)',
   ],
-  
-  // Extensions de fichiers supportées
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  
-  // Environnement de test
-  testEnvironment: 'node',
-  
-  // Timeout des tests
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'jsdom',
+  collectCoverage: false,
   testTimeout: 10000,
-  
-  // Verbosité
-  verbose: true
+  verbose: true,
+  transformIgnorePatterns: [
+    'node_modules/(?!(expo|@expo|react-native|@react-native|@react-navigation|expo-modules-core)/)',
+  ],
+  moduleNameMapper: {
+    '^react-native$': 'react-native-web',
+  },
 };

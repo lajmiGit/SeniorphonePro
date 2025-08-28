@@ -48,7 +48,9 @@ describe('Fonctions Utilitaires', () => {
     });
 
     test('formate correctement un numéro de 15 chiffres', () => {
-      expect(formatPhoneNumber('012345678901234')).toBe('01 23 45 67 89 01 23 4');
+      expect(formatPhoneNumber('012345678901234')).toBe(
+        '01 23 45 67 89 01 23 4'
+      );
     });
 
     test('ne modifie pas un numéro déjà formaté', () => {

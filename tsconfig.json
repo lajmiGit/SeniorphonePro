@@ -3,62 +3,63 @@
   "compilerOptions": {
     // === MODE STRICT ET VÉRIFICATIONS AVANCÉES ===
     "strict": true,
-    "noUnusedLocals": true,                    // Variables locales non utilisées
-    "noUnusedParameters": true,                 // Paramètres non utilisés
-    "noImplicitReturns": true,                  // Retours implicites interdits
-    "noFallthroughCasesInSwitch": true,         // Cases switch sans break
-    "noImplicitOverride": true,                 // Override explicite requis
-    "exactOptionalPropertyTypes": true,         // Types optionnels exacts
-    
+    "noUnusedLocals": true, // Variables locales non utilisées
+    "noUnusedParameters": true, // Paramètres non utilisés
+    "noImplicitReturns": true, // Retours implicites interdits
+    "noFallthroughCasesInSwitch": true, // Cases switch sans break
+    "noImplicitOverride": true, // Override explicite requis
+    "exactOptionalPropertyTypes": true, // Types optionnels exacts
+
     // === OPTIMISATIONS DE COMPILATION ===
-    "skipLibCheck": true,                       // Vérification des libs plus rapide
-    "forceConsistentCasingInFileNames": true,   // Casse des noms de fichiers cohérente
-    "allowUnreachableCode": false,              // Code inaccessible interdit
-    "allowUnusedLabels": false,                 // Labels non utilisés interdits
-    
+    "skipLibCheck": true, // Vérification des libs plus rapide
+    "forceConsistentCasingInFileNames": true, // Casse des noms de fichiers cohérente
+    "allowUnreachableCode": false, // Code inaccessible interdit
+    "allowUnusedLabels": false, // Labels non utilisés interdits
+
     // === SUPPORT REACT NATIVE ===
-    "jsx": "react-native",                      // Support JSX React Native
-    "allowSyntheticDefaultImports": true,       // Imports par défaut synthétiques
-    "esModuleInterop": true,                    // Interopérabilité ES modules
-    "allowJs": true,                            // Permettre les fichiers .js
-    
+    "jsx": "react-native", // Support JSX React Native
+    "allowSyntheticDefaultImports": true, // Imports par défaut synthétiques
+    "esModuleInterop": true, // Interopérabilité ES modules
+    "allowJs": true, // Permettre les fichiers .js
+
     // === SUPPORT MODERNE ===
-    "target": "ES2020",                         // Support ES2020
-    "lib": ["ES2020", "DOM"],                   // Bibliothèques ES2020 + DOM
-    "module": "ESNext",                         // Modules ES modernes
-    "moduleResolution": "bundler",              // Résolution des modules moderne
-    
+    "target": "ES2020", // Support ES2020
+    "lib": ["ES2020", "DOM"], // Bibliothèques ES2020 + DOM
+    "module": "ESNext", // Modules ES modernes
+    "moduleResolution": "bundler", // Résolution des modules moderne
+
     // === CHEMINS ET ALIAS ===
-    "baseUrl": ".",                             // URL de base
-    "paths": {                                  // Alias de chemins
+    "baseUrl": ".", // URL de base
+    "paths": {
+      // Alias de chemins
       "@/*": ["*"],
       "@components/*": ["components/*"],
       "@constants/*": ["constants/*"],
       "@docs/*": ["docs/*"],
       "@scripts/*": ["scripts/*"]
     },
-    
+
     // === OPTIONS DE COMPILATION ===
-    "declaration": false,                       // Pas de fichiers .d.ts (React Native)
-    "declarationMap": false,                    // Pas de source maps pour déclarations
-    "sourceMap": true,                          // Source maps pour debugging
-    "outDir": "./dist",                         // Dossier de sortie (pour référence)
-    "removeComments": false,                    // Garder les commentaires
-    "importHelpers": true,                      // Helpers d'import automatiques
-    
+    "declaration": false, // Pas de fichiers .d.ts (React Native)
+    "declarationMap": false, // Pas de source maps pour déclarations
+    "sourceMap": true, // Source maps pour debugging
+    "outDir": "./dist", // Dossier de sortie (pour référence)
+    "removeComments": false, // Garder les commentaires
+    "importHelpers": true, // Helpers d'import automatiques
+
     // === VÉRIFICATIONS DE QUALITÉ ===
-    "noImplicitAny": true,                      // Pas de type 'any' implicite
-    "noImplicitThis": true,                     // Pas de 'this' implicite
-    "alwaysStrict": true,                       // Toujours en mode strict
-    "noUncheckedIndexedAccess": true,           // Accès indexés vérifiés
+    "noImplicitAny": true, // Pas de type 'any' implicite
+    "noImplicitThis": true, // Pas de 'this' implicite
+    "alwaysStrict": true, // Toujours en mode strict
+    "noUncheckedIndexedAccess": true, // Accès indexés vérifiés
     "noPropertyAccessFromIndexSignature": true, // Accès aux propriétés vérifiés
-    
+
     // === OPTIMISATIONS PERFORMANCE ===
-    "incremental": true,                        // Compilation incrémentale
-    "tsBuildInfoFile": "./.tsbuildinfo",        // Fichier d'info de build
-    "assumeChangesOnlyAffectDirectDependencies": true, // Optimisation des dépendances
+    "incremental": true, // Compilation incrémentale
+    "tsBuildInfoFile": "./.tsbuildinfo", // Fichier d'info de build
+    "assumeChangesOnlyAffectDirectDependencies": true // Optimisation des dépendances
   },
-  
+
   // === FICHIERS À INCLURE/EXCLURE ===
   "include": [
     "**/*.ts",
@@ -67,7 +68,7 @@
     "**/*.jsx",
     "**/*.json"
   ],
-  
+
   "exclude": [
     "node_modules",
     "expo",
@@ -80,7 +81,7 @@
     "babel.config.js",
     "eslint.config.js"
   ],
-  
+
   // === CONFIGURATIONS SPÉCIFIQUES ===
   "ts-node": {
     "esm": true,
