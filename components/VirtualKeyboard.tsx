@@ -13,6 +13,31 @@ const { width, height } = Dimensions.get('window');
 
 import { VirtualKeyboardProps } from '../types';
 
+/**
+ * Clavier virtuel adapté aux seniors avec structure en 3 parties clairement définies
+ * 
+ * STRUCTURE DE L'ÉCRAN :
+ * ┌─────────────────────────────────────┐
+ * │ PARTIE 1: EN-TÊTE (15% hauteur)    │
+ * │ - Bouton fermer ❌                  │
+ * │ - Affichage texte saisi             │
+ * │ - Boutons ABC ↔ 123                 │
+ * ├─────────────────────────────────────┤
+ * │ PARTIE 2: CLAVIER (75% hauteur)    │
+ * │ - Lettres A-Z ou chiffres 1-9      │
+ * │ - Touches spéciales (Espace, ⌫)    │
+ * │ - Organisation en grille 6x5        │
+ * ├─────────────────────────────────────┤
+ * │ PARTIE 3: VALIDATION (10% hauteur) │
+ * │ - Bouton "✅ Valider"               │
+ * └─────────────────────────────────────┘
+ * 
+ * @param onKeyPress - Callback appelé quand une touche est pressée
+ * @param onBackspace - Callback appelé pour effacer un caractère
+ * @param onValidate - Callback appelé pour valider la saisie
+ * @param onClose - Callback appelé pour fermer le clavier
+ * @param currentText - Texte actuellement saisi
+ */
 export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   onKeyPress,
   onBackspace,
@@ -42,9 +67,22 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 
   const keyboardRows = showNumbers ? numberRows : letterRows;
 
-  // Calculs dynamiques pour la responsivité
-  const headerHeight = height * 0.15;
-  const keySize = Math.min((width - 40) / 6, (height * 0.6) / 6);
+  // CALCULS DYNAMIQUES POUR LA RESPONSIVITÉ
+  // Structure en 3 parties avec pourcentages clairs :
+  // Partie 1: En-tête (15% de la hauteur)
+  // Partie 2: Clavier principal (75% de la hauteur - flexible)
+  // Partie 3: Bouton validation (10% de la hauteur)
+  
+  const headerHeight = height * 0.15;        // 15% - En-tête fixe
+  const validationHeight = height * 0.10;    // 10% - Bouton validation
+  const keyboardHeight = height * 0.75;      // 75% - Clavier principal (flexible)
+  
+  // Taille des touches basée sur l'espace disponible
+  const keySize = Math.min(
+    (width - 40) / 6,           // Largeur : 6 touches par ligne
+    keyboardHeight / 8           // Hauteur : 8 rangées maximum
+  );
+  
   const keySpacing = keySize * 0.1;
   const keyboardPadding = width * 0.05;
 
@@ -70,7 +108,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* En-tête responsive */}
+      {/* PARTIE 1: EN-TÊTE (15% de la hauteur) */}
       <View style={[styles.header, { height: headerHeight }]}>
         {/* Bouton fermer en haut à droite */}
         <View style={styles.headerTop}>
@@ -170,8 +208,17 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         </View>
       </View>
 
-      {/* Clavier principal responsive */}
-      <View style={[styles.keyboardContainer, { padding: keyboardPadding }]}>
+      {/* PARTIE 2: CLAVIER PRINCIPAL (75% de la hauteur - flexible) */}
+      <View 
+        style={[
+          styles.keyboardContainer, 
+          { 
+            padding: keyboardPadding,
+            height: keyboardHeight,
+            justifyContent: 'center'
+          }
+        ]}
+      >
         {keyboardRows.map((row, rowIndex) => (
           <View
             key={rowIndex}
@@ -265,8 +312,17 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         </View>
       </View>
 
-      {/* Bouton de validation responsive - EN BAS */}
-      <View style={[styles.validationContainer, { padding: keyboardPadding }]}>
+      {/* PARTIE 3: BOUTON DE VALIDATION (10% de la hauteur) */}
+      <View 
+        style={[
+          styles.validationContainer, 
+          { 
+            padding: keyboardPadding,
+            height: validationHeight,
+            justifyContent: 'center'
+          }
+        ]}
+      >
         <TouchableOpacity
           style={[
             styles.validateButton,
