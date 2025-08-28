@@ -16,18 +16,18 @@ import { VirtualKeyboardProps } from '../types';
 /**
  * Clavier virtuel simplifié et optimisé pour les seniors
  * 
- * NOUVELLE STRUCTURE SIMPLIFIÉE :
+ * NOUVELLE STRUCTURE AVEC CADRES :
  * ┌─────────────────────────────────────┐
- * │ PARTIE 1: EN-TÊTE (20% hauteur)    │
+ * │ PARTIE 1: EN-TÊTE (20% hauteur)    │ ← Cadre vert avec bordure
  * │ - Titre + Bouton fermer            │
  * │ - Texte saisi en cours             │
  * │ - Boutons ABC/123                  │
  * ├─────────────────────────────────────┤
- * │ PARTIE 2: CLAVIER (65% hauteur)    │
+ * │ PARTIE 2: CLAVIER (65% hauteur)    │ ← Cadre blanc avec bordure
  * │ - Grille de touches 6x5            │
  * │ - Touches Espace et Retour         │
  * ├─────────────────────────────────────┤
- * │ PARTIE 3: VALIDATION (15% hauteur) │
+ * │ PARTIE 3: VALIDATION (15% hauteur) │ ← Cadre bleu avec bordure
  * │ - Bouton Valider large             │
  * └─────────────────────────────────────┘
  */
@@ -95,87 +95,111 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* PARTIE 1: EN-TÊTE (20% hauteur) */}
-      <View style={[styles.header, { height: headerHeight }]}>
-        {/* Barre de titre avec bouton fermer */}
-        <View style={styles.titleBar}>
-          <Text style={styles.title}>Clavier Virtuel</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={handleClose}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.closeButtonText}>✕</Text>
-          </TouchableOpacity>
-        </View>
+      {/* PARTIE 1: EN-TÊTE (20% hauteur) - CADRE VERT */}
+      <View style={[styles.partieContainer, { height: headerHeight }]}>
+        <View style={styles.partieFrame}>
+          <View style={[styles.partieHeader, { backgroundColor: '#4CAF50' }]}>
+            <Text style={styles.partieTitle}>Partie 1</Text>
+          </View>
+          
+          <View style={styles.headerContent}>
+            {/* Barre de titre avec bouton fermer */}
+            <View style={styles.titleBar}>
+              <Text style={styles.title}>Clavier Virtuel</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleClose}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
 
-        {/* Affichage du texte saisi */}
-        <View style={styles.textDisplay}>
-          <Text style={styles.textLabel}>Texte saisi :</Text>
-          <Text style={styles.textValue}>
-            {currentText || 'Aucun texte'}
-          </Text>
-        </View>
+            {/* Affichage du texte saisi */}
+            <View style={styles.textDisplay}>
+              <Text style={styles.textLabel}>Texte saisi :</Text>
+              <Text style={styles.textValue}>
+                {currentText || 'Aucun texte'}
+              </Text>
+            </View>
 
-        {/* Bouton de basculement ABC/123 */}
-        <TouchableOpacity
-          style={[styles.modeButton, showNumbers && styles.modeButtonActive]}
-          onPress={toggleMode}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.modeButtonText, showNumbers && styles.modeButtonTextActive]}>
-            {showNumbers ? 'ABC' : '123'}
-          </Text>
-        </TouchableOpacity>
+            {/* Bouton de basculement ABC/123 */}
+            <TouchableOpacity
+              style={[styles.modeButton, showNumbers && styles.modeButtonActive]}
+              onPress={toggleMode}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.modeButtonText, showNumbers && styles.modeButtonTextActive]}>
+                {showNumbers ? 'ABC' : '123'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
-      {/* PARTIE 2: CLAVIER (65% hauteur) */}
-      <View style={[styles.keyboard, { height: keyboardHeight }]}>
-        {/* Grille de touches */}
-        {(showNumbers ? numberKeys : letterKeys).map((row, rowIndex) => (
-          <View key={rowIndex} style={styles.keyRow}>
-            {row.map(key => (
+      {/* PARTIE 2: CLAVIER (65% hauteur) - CADRE BLANC */}
+      <View style={[styles.partieContainer, { height: keyboardHeight }]}>
+        <View style={styles.partieFrame}>
+          <View style={[styles.partieHeader, { backgroundColor: '#9C27B0' }]}>
+            <Text style={styles.partieTitle}>Partie 2</Text>
+          </View>
+          
+          <View style={styles.keyboardContent}>
+            {/* Grille de touches */}
+            {(showNumbers ? numberKeys : letterKeys).map((row, rowIndex) => (
+              <View key={rowIndex} style={styles.keyRow}>
+                {row.map(key => (
+                  <TouchableOpacity
+                    key={key}
+                    style={styles.keyButton}
+                    onPress={() => handleKeyPress(key)}
+                    activeOpacity={0.6}
+                  >
+                    <Text style={styles.keyText}>{key}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
+
+            {/* Ligne des touches spéciales */}
+            <View style={styles.specialRow}>
               <TouchableOpacity
-                key={key}
-                style={styles.keyButton}
-                onPress={() => handleKeyPress(key)}
+                style={[styles.specialButton, styles.spaceButton]}
+                onPress={() => handleKeyPress(' ')}
                 activeOpacity={0.6}
               >
-                <Text style={styles.keyText}>{key}</Text>
+                <Text style={styles.specialButtonText}>Espace</Text>
               </TouchableOpacity>
-            ))}
+
+              <TouchableOpacity
+                style={[styles.specialButton, styles.backspaceButton]}
+                onPress={handleBackspace}
+                activeOpacity={0.6}
+              >
+                <Text style={styles.specialButtonText}>⌫</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        ))}
-
-        {/* Ligne des touches spéciales */}
-        <View style={styles.specialRow}>
-          <TouchableOpacity
-            style={[styles.specialButton, styles.spaceButton]}
-            onPress={() => handleKeyPress(' ')}
-            activeOpacity={0.6}
-          >
-            <Text style={styles.specialButtonText}>Espace</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.specialButton, styles.backspaceButton]}
-            onPress={handleBackspace}
-            activeOpacity={0.6}
-          >
-            <Text style={styles.specialButtonText}>⌫</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
-      {/* PARTIE 3: VALIDATION (15% hauteur) */}
-      <View style={[styles.validation, { height: validationHeight }]}>
-        <TouchableOpacity
-          style={styles.validateButton}
-          onPress={handleValidate}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.validateButtonText}>✅ Valider</Text>
-        </TouchableOpacity>
+      {/* PARTIE 3: VALIDATION (15% hauteur) - CADRE BLEU */}
+      <View style={[styles.partieContainer, { height: validationHeight }]}>
+        <View style={styles.partieFrame}>
+          <View style={[styles.partieHeader, { backgroundColor: '#2196F3' }]}>
+            <Text style={styles.partieTitle}>Partie 3</Text>
+          </View>
+          
+          <View style={styles.validationContent}>
+            <TouchableOpacity
+              style={styles.validateButton}
+              onPress={handleValidate}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.validateButtonText}>✅ Valider</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -185,15 +209,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',
+    padding: 10,
   },
   
-  // PARTIE 1: EN-TÊTE
-  header: {
+  // CADRES COMMUNS POUR CHAQUE PARTIE
+  partieContainer: {
+    marginBottom: 10,
+  },
+  
+  partieFrame: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    borderWidth: 3,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    overflow: 'hidden',
+  },
+  
+  partieHeader: {
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 2,
+  },
+  
+  partieTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  
+  // PARTIE 1: EN-TÊTE - CADRE VERT
+  headerContent: {
+    flex: 1,
     backgroundColor: '#4CAF50',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    borderBottomWidth: 3,
-    borderBottomColor: '#388E3C',
   },
   
   titleBar: {
@@ -280,10 +335,12 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   
-  // PARTIE 2: CLAVIER
-  keyboard: {
+  // PARTIE 2: CLAVIER - CADRE BLANC
+  keyboardContent: {
+    flex: 1,
     padding: 20,
     justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
   },
   
   keyRow: {
@@ -295,7 +352,7 @@ const styles = StyleSheet.create({
   keyButton: {
     width: 50,
     height: 50,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 5,
@@ -353,14 +410,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   
-  // PARTIE 3: VALIDATION
-  validation: {
+  // PARTIE 3: VALIDATION - CADRE BLEU
+  validationContent: {
+    flex: 1,
     padding: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F1F3F4',
-    borderTopWidth: 2,
-    borderTopColor: '#E0E0E0',
+    backgroundColor: '#2196F3',
   },
   
   validateButton: {
