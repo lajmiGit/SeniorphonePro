@@ -15,7 +15,6 @@ export interface SystemInfoProps {
 
 export interface PhoneDisplayProps {
   phoneNumber: string;
-  onClear: () => void;
   onDeleteDigit: () => void;
   onCall?: (phoneNumber: string) => void;
 }

@@ -17,6 +17,7 @@ import {
 import * as Speech from 'expo-speech';
 
 // Déclaration des types globaux pour setTimeout et setInterval
+// Déclarations globales pour les fonctions manquantes
 declare global {
   function setTimeout(callback: (...args: any[]) => void, ms: number): number;
   function clearTimeout(id: number): void;
@@ -371,7 +372,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       // Lecture avec gestion d'erreur
       try {
         Speech.speak(message, speechConfig);
-      } catch (error) {
+      } catch {
         // Gestion silencieuse des erreurs
       }
     }, [currentTime]);
@@ -401,7 +402,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       // Lecture avec gestion d'erreur
       try {
         Speech.speak(message, speechConfig);
-      } catch (error) {
+      } catch {
         // Gestion silencieuse des erreurs
       }
     }, [networkLevel]);
@@ -434,7 +435,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       // Lecture avec gestion d'erreur
       try {
         Speech.speak(message, speechConfig);
-      } catch (error) {
+      } catch {
         // Gestion silencieuse des erreurs
       }
     }, [batteryLevel]);

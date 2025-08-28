@@ -86,11 +86,7 @@ export default function App() {
     }
   };
 
-  // Supprimer tout le numéro
-  const clearNumber = () => {
-    setPhoneNumber('');
-    Vibration.vibrate(100);
-  };
+
 
   const handleHomePress = () => {
     // Animation de clic pour le bouton accueil
@@ -294,7 +290,6 @@ export default function App() {
           <View style={[styles.section, styles.phoneSection]}>
             <PhoneDisplay
               phoneNumber={phoneNumber}
-              onClear={clearNumber}
               onDeleteDigit={deleteDigit}
             />
           </View>

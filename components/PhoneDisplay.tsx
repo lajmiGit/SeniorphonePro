@@ -11,6 +11,11 @@ import {
 } from 'react-native';
 import * as Speech from 'expo-speech';
 
+// Déclarations globales pour les fonctions manquantes
+declare global {
+  function setTimeout(callback: (...args: any[]) => void, ms: number): number;
+}
+
 const { width, height } = Dimensions.get('window');
 
 import { PhoneDisplayProps } from '../types';
