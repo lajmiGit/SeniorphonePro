@@ -14,29 +14,22 @@ const { width, height } = Dimensions.get('window');
 import { VirtualKeyboardProps } from '../types';
 
 /**
- * Clavier virtuel adapté aux seniors avec structure en 3 parties clairement définies
+ * Clavier virtuel simplifié et optimisé pour les seniors
  * 
- * STRUCTURE DE L'ÉCRAN :
+ * NOUVELLE STRUCTURE SIMPLIFIÉE :
  * ┌─────────────────────────────────────┐
- * │ PARTIE 1: EN-TÊTE (15% hauteur)    │
- * │ - Bouton fermer ❌                  │
- * │ - Affichage texte saisi             │
- * │ - Boutons ABC ↔ 123                 │
+ * │ PARTIE 1: EN-TÊTE (20% hauteur)    │
+ * │ - Titre + Bouton fermer            │
+ * │ - Texte saisi en cours             │
+ * │ - Boutons ABC/123                  │
  * ├─────────────────────────────────────┤
- * │ PARTIE 2: CLAVIER (75% hauteur)    │
- * │ - Lettres A-Z ou chiffres 1-9      │
- * │ - Touches spéciales (Espace, ⌫)    │
- * │ - Organisation en grille 6x5        │
+ * │ PARTIE 2: CLAVIER (65% hauteur)    │
+ * │ - Grille de touches 6x5            │
+ * │ - Touches Espace et Retour         │
  * ├─────────────────────────────────────┤
- * │ PARTIE 3: VALIDATION (10% hauteur) │
- * │ - Bouton "✅ Valider"               │
+ * │ PARTIE 3: VALIDATION (15% hauteur) │
+ * │ - Bouton Valider large             │
  * └─────────────────────────────────────┘
- * 
- * @param onKeyPress - Callback appelé quand une touche est pressée
- * @param onBackspace - Callback appelé pour effacer un caractère
- * @param onValidate - Callback appelé pour valider la saisie
- * @param onClose - Callback appelé pour fermer le clavier
- * @param currentText - Texte actuellement saisi
  */
 export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   onKeyPress,
@@ -47,45 +40,34 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 }) => {
   const [showNumbers, setShowNumbers] = useState(false);
 
-  // Définition des caractères du clavier - Lettres
-  const letterRows = [
+  // Configuration des touches
+  const letterKeys = [
     ['A', 'B', 'C', 'D', 'E', 'F'],
     ['G', 'H', 'I', 'J', 'K', 'L'],
     ['M', 'N', 'O', 'P', 'Q', 'R'],
     ['S', 'T', 'U', 'V', 'W', 'X'],
-    ['Y', 'Z'],
+    ['Y', 'Z']
   ];
 
-  // Définition des caractères du clavier - Chiffres et caractères spéciaux
-  const numberRows = [
+  const numberKeys = [
     ['1', '2', '3', '4', '5', '6'],
     ['7', '8', '9', '0', '-', '_'],
     ['@', '.', ',', '!', '?', '&'],
     ['(', ')', '[', ']', '{', '}'],
-    ['#', '$', '%', '+', '=', '/'],
+    ['#', '$', '%', '+', '=', '/']
   ];
 
-  const keyboardRows = showNumbers ? numberRows : letterRows;
-
-  // CALCULS DYNAMIQUES POUR LA RESPONSIVITÉ
-  // Structure en 3 parties avec pourcentages clairs :
-  // Partie 1: En-tête (15% de la hauteur)
-  // Partie 2: Clavier principal (75% de la hauteur - flexible)
-  // Partie 3: Bouton validation (10% de la hauteur)
+  // Dimensions calculées
+  const headerHeight = height * 0.20;      // 20% - En-tête
+  const keyboardHeight = height * 0.65;    // 65% - Clavier
+  const validationHeight = height * 0.15;  // 15% - Validation
   
-  const headerHeight = height * 0.15;        // 15% - En-tête fixe
-  const validationHeight = height * 0.10;    // 10% - Bouton validation
-  const keyboardHeight = height * 0.75;      // 75% - Clavier principal (flexible)
-  
-  // Taille des touches basée sur l'espace disponible
   const keySize = Math.min(
-    (width - 40) / 6,           // Largeur : 6 touches par ligne
-    keyboardHeight / 8           // Hauteur : 8 rangées maximum
+    (width - 60) / 6,        // 6 touches par ligne avec marges
+    keyboardHeight / 7        // 7 rangées maximum
   );
-  
-  const keySpacing = keySize * 0.1;
-  const keyboardPadding = width * 0.05;
 
+  // Gestion des interactions
   const handleKeyPress = (key: string) => {
     Vibration.vibrate(50);
     onKeyPress(key);
@@ -106,245 +88,93 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
     onClose();
   };
 
+  const toggleMode = () => {
+    Vibration.vibrate(50);
+    setShowNumbers(!showNumbers);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* PARTIE 1: EN-TÊTE (15% de la hauteur) */}
+      {/* PARTIE 1: EN-TÊTE (20% hauteur) */}
       <View style={[styles.header, { height: headerHeight }]}>
-        {/* Bouton fermer en haut à droite */}
-        <View style={styles.headerTop}>
+        {/* Barre de titre avec bouton fermer */}
+        <View style={styles.titleBar}>
+          <Text style={styles.title}>Clavier Virtuel</Text>
           <TouchableOpacity
-            style={[
-              styles.closeButton,
-              { width: keySize * 0.8, height: keySize * 0.8 },
-            ]}
+            style={styles.closeButton}
             onPress={handleClose}
             activeOpacity={0.7}
           >
-            <Text style={[styles.closeButtonText, { fontSize: keySize * 0.3 }]}>
-              ❌
-            </Text>
+            <Text style={styles.closeButtonText}>✕</Text>
           </TouchableOpacity>
         </View>
 
         {/* Affichage du texte saisi */}
         <View style={styles.textDisplay}>
-          <Text
-            style={[
-              styles.currentTextLabel,
-              { fontSize: Math.max(16, width * 0.04) },
-            ]}
-          >
-            Texte saisi :
-          </Text>
-          <Text
-            style={[
-              styles.currentText,
-              { fontSize: Math.max(20, width * 0.05) },
-            ]}
-          >
+          <Text style={styles.textLabel}>Texte saisi :</Text>
+          <Text style={styles.textValue}>
             {currentText || 'Aucun texte'}
           </Text>
         </View>
 
-        {/* Boutons de basculement ABC/123 */}
-        <View
-          style={[
-            styles.toggleContainer,
-            {
-              padding: keySize * 0.15,
-              borderRadius: keySize * 0.2,
-            },
-          ]}
+        {/* Bouton de basculement ABC/123 */}
+        <TouchableOpacity
+          style={[styles.modeButton, showNumbers && styles.modeButtonActive]}
+          onPress={toggleMode}
+          activeOpacity={0.7}
         >
-          <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              !showNumbers && styles.toggleButtonActive,
-              {
-                paddingVertical: keySize * 0.12,
-                paddingHorizontal: keySize * 0.2,
-                borderRadius: keySize * 0.15,
-                marginHorizontal: keySize * 0.05,
-              },
-            ]}
-            onPress={() => setShowNumbers(false)}
-            activeOpacity={0.7}
-          >
-            <Text
-              style={[
-                styles.toggleButtonText,
-                !showNumbers && styles.toggleButtonTextActive,
-                { fontSize: Math.max(18, keySize * 0.25) },
-              ]}
-            >
-              ABC
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.toggleButton,
-              showNumbers && styles.toggleButtonActive,
-              {
-                paddingVertical: keySize * 0.12,
-                paddingHorizontal: keySize * 0.2,
-                borderRadius: keySize * 0.15,
-                marginHorizontal: keySize * 0.05,
-              },
-            ]}
-            onPress={() => setShowNumbers(true)}
-            activeOpacity={0.7}
-          >
-            <Text
-              style={[
-                styles.toggleButtonText,
-                showNumbers && styles.toggleButtonTextActive,
-                { fontSize: Math.max(18, keySize * 0.25) },
-              ]}
-            >
-              123
-            </Text>
-          </TouchableOpacity>
-        </View>
+          <Text style={[styles.modeButtonText, showNumbers && styles.modeButtonTextActive]}>
+            {showNumbers ? 'ABC' : '123'}
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {/* PARTIE 2: CLAVIER PRINCIPAL (75% de la hauteur - flexible) */}
-      <View 
-        style={[
-          styles.keyboardContainer, 
-          { 
-            padding: keyboardPadding,
-            height: keyboardHeight,
-            justifyContent: 'center'
-          }
-        ]}
-      >
-        {keyboardRows.map((row, rowIndex) => (
-          <View
-            key={rowIndex}
-            style={[styles.keyboardRow, { marginBottom: keySpacing }]}
-          >
+      {/* PARTIE 2: CLAVIER (65% hauteur) */}
+      <View style={[styles.keyboard, { height: keyboardHeight }]}>
+        {/* Grille de touches */}
+        {(showNumbers ? numberKeys : letterKeys).map((row, rowIndex) => (
+          <View key={rowIndex} style={styles.keyRow}>
             {row.map(key => (
               <TouchableOpacity
                 key={key}
-                style={[
-                  styles.keyButton,
-                  {
-                    width: keySize,
-                    height: keySize,
-                    marginHorizontal: keySpacing / 2,
-                    borderRadius: keySize * 0.2,
-                    borderWidth: Math.max(3, keySize * 0.05),
-                    elevation: Math.max(8, keySize * 0.12),
-                    shadowRadius: Math.max(8, keySize * 0.12),
-                  },
-                ]}
+                style={styles.keyButton}
                 onPress={() => handleKeyPress(key)}
                 activeOpacity={0.6}
               >
-                <Text
-                  style={[
-                    styles.keyText,
-                    { fontSize: Math.max(24, keySize * 0.4) },
-                  ]}
-                >
-                  {key}
-                </Text>
+                <Text style={styles.keyText}>{key}</Text>
               </TouchableOpacity>
             ))}
           </View>
         ))}
 
-        {/* Ligne des touches spéciales responsive */}
-        <View style={[styles.specialRow, { marginTop: keySpacing * 1.5 }]}>
+        {/* Ligne des touches spéciales */}
+        <View style={styles.specialRow}>
           <TouchableOpacity
-            style={[
-              styles.specialButton,
-              styles.spaceButton,
-              {
-                height: keySize,
-                width: keySize * 4,
-                borderRadius: keySize * 0.2,
-                marginRight: keySpacing * 2,
-                borderWidth: Math.max(3, keySize * 0.05),
-                elevation: Math.max(8, keySize * 0.12),
-                shadowRadius: Math.max(8, keySize * 0.12),
-              },
-            ]}
+            style={[styles.specialButton, styles.spaceButton]}
             onPress={() => handleKeyPress(' ')}
             activeOpacity={0.6}
           >
-            <Text
-              style={[
-                styles.specialButtonText,
-                { fontSize: Math.max(18, keySize * 0.25) },
-              ]}
-            >
-              Espace
-            </Text>
+            <Text style={styles.specialButtonText}>Espace</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.specialButton,
-              styles.backspaceButton,
-              {
-                height: keySize,
-                width: keySize * 1.5,
-                borderRadius: keySize * 0.2,
-                borderWidth: Math.max(3, keySize * 0.05),
-                elevation: Math.max(8, keySize * 0.12),
-                shadowRadius: Math.max(8, keySize * 0.12),
-              },
-            ]}
+            style={[styles.specialButton, styles.backspaceButton]}
             onPress={handleBackspace}
             activeOpacity={0.6}
           >
-            <Text
-              style={[
-                styles.specialButtonText,
-                { fontSize: Math.max(20, keySize * 0.3) },
-              ]}
-            >
-              ⌫
-            </Text>
+            <Text style={styles.specialButtonText}>⌫</Text>
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* PARTIE 3: BOUTON DE VALIDATION (10% de la hauteur) */}
-      <View 
-        style={[
-          styles.validationContainer, 
-          { 
-            padding: keyboardPadding,
-            height: validationHeight,
-            justifyContent: 'center'
-          }
-        ]}
-      >
+      {/* PARTIE 3: VALIDATION (15% hauteur) */}
+      <View style={[styles.validation, { height: validationHeight }]}>
         <TouchableOpacity
-          style={[
-            styles.validateButton,
-            {
-              height: keySize * 1.2,
-              borderRadius: keySize * 0.2,
-              borderWidth: Math.max(4, keySize * 0.06),
-              elevation: Math.max(12, keySize * 0.18),
-              shadowRadius: Math.max(10, keySize * 0.15),
-            },
-          ]}
+          style={styles.validateButton}
           onPress={handleValidate}
           activeOpacity={0.7}
         >
-          <Text
-            style={[
-              styles.validateButtonText,
-              { fontSize: Math.max(24, keySize * 0.35) },
-            ]}
-          >
-            ✅ Valider
-          </Text>
+          <Text style={styles.validateButtonText}>✅ Valider</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -354,178 +184,207 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F8F9FA',
   },
+  
+  // PARTIE 1: EN-TÊTE
   header: {
     backgroundColor: '#4CAF50',
     paddingHorizontal: 20,
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(255, 255, 255, 0.1)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 18,
-    elevation: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.6,
-    shadowRadius: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 3,
+    borderBottomColor: '#388E3C',
   },
-  headerTop: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 10,
-  },
-  closeButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
-  },
-  closeButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  textDisplay: {
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  currentTextLabel: {
-    color: '#FFFFFF',
-    opacity: 0.9,
-    marginBottom: 5,
-    fontWeight: 'bold',
-  },
-  currentText: {
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
-  },
-  toggleContainer: {
+  
+  titleBar: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.4)',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
   },
-  toggleButton: {
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  toggleButtonActive: {
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-  },
-  toggleButtonText: {
+  
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
-    color: 'rgba(255, 255, 255, 0.7)',
-  },
-  toggleButtonTextActive: {
     color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  keyboardContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  keyboardRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  keyButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  
+  closeButton: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.9)',
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(255, 255, 255, 0.2)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
+  
+  closeButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  
+  textDisplay: {
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  
+  textLabel: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    opacity: 0.9,
+    marginBottom: 5,
+  },
+  
+  textValue: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    minHeight: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  
+  modeButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    alignSelf: 'center',
+  },
+  
+  modeButtonActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+  },
+  
+  modeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  
+  modeButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  
+  // PARTIE 2: CLAVIER
+  keyboard: {
+    padding: 20,
+    justifyContent: 'center',
+  },
+  
+  keyRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 15,
+  },
+  
+  keyButton: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  
   keyText: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333333',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
   },
+  
   specialRow: {
     flexDirection: 'row',
     justifyContent: 'center',
+    marginTop: 20,
   },
+  
   specialButton: {
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 10,
+    borderRadius: 12,
+    borderWidth: 2,
+    elevation: 4,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.5,
-    borderColor: 'rgba(255, 255, 255, 0.9)',
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(255, 255, 255, 0.2)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
+  
   spaceButton: {
+    width: 200,
     backgroundColor: '#FFC107',
+    borderColor: '#FFA000',
   },
+  
   backspaceButton: {
+    width: 80,
     backgroundColor: '#F44336',
+    borderColor: '#D32F2F',
   },
+  
   specialButtonText: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.6)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
   },
-  validationContainer: {
+  
+  // PARTIE 3: VALIDATION
+  validation: {
+    padding: 20,
+    justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#F1F3F4',
+    borderTopWidth: 2,
+    borderTopColor: '#E0E0E0',
   },
+  
   validateButton: {
     width: '80%',
+    height: 60,
     backgroundColor: '#4CAF50',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 15,
+    borderWidth: 3,
+    borderColor: '#388E3C',
+    elevation: 6,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 8,
-    },
-    shadowOpacity: 0.6,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(255, 255, 255, 0.1)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
+  
   validateButtonText: {
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    textShadowColor: 'rgba(0, 0, 0, 0.7)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
