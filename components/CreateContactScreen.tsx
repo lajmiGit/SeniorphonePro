@@ -35,6 +35,7 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
   const [activeField, setActiveField] = useState<
     'firstName' | 'lastName' | 'phoneNumber' | null
   >(null);
+  const [currentText, setCurrentText] = useState('');
 
   const handleSave = async () => {
     if (!firstName.trim() && !lastName.trim()) {
@@ -98,37 +99,47 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
   };
 
   const handleKeyboardKeyPress = (key: string) => {
-    if (activeField === 'firstName') {
-      setFirstName(prev => prev + key);
-    } else if (activeField === 'lastName') {
-      setLastName(prev => prev + key);
-    } else if (activeField === 'phoneNumber') {
-      setPhoneNumber(prev => prev + key);
-    }
+    setCurrentText(prev => prev + key);
   };
 
   const handleKeyboardBackspace = () => {
-    if (activeField === 'firstName') {
-      setFirstName(prev => prev.slice(0, -1));
-    } else if (activeField === 'lastName') {
-      setLastName(prev => prev.slice(0, -1));
-    } else if (activeField === 'phoneNumber') {
-      setPhoneNumber(prev => prev.slice(0, -1));
-    }
+    setCurrentText(prev => prev.slice(0, -1));
   };
 
   const handleKeyboardValidate = () => {
+    // Sauvegarder le texte saisi avant de fermer
+    if (activeField && currentText) {
+      if (activeField === 'firstName') {
+        setFirstName(currentText);
+      } else if (activeField === 'lastName') {
+        setLastName(currentText);
+      } else if (activeField === 'phoneNumber') {
+        setPhoneNumber(currentText);
+      }
+    }
+    
     setShowKeyboard(false);
     setActiveField(null);
+    setCurrentText(''); // Réinitialiser le texte
   };
 
   const handleKeyboardClose = () => {
+    // Fermer le clavier SANS sauvegarder le texte
     setShowKeyboard(false);
     setActiveField(null);
+    setCurrentText(''); // Réinitialiser le texte
   };
 
   const openKeyboard = (field: 'firstName' | 'lastName' | 'phoneNumber') => {
     setActiveField(field);
+    // Initialiser currentText avec la valeur actuelle du champ
+    if (field === 'firstName') {
+      setCurrentText(firstName);
+    } else if (field === 'lastName') {
+      setCurrentText(lastName);
+    } else if (field === 'phoneNumber') {
+      setCurrentText(phoneNumber);
+    }
     setShowKeyboard(true);
   };
 
@@ -157,6 +168,7 @@ export const CreateContactScreen: React.FC<CreateContactScreenProps> = ({
                   ? phoneNumber
                   : ''
           }
+          activeField={activeField}
         />
       ) : (
         <View style={styles.mainContainer}>

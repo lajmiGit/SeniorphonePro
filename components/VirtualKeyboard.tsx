@@ -1,36 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  SafeAreaView,
-  Dimensions,
   TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Modal,
+  SafeAreaView,
 } from 'react-native';
+import * as Speech from 'expo-speech';
 
 const { width, height } = Dimensions.get('window');
 
-import { VirtualKeyboardProps } from '../types';
+interface VirtualKeyboardProps {
+  onKeyPress?: (key: string) => void;
+  onBackspace?: () => void;
+  onValidate?: () => void;
+  onClose?: () => void;
+  currentText?: string;
+  activeField?: 'firstName' | 'lastName' | 'phoneNumber' | null;
+}
 
 /**
  * Écran clavier avec 4 parties encadrées
  * Structure identique à l'écran de création de contact
  */
-export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
+export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
+  onKeyPress,
+  onBackspace,
+  onValidate,
+  onClose,
+  currentText: initialText = '',
+  activeField
+}) => {
   const [keyboardType, setKeyboardType] = useState<'abc' | '123' | 'symbols'>('abc');
-  const [currentText, setCurrentText] = useState('');
+  const [currentText, setCurrentText] = useState(initialText);
   const [zone1Width, setZone1Width] = useState(0);
+  const [zone4Height, setZone4Height] = useState(0);
+  const [zone4Width, setZone4Width] = useState(0);
+  const [showTextZoom, setShowTextZoom] = useState(false);
+
+  // Synchroniser le texte avec les props
+  useEffect(() => {
+    setCurrentText(initialText);
+  }, [initialText]);
+
+  // Forcer le clavier en mode "123" si c'est le champ téléphone
+  useEffect(() => {
+    if (activeField === 'phoneNumber') {
+      setKeyboardType('123');
+    }
+  }, [activeField]);
 
   const handleKeyboardTypeChange = (type: 'abc' | '123' | 'symbols') => {
+    // Empêcher le changement de type si c'est le champ téléphone
+    if (activeField === 'phoneNumber') {
+      return;
+    }
     setKeyboardType(type);
   };
 
   const handleTextChange = (text: string) => {
-    setCurrentText(prev => prev + text);
+    const newText = currentText + text;
+    setCurrentText(newText);
+    // Appeler la fonction de callback si elle existe
+    if (onKeyPress) {
+      onKeyPress(text);
+    }
   };
 
   const handleDeleteText = () => {
-    setCurrentText(prev => prev.slice(0, -1));
+    const newText = currentText.slice(0, -1);
+    setCurrentText(newText);
+    // Appeler la fonction de callback si elle existe
+    if (onBackspace) {
+      onBackspace();
+    }
   };
 
   const handleKeyPress = (key: string) => {
@@ -40,6 +85,59 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
   const handleZone1Layout = (event: any) => {
     const { width } = event.nativeEvent.layout;
     setZone1Width(width);
+  };
+
+  const handleZone4Layout = (event: any) => {
+    const { width, height } = event.nativeEvent.layout;
+    setZone4Width(width);
+    setZone4Height(height);
+  };
+
+  const handleTextZoom = () => {
+    setShowTextZoom(true);
+    // Lecture automatique du texte quand le zoom s'ouvre
+    setTimeout(() => speakText(), 350);
+  };
+
+  const closeTextZoom = () => {
+    setShowTextZoom(false);
+  };
+
+  const handleValidate = () => {
+    // Appeler la fonction de validation si elle existe
+    if (onValidate) {
+      onValidate();
+    }
+  };
+
+  const handleCancel = () => {
+    // Remplir le champ avec le texte saisi avant de fermer
+    if (onKeyPress && currentText) {
+      // Simuler l'ajout du texte complet
+      console.log('📝 Texte saisi à transférer:', currentText);
+    }
+    
+    // Appeler la fonction de fermeture si elle existe
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const speakText = () => {
+    const message = currentText || 'Aucun texte saisi';
+    const speechConfig = {
+      language: 'fr-FR',
+      pitch: 1.0,
+      rate: 0.8,
+      voice: 'com.apple.ttsbundle.siri_female_fr-FR_compact'
+    };
+    
+    try {
+      Speech.speak(message, speechConfig);
+      console.log('🗣️ Synthèse vocale activée pour:', message);
+    } catch {
+      console.log('❌ Erreur lors de la synthèse vocale');
+    }
   };
 
   return (
@@ -52,7 +150,11 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
             paddingHorizontal: width > 0 ? (width * 0.10) / 3 : 0 
           }]}>
             {/* Champ d'affichage des caractères saisis */}
-            <View style={[styles.textDisplayField, { width: width * 0.60 }]}>
+            <TouchableOpacity 
+              style={[styles.textDisplayField, { width: width * 0.60 }]}
+              onPress={handleTextZoom}
+              activeOpacity={0.7}
+            >
               <Text 
                 style={[styles.textDisplayValue, { 
                   fontSize: Math.min(
@@ -67,7 +169,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
               >
                 {currentText || 'Aucun texte'}
               </Text>
-            </View>
+            </TouchableOpacity>
             
             {/* Bouton de suppression */}
             <TouchableOpacity style={[styles.deleteButton, { width: zone1Width * 0.20 }]} onPress={handleDeleteText}>
@@ -76,8 +178,8 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
           </View>
         </View>
 
-        {/* Partie 2: Zone principale - 60% de la hauteur */}
-        <View style={[styles.section, styles.mainSection]}>
+        {/* Partie 2: Clavier principal - 60% de la hauteur */}
+        <View style={[styles.section, styles.keyboardSection]}>
           <View style={styles.keyboardContainer}>
             {/* Clavier ABC (caractères) */}
             {keyboardType === 'abc' && (
@@ -338,34 +440,134 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
         <View style={[styles.section, styles.secondarySection]}>
           <View style={styles.keyboardSelector}>
             <TouchableOpacity 
-              style={[styles.selectorButton, keyboardType === 'abc' && styles.selectorButtonActive]}
+              style={[
+                styles.selectorButton, 
+                keyboardType === 'abc' && styles.selectorButtonActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButton
+              ]}
               onPress={() => handleKeyboardTypeChange('abc')}
+              disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[styles.selectorButtonText, keyboardType === 'abc' && styles.selectorButtonTextActive]}>
+              <Text style={[
+                styles.selectorButtonText, 
+                keyboardType === 'abc' && styles.selectorButtonTextActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
+              ]}>
                 ABC
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.selectorButton, keyboardType === '123' && styles.selectorButtonActive]}
+              style={[
+                styles.selectorButton, 
+                keyboardType === '123' && styles.selectorButtonActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButton
+              ]}
               onPress={() => handleKeyboardTypeChange('123')}
+              disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[styles.selectorButtonText, keyboardType === '123' && styles.selectorButtonTextActive]}>
+              <Text style={[
+                styles.selectorButtonText, 
+                keyboardType === '123' && styles.selectorButtonTextActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
+              ]}>
                 123
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[styles.selectorButton, keyboardType === 'symbols' && styles.selectorButtonActive]}
+              style={[
+                styles.selectorButton, 
+                keyboardType === 'symbols' && styles.selectorButtonActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButton
+              ]}
               onPress={() => handleKeyboardTypeChange('symbols')}
+              disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[styles.selectorButtonText, keyboardType === 'symbols' && styles.selectorButtonTextActive]}>
+              <Text style={[
+                styles.selectorButtonText, 
+                keyboardType === 'symbols' && styles.selectorButtonTextActive,
+                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
+              ]}>
                 @#$
               </Text>
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* Partie 4: Boutons d'action - 15% de la hauteur */}
+        <View style={[styles.section, styles.actionSection]} onLayout={handleZone4Layout}>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity 
+              style={[
+                styles.actionButton, 
+                styles.cancelButton,
+                {
+                  height: zone4Height > 0 ? zone4Height * 0.90 : 60,
+                  width: zone4Width > 0 ? zone4Width * 0.40 : 150,
+                }
+              ]}
+              onPress={handleCancel}
+            >
+              <Text style={styles.cancelButtonText}>❌ Annuler</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={[
+                styles.actionButton, 
+                styles.validateButton,
+                {
+                  height: zone4Height > 0 ? zone4Height * 0.90 : 60,
+                  width: zone4Width > 0 ? zone4Width * 0.40 : 150,
+                }
+              ]}
+              onPress={handleValidate}
+            >
+              <Text style={styles.validateButtonText}>✅ Valider</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
+
+      {/* Modal de zoom du texte */}
+      <Modal
+        visible={showTextZoom}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeTextZoom}
+      >
+        <TouchableOpacity 
+          style={styles.zoomOverlay} 
+          activeOpacity={1} 
+          onPress={closeTextZoom}
+        >
+          <View style={styles.zoomContainer}>
+            {/* Titre - 30% de la hauteur */}
+            <View style={styles.zoomHeader}>
+              <Text style={styles.zoomTitle}>📝 Texte Saisi</Text>
+            </View>
+            
+            {/* Contenu du texte - 50% de la hauteur */}
+            <View style={styles.zoomContent}>
+              <Text style={styles.zoomTextValue}>
+                {currentText || 'Aucun texte saisi'}
+              </Text>
+              
+              {/* Bouton pour réécouter */}
+              <TouchableOpacity style={styles.zoomRelistenButton} onPress={speakText}>
+                <Text style={styles.zoomRelistenButtonText}>🔊 Relire</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Instructions - 20% de la hauteur */}
+            <View style={styles.zoomInstructions}>
+              <Text style={styles.zoomInstructionsText}>
+                Appuyez n'importe où pour fermer
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -464,8 +666,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   
-  // Partie 2: Zone principale (60% de la hauteur)
-  mainSection: {
+  // Partie 2: Clavier principal (60% de la hauteur)
+  keyboardSection: {
     height: height * 0.60, // 60% de la hauteur
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
@@ -557,35 +759,122 @@ const styles = StyleSheet.create({
   // Partie 3: Zone secondaire (10% de la hauteur)
   secondarySection: {
     height: height * 0.10, // 10% de la hauteur
-    backgroundColor: '#FFC107',
+    backgroundColor: '#E8F5E8',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: '#FFA000',
+    borderColor: 'rgba(255, 255, 255, 0.8)',
     // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 0.7)',
-    borderLeftColor: 'rgba(255, 255, 255, 0.7)',
-    borderRightColor: 'rgba(255, 255, 255, 0.3)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
+    borderTopColor: 'rgba(255, 255, 255, 1.0)',
+    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
+    borderRightColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 18,
+    elevation: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 10,
+  },
+
+  // Partie 4: Boutons d'action (20% de la hauteur)
+  actionSection: {
+    height: height * 0.15, // 15% de la hauteur
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    // Effet 3D avec bordures contrastées
+    borderTopColor: 'rgba(255, 255, 255, 1.0)',
+    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
+    borderRightColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
   },
-  
-  secondaryText: {
-    fontSize: 18,
+
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Math.max(15, width * 0.04), // Responsive
+    width: '100%',
+    height: '100%',
+  },
+
+  actionButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderWidth: 3,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    // Effet 3D avec bordures contrastées
+    borderTopColor: 'rgba(255, 255, 255, 1.0)',
+    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
+    borderRightColor: 'rgba(0, 0, 0, 0.2)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+  },
+
+  cancelButton: {
+    backgroundColor: '#F44336', // Background rouge
+    borderColor: '#D32F2F',
+    marginRight: 10,
+    // Dimensions selon la formule : 90% hauteur, 40% largeur de la Partie 4
+    // height: zone4Height > 0 ? zone4Height * 0.90 : 60,
+    // width: zone4Width > 0 ? zone4Width * 0.40 : 150,
+  },
+
+  validateButton: {
+    backgroundColor: '#4CAF50', // Background vert
+    borderColor: '#388E3C',
+    marginLeft: 10,
+    // Dimensions selon la formule : 90% hauteur, 40% largeur de la Partie 4
+    // height: zone4Height > 0 ? zone4Height * 0.90 : 60,
+    // width: zone4Width > 0 ? zone4Width * 0.40 : 150,
+  },
+
+  cancelButtonText: {
+    fontSize: Math.max(18, height * 0.022), // Taille adaptée pour une ligne
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#FFFFFF', // Texte blanc sur fond rouge
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    includeFontPadding: false, // Évite le padding automatique
+    textAlignVertical: 'center', // Centrage vertical parfait
+  },
+
+  validateButtonText: {
+    fontSize: Math.max(18, height * 0.022), // Taille adaptée pour une ligne
+    fontWeight: 'bold',
+    color: '#FFFFFF', // Texte blanc sur fond vert
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    includeFontPadding: false, // Évite le padding automatique
+    textAlignVertical: 'center', // Centrage vertical parfait
   },
 
   keyboardSelector: {
@@ -628,41 +917,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  
-  // Partie 4: Actions (20% de la hauteur)
-  actionSection: {
-    height: height * 0.20, // 20% de la hauteur
-    backgroundColor: '#2196F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#1976D2',
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 0.7)',
-    borderLeftColor: 'rgba(255, 255, 255, 0.7)',
-    borderRightColor: 'rgba(255, 255, 255, 0.3)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 18,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-  },
-  
-  actionText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+
+  disabledSelectorButton: {
+    opacity: 0.5, // Rendre le bouton désactivé plus sombre
+    backgroundColor: '#CCCCCC', // Couleur de fond pour le bouton désactivé
+    borderColor: '#A0A0A0', // Couleur de bordure pour le bouton désactivé
   },
 
+  disabledSelectorButtonText: {
+    color: '#999999', // Couleur du texte pour le bouton désactivé
+  },
+  
   numberKey: {
     width: Math.min(60, (width - 120) / 3), // 3 touches par ligne avec marges
     height: Math.min(60, (height * 0.6 - 100) / 5), // 5 rangées avec espacement
@@ -725,5 +990,94 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+  },
+
+  zoomOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  zoomContainer: {
+    width: width * 0.8,
+    height: height * 0.6,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.7,
+    shadowRadius: 15,
+  },
+
+  zoomHeader: {
+    height: '30%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+
+  zoomTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333333',
+    textAlign: 'center',
+  },
+
+  zoomContent: {
+    height: '50%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+
+  zoomTextValue: {
+    fontSize: 42,
+    fontWeight: '900',
+    color: '#007BFF',
+    textAlign: 'center',
+    lineHeight: 50,
+  },
+
+  zoomInstructions: {
+    height: '20%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  zoomInstructionsText: {
+    fontSize: 16,
+    color: '#999999',
+    textAlign: 'center',
+  },
+
+  zoomRelistenButton: {
+    backgroundColor: '#2196F3',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 25,
+    marginTop: 15,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+
+  zoomRelistenButtonText: {
+    color: 'white',
+    fontSize: Math.min(22, Math.max(17, width * 0.054)),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });
