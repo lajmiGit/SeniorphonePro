@@ -25,7 +25,6 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
   const [showTimeZoom, setShowTimeZoom] = useState(false);
   const [showNetworkZoom, setShowNetworkZoom] = useState(false);
   const [showBatteryZoom, setShowBatteryZoom] = useState(false);
-
   const zoomScale = useRef(new Animated.Value(0)).current;
   const zoomOpacity = useRef(new Animated.Value(0)).current;
   const networkZoomScale = useRef(new Animated.Value(0)).current;
@@ -98,7 +97,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
       }),
     ]).start();
     
-    // Lecture automatique des informations réseau
+    // Lecture automatique des informations de réseau
     setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
   };
 
@@ -425,37 +424,54 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
             ]}
           >
             <View style={styles.zoomTimeCard}>
-              <Text style={styles.zoomTimeText}>
-                {currentTime.toLocaleTimeString('fr-FR', { 
-                  hour: '2-digit', 
-                  minute: '2-digit',
-                  second: '2-digit'
-                })}
-              </Text>
-              <Text style={styles.zoomDateText}>
-                {currentTime.toLocaleDateString('fr-FR', { 
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </Text>
-              <View style={styles.zoomDivider} />
-              
-              {/* Bouton de lecture vocale */}
-              <TouchableOpacity 
-                style={styles.zoomVoiceButton}
-                onPress={speakTime}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.zoomVoiceButtonText}>
-                  🔊 Relire l'heure
+              {/* Section Titre/Heure (20% de la hauteur) */}
+              <View style={styles.zoomTimeTitleSection}>
+                <Text style={styles.zoomTimeIcon}>🕐</Text>
+                <Text style={styles.zoomTimeText}>
+                  {currentTime.toLocaleTimeString('fr-FR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                  })}
                 </Text>
-              </TouchableOpacity>
+              </View>
               
-              <Text style={styles.zoomInfoText}>
-                Appuyez n'importe où pour fermer
-              </Text>
+              {/* Section Date complète (50% de la hauteur) */}
+              <View style={styles.zoomTimeDateSection}>
+                <Text style={styles.zoomDateText}>
+                  {currentTime.toLocaleDateString('fr-FR', { 
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </Text>
+              </View>
+              
+              {/* Section Séparateur (10% de la hauteur) */}
+              <View style={styles.zoomTimeSeparatorSection}>
+                <View style={styles.zoomDivider} />
+              </View>
+              
+              {/* Section Bouton relire (15% de la hauteur) */}
+              <View style={styles.zoomTimeButtonSection}>
+                <TouchableOpacity 
+                  style={styles.zoomVoiceButton}
+                  onPress={speakTime}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.zoomVoiceButtonText}>
+                    🔊 Relire l'heure
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              
+              {/* Section Instructions (15% de la hauteur) */}
+              <View style={styles.zoomTimeCloseSection}>
+                <Text style={styles.zoomInfoText}>
+                  Appuyez n'importe où pour fermer
+                </Text>
+              </View>
             </View>
           </Animated.View>
         </TouchableOpacity>
@@ -483,39 +499,42 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
             ]}
           >
             <View style={styles.zoomNetworkCard}>
-              <Text style={styles.zoomNetworkTitle}>
-                📶
-              </Text>
-              
-              {/* Barres de réseau 3D parfaitement centrées */}
-              <View style={styles.zoomNetworkVisual}>
-                <View style={styles.zoomNetworkBars}>
-                  {Array.from({ length: 5 }, (_, i) => {
-                    const isActive = i < networkLevel;
-                    const barHeight = 20 + ((i + 1) * 8); // Même logique que dans l'écran phone
-                    const opacity = isActive ? 1 : 0.15;
-                    const color = getNetworkColor(networkLevel);
-                    
-                    return (
-                      <View 
-                        key={i} 
-                        style={[
-                          styles.zoomNetworkBar3D, 
-                          { 
-                            height: barHeight,
-                            backgroundColor: color,
-                            opacity: opacity,
-                            transform: [{ scaleY: isActive ? 1 : 0.2 }],
-                          }
-                        ]} 
-                      />
-                    );
-                  })}
+              {/* Section Titre/Réseau (40% de la largeur) */}
+              <View style={styles.zoomNetworkTitleSection}>
+                <Text style={styles.zoomNetworkTitle}>
+                  📶
+                </Text>
+                
+                {/* Barres de réseau 3D parfaitement centrées */}
+                <View style={styles.zoomNetworkVisual}>
+                  <View style={styles.zoomNetworkBars}>
+                    {Array.from({ length: 5 }, (_, i) => {
+                      const isActive = i < networkLevel;
+                      const barHeight = 20 + ((i + 1) * 8); // Même logique que dans l'écran phone
+                      const opacity = isActive ? 1 : 0.15;
+                      const color = getNetworkColor(networkLevel);
+                      
+                      return (
+                        <View 
+                          key={i} 
+                          style={[
+                            styles.zoomNetworkBar3D, 
+                            { 
+                              height: barHeight,
+                              backgroundColor: color,
+                              opacity: opacity,
+                              transform: [{ scaleY: isActive ? 1 : 0.2 }],
+                            }
+                          ]} 
+                        />
+                      );
+                    })}
+                  </View>
                 </View>
               </View>
               
-              {/* Qualité du réseau parfaitement centrée */}
-              <View style={styles.zoomNetworkQuality}>
+              {/* Section Qualité du réseau (40% de la hauteur) */}
+              <View style={styles.zoomNetworkQualitySection}>
                 <Text style={[styles.zoomNetworkQualityText, { color: getNetworkColor(networkLevel) }]}>
                   {networkLevel >= 4 ? 'Excellent' : 
                    networkLevel >= 3 ? 'Bon' : 
@@ -523,22 +542,25 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
                 </Text>
               </View>
               
-              <View style={styles.zoomDivider} />
+              {/* Section Bouton relire (25% de la hauteur) */}
+              <View style={styles.zoomNetworkButtonSection}>
+                <TouchableOpacity 
+                  style={styles.zoomVoiceButton}
+                  onPress={speakNetwork}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.zoomVoiceButtonText}>
+                    🔊 Relire le réseau
+                  </Text>
+                </TouchableOpacity>
+              </View>
               
-              {/* Bouton de lecture vocale */}
-              <TouchableOpacity 
-                style={styles.zoomVoiceButton}
-                onPress={speakNetwork}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.zoomVoiceButtonText}>
-                  🔊 Relire le réseau
+              {/* Section Instructions (25% de la hauteur) */}
+              <View style={styles.zoomNetworkCloseSection}>
+                <Text style={styles.zoomInfoText}>
+                  Appuyez n'importe où pour fermer
                 </Text>
-              </TouchableOpacity>
-              
-              <Text style={styles.zoomInfoText}>
-                Appuyez n'importe où pour fermer
-              </Text>
+              </View>
             </View>
           </Animated.View>
         </TouchableOpacity>
@@ -808,8 +830,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     includeFontPadding: false, // Évite le padding automatique
     textAlignVertical: 'center', // Centrage vertical parfait
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   // Styles pour le modal de zoom de l'heure
   zoomOverlay: {
@@ -853,26 +873,53 @@ const styles = StyleSheet.create({
     // Assure que le contenu reste dans les limites
     overflow: 'hidden',
   },
+  zoomTimeTitleSection: {
+    height: '40%', // 40% de la hauteur du cadre zoom (au lieu de 20%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomTimeIcon: {
+    fontSize: Math.min(50, Math.max(35, width * 0.12)), // +20% : 40→50, 30→35, 0.1→0.12
+    marginBottom: 10, // Marge entre l'icône et le texte
+  },
   zoomTimeText: {
     fontSize: Math.min(86, Math.max(58, width * 0.144)), // +20% : 72→86, 48→58, 0.12→0.144
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
-    marginBottom: 20,
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
+  },
+  zoomTimeDateSection: {
+    height: '30%', // 30% de la hauteur du cadre zoom (au lieu de 50%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
   },
   zoomDateText: {
     fontSize: Math.min(34, Math.max(24, width * 0.084)), // +20% : 28→34, 20→24, 0.07→0.084
     color: '#666',
     textAlign: 'center',
-    marginBottom: 25,
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 2, // Permet 2 lignes pour la date complète
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
+  },
+  zoomTimeSeparatorSection: {
+    height: '10%', // 10% de la hauteur du cadre zoom
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomTimeButtonSection: {
+    height: '15%', // 15% de la hauteur du cadre zoom
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomTimeCloseSection: {
+    height: '15%', // 15% de la hauteur du cadre zoom
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   zoomDivider: {
     width: '80%',
@@ -888,129 +935,6 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     includeFontPadding: false,
     textAlignVertical: 'center',
-  },
-  // Styles pour le modal de zoom du réseau
-  zoomNetworkCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: 30,
-    padding: Math.min(30, Math.max(20, width * 0.06)), // Padding réduit pour contenir le contenu
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.8)',
-    // Effet 3D moderne
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(255, 255, 255, 0.3)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
-    // Dimensions exactes comme la batterie
-    width: width * 0.9, // 90% de la largeur de l'écran
-    height: height * 0.8, // 80% de la hauteur de l'écran
-    // Centrage parfait
-    alignSelf: 'center',
-    // Assure que le contenu reste dans les limites
-    overflow: 'hidden',
-  },
-  zoomNetworkTitle: {
-    fontSize: Math.min(58, Math.max(38, width * 0.144)), // +20% : 48→58, 32→38, 0.12→0.144
-    fontWeight: 'bold',
-    color: '#2196F3',
-    textAlign: 'center',
-    marginBottom: 25, // Marge augmentée
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
-  },
-  zoomNetworkInfo: {
-    width: '100%',
-    marginBottom: 25, // Marge augmentée
-  },
-  zoomNetworkRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end', // Aligne les éléments sur le bas pour les barres
-    marginBottom: 20, // Marge augmentée
-    paddingHorizontal: 15, // Padding horizontal augmenté
-  },
-  zoomNetworkLabel: {
-    fontSize: Math.min(38, Math.max(29, width * 0.096)), // +20% : 32→38, 24→29, 0.08→0.096
-    color: '#666',
-    fontWeight: '600',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
-  },
-  zoomNetworkValue: {
-    fontSize: Math.min(38, Math.max(29, width * 0.096)), // +20% : 32→38, 24→29, 0.08→0.096
-    color: '#333',
-    fontWeight: 'bold',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
-  },
-  zoomNetworkBars: {
-    flexDirection: 'row',
-    alignItems: 'flex-end', // Aligne les barres sur le bas
-    gap: 4,
-    justifyContent: 'center', // Centre parfaitement le groupe de barres
-  },
-  zoomNetworkBar: {
-    width: Math.min(16, Math.max(12, width * 0.035)), // Largeur augmentée au maximum
-    borderRadius: 4,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.4,
-    shadowRadius: 4,
-    marginHorizontal: 3, // Espacement augmenté entre les barres
-  },
-  zoomNetworkBar3D: {
-    width: Math.min(20, Math.max(16, width * 0.04)), // Largeur plus grande pour le zoom
-    backgroundColor: 'white',
-    borderRadius: 8,
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
-    marginHorizontal: 4, // Espacement plus grand entre les barres
-    alignSelf: 'center', // Centre chaque barre individuellement
-  },
-  zoomNetworkVisual: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 25, // Marge pour séparer des autres éléments
-  },
-  zoomNetworkQuality: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  zoomNetworkQualityText: {
-    fontSize: Math.min(38, Math.max(29, width * 0.096)), // +20% : 32→38, 24→29, 0.08→0.096
-    fontWeight: 'bold',
-    textAlign: 'center',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   // Styles pour le modal de zoom de la batterie
   zoomBatteryCard: {
@@ -1161,6 +1085,97 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     numberOfLines: 1, // Force l'affichage sur une seule ligne
     ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
+  },
+  // Styles pour le modal de zoom du réseau
+  zoomNetworkCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 30,
+    padding: Math.min(50, Math.max(35, width * 0.12)), // Padding réduit : 35 à 50
+    alignItems: 'center',
+    justifyContent: 'center',
+    // flexDirection: 'row' supprimé pour revenir à la disposition verticale
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    borderWidth: 3,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
+    // Effet 3D moderne
+    borderTopColor: 'rgba(255, 255, 255, 1.0)',
+    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
+    borderRightColor: 'rgba(255, 255, 255, 0.3)',
+    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
+    // Dimensions exactes comme les autres zooms
+    width: width * 0.9, // 90% de la largeur de l'écran
+    height: height * 0.8, // 80% de la hauteur de l'écran
+    // Centrage parfait
+    alignSelf: 'center',
+    // Assure que le contenu reste dans les limites
+    overflow: 'hidden',
+  },
+  zoomNetworkTitleSection: {
+    height: '30%', // 30% de la hauteur du cadre zoom (au lieu de 40%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomNetworkTitle: {
+    fontSize: Math.min(50, Math.max(35, width * 0.12)), // +20% : 40→50, 30→35, 0.1→0.12
+    marginBottom: 10, // Marge entre l'icône et le texte
+  },
+  zoomNetworkVisual: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomNetworkBars: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  zoomNetworkBar3D: {
+    width: 12,
+    backgroundColor: 'white',
+    borderRadius: 6,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
+  },
+  zoomNetworkQualitySection: {
+    height: '30%', // 30% de la hauteur du cadre zoom (au lieu de 40%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomNetworkQualityText: {
+    fontSize: Math.min(86, Math.max(58, width * 0.144)), // +20% : 72→86, 48→58, 0.12→0.144
+    fontWeight: 'bold',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  zoomNetworkButtonSection: {
+    height: '20%', // 20% de la hauteur du cadre zoom (au lieu de 25%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10, // Marge entre les sections
+  },
+  zoomNetworkCloseSection: {
+    height: '20%', // 20% de la hauteur du cadre zoom (au lieu de 25%)
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   // Styles pour les boutons de lecture vocale
   zoomVoiceButton: {

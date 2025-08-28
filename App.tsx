@@ -8,7 +8,9 @@ import {
   SafeAreaView,
   Alert,
   Vibration,
-  Animated
+  Animated,
+  Linking,
+  Modal
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as Battery from 'expo-battery';
@@ -23,6 +25,7 @@ const { height } = Dimensions.get('window');
 
 export default function App() {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
   const [networkLevel, setNetworkLevel] = useState(4);
   const [batteryLevel, setBatteryLevel] = useState(85);
   const [currentScreen, setCurrentScreen] = useState<'navigation' | 'contacts' | 'phone' | 'createContact'>('navigation');
@@ -111,23 +114,48 @@ export default function App() {
       // Vibration tactile
       Vibration.vibrate(150);
 
+      // Ouvrir le zoom de confirmation d'appel
+      setShowCallConfirmZoom(true);
+    }
+  };
+
+  // Confirmer l'appel
+  const confirmCall = () => {
+    console.log('📞 Appel confirmé pour le numéro:', phoneNumber);
+    setShowCallConfirmZoom(false);
+    
+    // Lancer l'appel réel
+    launchRealCall(phoneNumber);
+  };
+
+  // Annuler l'appel
+  const cancelCall = () => {
+    console.log('❌ Appel annulé');
+    setShowCallConfirmZoom(false);
+  };
+
+  // Lancer l'appel réel
+  const launchRealCall = (number: string) => {
+    try {
+      // Utiliser Linking pour lancer l'appel téléphonique
+      const phoneUrl = `tel:${number}`;
+      Linking.openURL(phoneUrl);
+      
+      console.log('📞 Lancement de l\'appel vers:', number);
+      
+      // Afficher un message de confirmation
       Alert.alert(
-        'Appel en cours',
-        `Appeler le numéro ${phoneNumber} ?`,
-        [
-          {
-            text: 'Annuler',
-            style: 'cancel',
-          },
-          {
-            text: 'Appeler',
-            onPress: () => {
-              console.log('Appel en cours vers:', phoneNumber);
-              // Ici vous pouvez ajouter la logique d'appel réelle
-              Alert.alert('Appel', 'Connexion en cours...');
-            },
-          },
-        ]
+        'Appel lancé',
+        `Connexion en cours vers ${number}...`,
+        [{ text: 'OK' }]
+      );
+    } catch (error) {
+      console.error('❌ Erreur lors du lancement de l\'appel:', error);
+      
+      Alert.alert(
+        'Erreur',
+        'Impossible de lancer l\'appel. Vérifiez que votre téléphone peut passer des appels.',
+        [{ text: 'OK' }]
       );
     }
   };
@@ -241,6 +269,78 @@ export default function App() {
             </TouchableOpacity>
           </View>
         </>
+      )}
+
+      {/* Modal de confirmation d'appel */}
+      {showCallConfirmZoom && (
+        <Modal
+          visible={showCallConfirmZoom}
+          transparent={true}
+          animationType="none"
+          onRequestClose={cancelCall}
+        >
+          <TouchableOpacity 
+            style={styles.zoomOverlay} 
+            activeOpacity={1} 
+            onPress={cancelCall}
+          >
+            <View style={styles.zoomCallConfirmCard}>
+              {/* Section Titre */}
+              <View style={styles.zoomCallConfirmTitleSection}>
+                <Text style={styles.zoomCallConfirmIcon}>📞</Text>
+                <Text style={styles.zoomCallConfirmTitle}>Confirmation d'appel</Text>
+              </View>
+
+              {/* Section Numéro */}
+              <View style={styles.zoomCallConfirmNumberSection}>
+                <Text style={styles.zoomCallConfirmNumber}>{phoneNumber}</Text>
+              </View>
+
+              {/* Section Question */}
+              <View style={styles.zoomCallConfirmQuestionSection}>
+                <Text style={styles.zoomCallConfirmQuestion}>
+                  Voulez-vous lancer cet appel ?
+                </Text>
+              </View>
+
+              {/* Section Boutons */}
+              <View style={styles.zoomCallConfirmButtonsSection}>
+                <TouchableOpacity
+                  style={[styles.zoomCallConfirmButton, { backgroundColor: '#F44336' }]}
+                  onPress={cancelCall}
+                >
+                  <Text 
+                    style={styles.zoomCallConfirmButtonText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    Non
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  style={[styles.zoomCallConfirmButton, { backgroundColor: '#4CAF50' }]}
+                  onPress={confirmCall}
+                >
+                  <Text 
+                    style={styles.zoomCallConfirmButtonText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
+                    Oui
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Section Instructions de fermeture */}
+              <View style={styles.zoomCallConfirmCloseSection}>
+                <Text style={styles.zoomInfoText}>
+                  Appuyez n'importe où pour fermer
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       )}
 
       {/* Écran de navigation */}
@@ -403,5 +503,129 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     paddingTop: 20,
+  },
+  zoomOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomCallConfirmCard: {
+    width: '80%', // 80% de la largeur de l'écran
+    height: '80%', // 80% de la hauteur de l'écran
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+  },
+  zoomCallConfirmTitleSection: {
+    height: '20%', // 20% de la hauteur du zoom (réduit de 25% à 20%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  zoomCallConfirmIcon: {
+    fontSize: 48,
+    marginBottom: 10,
+  },
+  zoomCallConfirmTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+  },
+  zoomCallConfirmNumberSection: {
+    height: '20%', // 20% de la hauteur du zoom (réduit de 25% à 20%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  zoomCallConfirmNumber: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#2196F3',
+    textAlign: 'center',
+  },
+  zoomCallConfirmQuestionSection: {
+    height: '10%', // 10% de la hauteur du zoom (réduit de 20% à 10%)
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  zoomCallConfirmQuestion: {
+    fontSize: 20,
+    color: '#666',
+    textAlign: 'center',
+  },
+  zoomCallConfirmButtonsSection: {
+    height: '35%', // 35% de la hauteur du zoom
+    flexDirection: 'row',
+    justifyContent: 'center', // Centrage parfait des éléments
+    alignItems: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 0, // Pas de padding pour éviter les décalages
+    width: '100%', // Assure que la section prend toute la largeur disponible
+  },
+  zoomCallConfirmButton: {
+    paddingVertical: 25,
+    paddingHorizontal: 20, // Padding adapté
+    borderRadius: 15,
+    width: '40%', // Chaque bouton occupe exactement 40% de la largeur du zoom
+    minHeight: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    // Assure que la largeur est respectée
+    flex: 0, // Empêche le flex de modifier la largeur
+    alignSelf: 'stretch', // Étire le bouton sur sa largeur définie
+    marginHorizontal: '2.5%', // Marge de 2.5% de chaque côté
+    overflow: 'hidden', // Empêche le débordement
+  },
+  zoomCallConfirmButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14, // Taille plus petite pour s'assurer que ça tient
+    fontWeight: 'bold',
+    textAlign: 'center', // Centrage du texte
+    includeFontPadding: false, // Supprime le padding automatique
+    textAlignVertical: 'center', // Centrage vertical
+    flexShrink: 1, // Permet au texte de se rétrécir si nécessaire
+    flexWrap: 'nowrap', // Empêche le retour à la ligne
+    // Propriétés supplémentaires pour forcer une ligne
+    lineHeight: 16, // Hauteur de ligne fixe
+    maxWidth: '100%', // Largeur maximale du texte
+  },
+  zoomCallConfirmButtonSpacer: {
+    width: '10%', // Espace de 10% de la largeur du zoom entre les boutons
+  },
+  zoomCallConfirmButtonSpacerSmall: {
+    width: '5%', // Espace de 5% de la largeur du zoom
+  },
+  zoomCallConfirmCloseSection: {
+    height: '15%', // 15% de la hauteur du zoom (réduit de 25% à 15%)
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  zoomInfoText: {
+    fontSize: Math.min(18, Math.max(14, Dimensions.get('window').width * 0.045)),
+    color: '#999',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });
