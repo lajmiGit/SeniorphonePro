@@ -10,7 +10,8 @@ import {
   Animated, 
   Vibration,
   Modal,
-  Alert
+  Alert,
+  Platform
 } from 'react-native';
 import * as Battery from 'expo-battery';
 import * as Contacts from 'expo-contacts';
@@ -225,7 +226,11 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar 
+        barStyle="light-content" 
+        backgroundColor="transparent"
+        translucent={true}
+      />
       
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (
@@ -392,6 +397,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5', // Blanc cassé - moins agressif pour les yeux seniors
+    paddingTop: Platform.OS === 'ios' ? 50 : 30, // Espace manuel pour la Status Bar
   },
   section: {
     marginHorizontal: 10,
