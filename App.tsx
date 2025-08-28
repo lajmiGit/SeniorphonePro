@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  StyleSheet, 
-  Text, 
   View, 
+  Text, 
+  StyleSheet, 
   TouchableOpacity, 
-  Dimensions,
-  SafeAreaView,
-  Alert,
+  SafeAreaView, 
+  StatusBar, 
+  Dimensions, 
+  Animated, 
   Vibration,
-  Animated,
-  Linking,
-  Modal
+  Modal,
+  Alert
 } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import * as Battery from 'expo-battery';
+import * as Contacts from 'expo-contacts';
+import * as Linking from 'expo-linking';
 import { SystemInfo } from './components/SystemInfo';
 import { PhoneDisplay } from './components/PhoneDisplay';
 import { DialPad } from './components/DialPad';
@@ -121,44 +122,41 @@ export default function App() {
 
   // Confirmer l'appel
   const confirmCall = () => {
-    console.log('📞 Appel confirmé pour le numéro:', phoneNumber);
+    console.log('=== DÉBUT CONFIRMATION APPEL ===');
+    console.log('Numéro à appeler:', phoneNumber);
+    console.log('Type du numéro:', typeof phoneNumber);
+    console.log('Longueur du numéro:', phoneNumber.length);
+    
     setShowCallConfirmZoom(false);
     
-    // Lancer l'appel réel
-    launchRealCall(phoneNumber);
-  };
-
-  // Annuler l'appel
-  const cancelCall = () => {
-    console.log('❌ Appel annulé');
-    setShowCallConfirmZoom(false);
-  };
-
-  // Lancer l'appel réel
-  const launchRealCall = (number: string) => {
+    // Lancement simple et efficace de l'appel
     try {
-      // Utiliser Linking pour lancer l'appel téléphonique
-      const phoneUrl = `tel:${number}`;
+      const phoneUrl = `tel:${phoneNumber}`;
+      console.log('URL téléphone générée:', phoneUrl);
+      
+      console.log('Tentative de lancement de l\'appel...');
       Linking.openURL(phoneUrl);
+      console.log('✅ Appel lancé vers:', phoneNumber);
       
-      console.log('📞 Lancement de l\'appel vers:', number);
-      
-      // Afficher un message de confirmation
-      Alert.alert(
-        'Appel lancé',
-        `Connexion en cours vers ${number}...`,
-        [{ text: 'OK' }]
-      );
     } catch (error) {
       console.error('❌ Erreur lors du lancement de l\'appel:', error);
-      
       Alert.alert(
         'Erreur',
         'Impossible de lancer l\'appel. Vérifiez que votre téléphone peut passer des appels.',
         [{ text: 'OK' }]
       );
     }
+    
+    console.log('=== FIN CONFIRMATION APPEL ===');
   };
+
+  // Annuler l'appel
+  const cancelCall = () => {
+    console.log('Appel annulé');
+    setShowCallConfirmZoom(false);
+  };
+
+  // Suppression de la fonction launchRealCall qui n'est plus nécessaire
 
   // Simulation des changements de niveau réseau et batterie
   // Récupération initiale de la batterie
@@ -202,7 +200,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar barStyle="light-content" />
       
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (

@@ -974,8 +974,6 @@ const styles = StyleSheet.create({
     marginBottom: 20, // Marge optimisée
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   // Sections du zoom batterie avec pourcentages exacts
   zoomBatteryIconSection: {
@@ -1020,8 +1018,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   zoomBatteryValue: {
     fontSize: Math.min(24, Math.max(18, width * 0.06)), // Taille optimisée
@@ -1029,8 +1025,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   zoomBatteryStatus: {
     fontSize: Math.min(38, Math.max(29, width * 0.096)), // +20% : 32→38, 24→29, 0.08→0.096
@@ -1038,8 +1032,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   zoomBatteryVisual: {
     alignItems: 'center',
@@ -1083,8 +1075,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1, // Force l'affichage sur une seule ligne
-    ellipsizeMode: 'tail', // Ajoute "..." si le texte est trop long
   },
   // Styles pour le modal de zoom du réseau
   zoomNetworkCard: {
