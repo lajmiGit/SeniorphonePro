@@ -460,7 +460,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
                   onPress={speakTime}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.zoomVoiceButtonText}>
+                  <Text 
+                    style={styles.zoomVoiceButtonText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
                     🔊 Relire l'heure
                   </Text>
                 </TouchableOpacity>
@@ -549,7 +553,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
                   onPress={speakNetwork}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.zoomVoiceButtonText}>
+                  <Text 
+                    style={styles.zoomVoiceButtonText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
                     🔊 Relire le réseau
                   </Text>
                 </TouchableOpacity>
@@ -630,7 +638,11 @@ export const SystemInfo: React.FC<SystemInfoProps> = ({
                   onPress={speakBattery}
                   activeOpacity={0.8}
                 >
-                  <Text style={styles.zoomVoiceButtonText}>
+                  <Text 
+                    style={styles.zoomVoiceButtonText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                  >
                     🔊 Relire la batterie
                   </Text>
                 </TouchableOpacity>
@@ -1190,7 +1202,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     includeFontPadding: false,
     textAlignVertical: 'center',
-    numberOfLines: 1,
-    ellipsizeMode: 'tail',
   },
 });
