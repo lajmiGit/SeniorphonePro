@@ -34,26 +34,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
 
         {/* Partie 3: Zone secondaire - 10% de la hauteur */}
         <View style={[styles.section, styles.secondarySection]}>
-          <View style={styles.characterGrid}>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>A</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>B</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>C</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>D</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>E</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.characterButton}>
-              <Text style={styles.characterText}>F</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.secondaryText}>Zone secondaire</Text>
         </View>
 
         {/* Partie 4: Actions - 20% de la hauteur */}
@@ -230,47 +211,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-
-  characterGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 10,
-  },
-
-  characterButton: {
-    width: 45,
-    height: 45,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 3,
-    marginVertical: 2,
-    borderWidth: 3,
-    borderColor: '#E0E0E0',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    // Effet 3D avec bordures contrastées
-    borderTopColor: 'rgba(255, 255, 255, 1.0)',
-    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
-    borderRightColor: 'rgba(224, 224, 224, 0.6)',
-    borderBottomColor: 'rgba(224, 224, 224, 0.6)',
-  },
-
-  characterText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333333',
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
