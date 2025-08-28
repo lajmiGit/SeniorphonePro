@@ -157,22 +157,23 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
+    aspectRatio: 1,
+    borderWidth: 2,
+    // Effet 3D avec petite élévation + ombres et bordures contrastées
+    elevation: 2,                              // Élévation très subtile pour Android
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 6,
+      height: 4,
     },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    aspectRatio: 1,
-    borderWidth: 3,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    // Effet 3D avec bordure interne
-    borderTopColor: 'rgba(255, 255, 255, 0.7)',
-    borderLeftColor: 'rgba(255, 255, 255, 0.7)',
-    borderRightColor: 'rgba(255, 255, 255, 0.3)',
-    borderBottomColor: 'rgba(255, 255, 255, 0.3)',
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    // Effet 3D subtil avec bordures contrastées
+    borderTopColor: 'rgba(255, 255, 255, 0.8)',    // Bordure supérieure plus claire
+    borderLeftColor: 'rgba(255, 255, 255, 0.8)',   // Bordure gauche plus claire
+    borderRightColor: 'rgba(255, 255, 255, 0.4)',  // Bordure droite plus sombre
+    borderBottomColor: 'rgba(255, 255, 255, 0.4)', // Bordure inférieure plus sombre
   },
   buttonText: {
     color: 'white',
