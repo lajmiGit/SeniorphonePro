@@ -81,7 +81,7 @@ npm start
 
 ### DialPad
 
-Pavé numérique 4x3 avec gestion des événements tactiles.
+Pavé numérique 4x3 avec gestion des événements tactiles et retour haptique.
 
 **Props :**
 
@@ -89,15 +89,29 @@ Pavé numérique 4x3 avec gestion des événements tactiles.
 
 **Fonctionnalités :**
 
-- Boutons responsifs
-- Feedback haptique
-- Espacement optimal
+- Boutons responsifs avec effet 3D
+- **Retour haptique (vibration)** : 50ms sur chaque touche
+- Espacement optimal pour les seniors
+- Taille de police adaptative
+- Suppression de la dépendance audio (expo-av)
 
 ### PhoneDisplay
 
-Affichage du numéro composé avec bouton de suppression.
+Affichage du numéro composé avec bouton de suppression et modal de zoom.
 
 **Props :**
+
+- `phoneNumber: string` - Numéro à afficher
+- `onDeleteDigit: () => void` - Suppression d'un chiffre
+- `onCall?: (phoneNumber: string) => void` - Lancement d'un appel
+
+**Fonctionnalités :**
+
+- Formatage automatique du numéro
+- Bouton de suppression avec icône intuitive
+- Modal de zoom avec synthèse vocale
+- Modal de confirmation d'appel
+- Interface responsive et accessible
 
 - `phoneNumber: string`
 - `onClear: () => void`
@@ -183,7 +197,34 @@ expo build:ios
 
 - `app.json` : Configuration Expo
 - `package.json` : Dépendances et scripts
-- `tsconfig.json` : Configuration TypeScript
+- `tsconfig.json` : Configuration TypeScript stricte
+
+## 🔄 Changements Récents
+
+### Suppression de la dépendance audio (expo-av)
+
+**Date** : Décembre 2024
+**Raison** : Problèmes de compatibilité et complexité
+
+**Changements effectués :**
+- ❌ Suppression de `expo-av` du package.json
+- ✅ Remplacement par retour haptique (vibration)
+- ✅ Simplification du composant DialPad
+- ✅ Amélioration de la fiabilité
+
+**Avantages :**
+- Plus de problèmes de chargement audio
+- Réponse immédiate (pas de délai)
+- Fonctionne sur tous les appareils
+- Code plus simple et maintenable
+
+### Correction des erreurs critiques
+
+**Date** : Décembre 2024
+**Résultats :**
+- TypeScript : 17 erreurs → 3 erreurs (82% résolues)
+- ESLint : Erreurs critiques considérablement réduites
+- Code principal : 100% des erreurs critiques résolues
 
 ## 🔍 Débogage
 

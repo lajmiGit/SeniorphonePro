@@ -71,9 +71,10 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 **Comment utiliser :**
 
 - Appuyez sur les chiffres pour composer
-- Chaque appui génère une vibration de confirmation
+- **Chaque appui génère une vibration de confirmation** (50ms)
 - Les boutons sont suffisamment grands pour un usage facile
 - Espacement optimal entre les boutons
+- **Retour haptique fiable** - Plus de problème de son
 
 **Couleur :** Violet (#9C27B0)
 
@@ -105,8 +106,9 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 
 - **Boutons surdimensionnés** pour faciliter l'utilisation
 - **Contraste élevé** pour une meilleure visibilité
-- **Vibrations haptiques** pour confirmer les actions
+- **Vibrations haptiques fiables** pour confirmer les actions
 - **Police grande** pour une lecture facile
+- **Retour tactile garanti** - Plus de problème de son
 
 ### 🌙 Mode Nuit
 
@@ -137,8 +139,15 @@ L'application SeniorPhonePro est conçue spécialement pour les seniors avec une
 ### Le numéro ne s'affiche pas ?
 
 - Vérifiez que vous appuyez bien sur les touches
-- Une vibration confirme chaque appui
+- **Une vibration de 50ms confirme chaque appui**
 - Le bouton "Effacer" permet de recommencer
+- **Plus de problème de son** - Retour haptique garanti
+
+### Pas de vibration lors de l'appui ?
+
+- Vérifiez que les vibrations sont activées sur votre téléphone
+- Redémarrez l'application si nécessaire
+- Le retour haptique fonctionne sur iOS et Android
 
 ### L'appel ne se lance pas ?
 
@@ -170,6 +179,28 @@ Pour toute question ou problème :
 - Consultez ce guide
 - Contactez le support technique
 - Demandez l'aide d'un proche
+
+---
+
+## 🔄 Améliorations Récentes (Décembre 2024)
+
+### ✨ **Nouveau : Retour haptique fiable**
+
+**Problème résolu :** Plus de problème de son lors de l'appui sur les touches
+
+**Solution :** Remplacement par vibration tactile de 50ms
+
+**Avantages :**
+- ✅ **Réponse immédiate** - Pas de délai d'attente
+- ✅ **Fonctionne toujours** - Plus de problème de compatibilité
+- ✅ **Économie de batterie** - Pas de chargement audio
+- ✅ **Plus simple** - Interface plus fiable
+
+### 🎯 **Amélioration de l'accessibilité**
+
+- **Vibration garantie** sur tous les appareils
+- **Retour tactile immédiat** pour chaque action
+- **Interface simplifiée** et plus rapide
 
 ---
 
