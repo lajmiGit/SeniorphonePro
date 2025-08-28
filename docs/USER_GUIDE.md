@@ -204,4 +204,44 @@ Pour toute question ou problème :
 
 ---
 
+## ⌨️ Clavier Virtuel
+
+### **Ouverture du clavier**
+- Appuyez sur n'importe quel champ de saisie (Prénom, Nom, Téléphone)
+- Le clavier s'ouvre automatiquement avec le type approprié
+
+### **Types de clavier disponibles**
+- **ABC** : Lettres de A à Z (pour prénom et nom)
+- **123** : Chiffres de 0 à 9 et symboles (pour téléphone)
+- **@#$** : Caractères spéciaux et ponctuation
+
+### **Clavier téléphone intelligent**
+- **Ouverture automatique** : Mode chiffres (123) forcé
+- **Boutons désactivés** : ABC et @#$ sont grisés
+- **Saisie optimisée** : Uniquement les chiffres disponibles
+
+### **Saisie de texte**
+- **Touches responsives** : Chaque touche génère une vibration
+- **Champ de saisie** : Affiche le texte en cours de composition
+- **Bouton supprimer** : Efface le dernier caractère saisi
+- **Taille adaptative** : Police qui s'ajuste à la longueur du texte
+
+### **Actions disponibles**
+- **✅ Valider** : Sauvegarde le texte et ferme le clavier
+- **❌ Annuler** : Ferme le clavier sans sauvegarder
+
+### **Zoom du texte**
+- **Appui sur le champ** : Ouvre une vue agrandie du texte
+- **Lecture automatique** : Synthèse vocale du texte saisi
+- **Bouton "Relire"** : Relance la lecture vocale
+- **Fermeture** : Appuyez n'importe où pour fermer
+
+### **Structure du clavier**
+- **Partie 1 (15%)** : Saisie et suppression
+- **Partie 2 (60%)** : Clavier principal
+- **Partie 3 (10%)** : Sélection du type
+- **Partie 4 (15%)** : Boutons d'action
+
+---
+
 _SeniorPhonePro - Une application conçue avec soin pour les seniors_ 🧡

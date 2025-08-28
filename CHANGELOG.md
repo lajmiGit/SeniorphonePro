@@ -2,6 +2,43 @@
 
 Tous les changements notables de l'application SeniorPhonePro seront documentés dans ce fichier.
 
+## [1.2.0] - 2024-12-XX
+
+### ✨ Ajouté
+- **Clavier virtuel intelligent** - 4 parties structurées avec gestion adaptative
+- **Clavier téléphone automatique** - Mode chiffres forcé pour les numéros
+- **Validation intelligente** - Boutons Valider/Annuler avec comportements distincts
+- **Synthèse vocale du texte** - Lecture automatique avec bouton "Relire"
+- **Zoom du texte saisi** - Vue agrandie avec synthèse vocale
+- **Gestion des champs de contact** - Saisie adaptée au type de champ
+
+### 🔧 Modifié
+- **VirtualKeyboard** - Refonte complète avec 4 parties encadrées
+- **CreateContactScreen** - Intégration intelligente avec le clavier virtuel
+- **Gestion des états** - Synchronisation parfaite entre clavier et écran
+- **Styles des boutons** - Cohérence visuelle avec CreateContactScreen
+
+### 🎨 Design
+- **Partie 1 (15%)** - Saisie et suppression avec champ adaptatif
+- **Partie 2 (60%)** - Clavier principal ABC/123/@#$ responsive
+- **Partie 3 (10%)** - Sélecteur de type avec boutons désactivés pour téléphone
+- **Partie 4 (15%)** - Boutons d'action avec dimensions 90%×40%
+- **Effets 3D** - Bordures contrastées et ombres cohérentes
+
+### ⚡ Performance
+- **Détection automatique** du type de champ (prénom, nom, téléphone)
+- **Clavier adaptatif** selon le contexte d'utilisation
+- **Synchronisation optimisée** entre composants
+- **Gestion d'état centralisée** avec useEffect
+
+### 🔒 Comportements
+- **Bouton Valider** : Sauvegarde le texte et ferme le clavier
+- **Bouton Annuler** : Ferme le clavier sans sauvegarder
+- **Champ téléphone** : Force le mode chiffres, désactive ABC/@#$
+- **Champs texte** : Clavier libre avec tous les types disponibles
+
+---
+
 ## [1.1.0] - 2024-12-XX
 
 ### ✨ Ajouté

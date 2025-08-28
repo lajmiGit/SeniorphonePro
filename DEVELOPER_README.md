@@ -137,6 +137,39 @@ Affichage des informations système (réseau, batterie, heure).
 - Indicateurs visuels colorés
 - Heure locale
 
+### VirtualKeyboard
+
+Clavier virtuel intelligent avec 4 parties encadrées et gestion adaptative des types de saisie.
+
+**Props :**
+- `onKeyPress?: (key: string) => void` - Gestion des touches pressées
+- `onBackspace?: () => void` - Gestion de la suppression
+- `onValidate?: () => void` - Validation de la saisie
+- `onClose?: () => void` - Fermeture du clavier
+- `currentText?: string` - Texte actuel affiché
+- `activeField?: 'firstName' | 'lastName' | 'phoneNumber' | null` - Champ actif
+
+**Fonctionnalités :**
+- **4 parties structurées** : Saisie (15%), Clavier (60%), Sélecteur (10%), Actions (15%)
+- **Clavier adaptatif** : ABC, 123, @#$ selon le type de champ
+- **Clavier téléphone intelligent** : Mode 123 automatique, boutons ABC/@#$ désactivés
+- **Validation intelligente** : Bouton Valider sauvegarde, Annuler ferme sans sauvegarder
+- **Synthèse vocale** : Lecture automatique du texte avec bouton "Relire"
+- **Style cohérent** : Identique à CreateContactScreen avec effets 3D
+- **Dimensions dynamiques** : Boutons 90% hauteur × 40% largeur de la Partie 4
+
+**Structure des parties :**
+- **Partie 1 (15%)** : Champ de saisie + bouton supprimer
+- **Partie 2 (60%)** : Clavier principal (ABC/123/@#$)
+- **Partie 3 (10%)** : Sélecteur de type de clavier
+- **Partie 4 (15%)** : Boutons Valider (vert) et Annuler (rouge)
+
+**Comportement spécial téléphone :**
+- Détection automatique du champ `phoneNumber`
+- Forçage en mode "123" (chiffres uniquement)
+- Désactivation des boutons ABC et @#$
+- Boutons grisés et non cliquables
+
 ## ♿ Accessibilité
 
 ### Configuration

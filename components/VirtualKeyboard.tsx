@@ -31,9 +31,11 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   onValidate,
   onClose,
   currentText: initialText = '',
-  activeField
+  activeField,
 }) => {
-  const [keyboardType, setKeyboardType] = useState<'abc' | '123' | 'symbols'>('abc');
+  const [keyboardType, setKeyboardType] = useState<'abc' | '123' | 'symbols'>(
+    'abc'
+  );
   const [currentText, setCurrentText] = useState(initialText);
   const [zone1Width, setZone1Width] = useState(0);
   const [zone4Height, setZone4Height] = useState(0);
@@ -116,7 +118,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       // Simuler l'ajout du texte complet
       console.log('📝 Texte saisi à transférer:', currentText);
     }
-    
+
     // Appeler la fonction de fermeture si elle existe
     if (onClose) {
       onClose();
@@ -129,9 +131,9 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       language: 'fr-FR',
       pitch: 1.0,
       rate: 0.8,
-      voice: 'com.apple.ttsbundle.siri_female_fr-FR_compact'
+      voice: 'com.apple.ttsbundle.siri_female_fr-FR_compact',
     };
-    
+
     try {
       Speech.speak(message, speechConfig);
       console.log('🗣️ Synthèse vocale activée pour:', message);
@@ -144,35 +146,53 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
     <SafeAreaView style={styles.container}>
       <View style={styles.mainContainer}>
         {/* Partie 1: En-tête - 15% de la hauteur */}
-        <View style={[styles.section, styles.headerSection]} onLayout={handleZone1Layout}>
+        <View
+          style={[styles.section, styles.headerSection]}
+          onLayout={handleZone1Layout}
+        >
           {/* Zone de saisie et bouton de suppression */}
-          <View style={[styles.inputContainer, { 
-            paddingHorizontal: width > 0 ? (width * 0.10) / 3 : 0 
-          }]}>
+          <View
+            style={[
+              styles.inputContainer,
+              {
+                paddingHorizontal: width > 0 ? (width * 0.1) / 3 : 0,
+              },
+            ]}
+          >
             {/* Champ d'affichage des caractères saisis */}
-            <TouchableOpacity 
-              style={[styles.textDisplayField, { width: width * 0.60 }]}
+            <TouchableOpacity
+              style={[styles.textDisplayField, { width: width * 0.6 }]}
               onPress={handleTextZoom}
               activeOpacity={0.7}
             >
-              <Text 
-                style={[styles.textDisplayValue, { 
-                  fontSize: Math.min(
-                    Math.max(16, Math.floor(
-                      (width * 0.60 * 0.15) / Math.max(1, currentText.length * 0.15)
-                    )),
-                    48 // Taille maximale
-                  )
-                }]}
+              <Text
+                style={[
+                  styles.textDisplayValue,
+                  {
+                    fontSize: Math.min(
+                      Math.max(
+                        16,
+                        Math.floor(
+                          (width * 0.6 * 0.15) /
+                            Math.max(1, currentText.length * 0.15)
+                        )
+                      ),
+                      48 // Taille maximale
+                    ),
+                  },
+                ]}
                 numberOfLines={1}
-                ellipsizeMode="tail"
+                ellipsizeMode='tail'
               >
                 {currentText || 'Aucun texte'}
               </Text>
             </TouchableOpacity>
-            
+
             {/* Bouton de suppression */}
-            <TouchableOpacity style={[styles.deleteButton, { width: zone1Width * 0.20 }]} onPress={handleDeleteText}>
+            <TouchableOpacity
+              style={[styles.deleteButton, { width: zone1Width * 0.2 }]}
+              onPress={handleDeleteText}
+            >
               <Text style={styles.deleteButtonText}>⌫</Text>
             </TouchableOpacity>
           </View>
@@ -186,98 +206,176 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
               <>
                 {/* Première rangée : A, B, C, D, E, F */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('A')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('A')}
+                  >
                     <Text style={styles.keyboardKeyText}>A</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('B')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('B')}
+                  >
                     <Text style={styles.keyboardKeyText}>B</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('C')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('C')}
+                  >
                     <Text style={styles.keyboardKeyText}>C</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('D')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('D')}
+                  >
                     <Text style={styles.keyboardKeyText}>D</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('E')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('E')}
+                  >
                     <Text style={styles.keyboardKeyText}>E</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('F')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('F')}
+                  >
                     <Text style={styles.keyboardKeyText}>F</Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Deuxième rangée : G, H, I, J, K, L */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('G')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('G')}
+                  >
                     <Text style={styles.keyboardKeyText}>G</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('H')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('H')}
+                  >
                     <Text style={styles.keyboardKeyText}>H</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('I')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('I')}
+                  >
                     <Text style={styles.keyboardKeyText}>I</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('J')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('J')}
+                  >
                     <Text style={styles.keyboardKeyText}>J</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('K')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('K')}
+                  >
                     <Text style={styles.keyboardKeyText}>K</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('L')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('L')}
+                  >
                     <Text style={styles.keyboardKeyText}>L</Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Troisième rangée : M, N, O, P, Q, R */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('M')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('M')}
+                  >
                     <Text style={styles.keyboardKeyText}>M</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('N')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('N')}
+                  >
                     <Text style={styles.keyboardKeyText}>N</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('O')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('O')}
+                  >
                     <Text style={styles.keyboardKeyText}>O</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('P')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('P')}
+                  >
                     <Text style={styles.keyboardKeyText}>P</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('Q')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('Q')}
+                  >
                     <Text style={styles.keyboardKeyText}>Q</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('R')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('R')}
+                  >
                     <Text style={styles.keyboardKeyText}>R</Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Quatrième rangée : S, T, U, V, W, X */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('S')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('S')}
+                  >
                     <Text style={styles.keyboardKeyText}>S</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('T')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('T')}
+                  >
                     <Text style={styles.keyboardKeyText}>T</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('U')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('U')}
+                  >
                     <Text style={styles.keyboardKeyText}>U</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('V')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('V')}
+                  >
                     <Text style={styles.keyboardKeyText}>V</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('W')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('W')}
+                  >
                     <Text style={styles.keyboardKeyText}>W</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('X')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('X')}
+                  >
                     <Text style={styles.keyboardKeyText}>X</Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Cinquième rangée : Y, Z */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('Y')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('Y')}
+                  >
                     <Text style={styles.keyboardKeyText}>Y</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.keyboardKey} onPress={() => handleKeyPress('Z')}>
+                  <TouchableOpacity
+                    style={styles.keyboardKey}
+                    onPress={() => handleKeyPress('Z')}
+                  >
                     <Text style={styles.keyboardKeyText}>Z</Text>
                   </TouchableOpacity>
                 </View>
@@ -289,53 +387,137 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
               <>
                 {/* Première rangée : 1, 2, 3 */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('1')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>1</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('1')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      1
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('2')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>2</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('2')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      2
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('3')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>3</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('3')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      3
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Deuxième rangée : 4, 5, 6 */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('4')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>4</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('4')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      4
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('5')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>5</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('5')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      5
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('6')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>6</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('6')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      6
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Troisième rangée : 7, 8, 9 */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('7')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>7</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('7')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      7
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('8')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>8</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('8')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      8
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('9')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>9</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('9')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      9
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Quatrième rangée : *, 0, # */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('*')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>*</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('*')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      *
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('0')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>0</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('0')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      0
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.numberKey]} onPress={() => handleKeyPress('#')}>
-                    <Text style={[styles.keyboardKeyText, styles.numberKeyText]}>#</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.numberKey]}
+                    onPress={() => handleKeyPress('#')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.numberKeyText]}
+                    >
+                      #
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -346,89 +528,257 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
               <>
                 {/* Première rangée : @, #, $, %, ^, & */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('@')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>@</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('@')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      @
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('#')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>#</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('#')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      #
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('$')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>$</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('$')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      $
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('%')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>%</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('%')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      %
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('^')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>^</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('^')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      ^
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('&')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>&</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('&')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      &
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Deuxième rangée : *, (, ), -, +, = */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('*')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>*</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('*')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      *
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('(')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>(</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('(')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      (
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress(')')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>)</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress(')')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      )
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('-')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>-</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('-')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      -
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('+')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>+</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('+')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      +
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('=')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>=</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('=')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      =
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Troisième rangée : [, ], {, }, |, \ */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('[')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>[</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('[')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      [
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress(']')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>]</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress(']')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      ]
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('{')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>{'{'}</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('{')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      {'{'}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('}')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>{'}'}</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('}')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      {'}'}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('|')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>|</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('|')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      |
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('\\')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>\</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('\\')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      \
+                    </Text>
                   </TouchableOpacity>
                 </View>
-                
+
                 {/* Quatrième rangée : <, >, ?, /, ~, ` */}
                 <View style={styles.keyboardRow}>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('<')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>{'<'}</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('<')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      {'<'}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('>')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>{'>'}</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('>')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      {'>'}
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('?')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>?</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('?')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      ?
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('/')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>/</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('/')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      /
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('~')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>~</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('~')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      ~
+                    </Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.keyboardKey, styles.symbolKey]} onPress={() => handleKeyPress('`')}>
-                    <Text style={[styles.keyboardKeyText, styles.symbolKeyText]}>`</Text>
+                  <TouchableOpacity
+                    style={[styles.keyboardKey, styles.symbolKey]}
+                    onPress={() => handleKeyPress('`')}
+                  >
+                    <Text
+                      style={[styles.keyboardKeyText, styles.symbolKeyText]}
+                    >
+                      `
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </>
@@ -439,56 +789,65 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         {/* Partie 3: Zone secondaire - 10% de la hauteur */}
         <View style={[styles.section, styles.secondarySection]}>
           <View style={styles.keyboardSelector}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.selectorButton, 
+                styles.selectorButton,
                 keyboardType === 'abc' && styles.selectorButtonActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButton
+                activeField === 'phoneNumber' && styles.disabledSelectorButton,
               ]}
               onPress={() => handleKeyboardTypeChange('abc')}
               disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[
-                styles.selectorButtonText, 
-                keyboardType === 'abc' && styles.selectorButtonTextActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
-              ]}>
+              <Text
+                style={[
+                  styles.selectorButtonText,
+                  keyboardType === 'abc' && styles.selectorButtonTextActive,
+                  activeField === 'phoneNumber' &&
+                    styles.disabledSelectorButtonText,
+                ]}
+              >
                 ABC
               </Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={[
-                styles.selectorButton, 
+                styles.selectorButton,
                 keyboardType === '123' && styles.selectorButtonActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButton
+                activeField === 'phoneNumber' && styles.disabledSelectorButton,
               ]}
               onPress={() => handleKeyboardTypeChange('123')}
               disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[
-                styles.selectorButtonText, 
-                keyboardType === '123' && styles.selectorButtonTextActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
-              ]}>
+              <Text
+                style={[
+                  styles.selectorButtonText,
+                  keyboardType === '123' && styles.selectorButtonTextActive,
+                  activeField === 'phoneNumber' &&
+                    styles.disabledSelectorButtonText,
+                ]}
+              >
                 123
               </Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={[
-                styles.selectorButton, 
+                styles.selectorButton,
                 keyboardType === 'symbols' && styles.selectorButtonActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButton
+                activeField === 'phoneNumber' && styles.disabledSelectorButton,
               ]}
               onPress={() => handleKeyboardTypeChange('symbols')}
               disabled={activeField === 'phoneNumber'}
             >
-              <Text style={[
-                styles.selectorButtonText, 
-                keyboardType === 'symbols' && styles.selectorButtonTextActive,
-                activeField === 'phoneNumber' && styles.disabledSelectorButtonText
-              ]}>
+              <Text
+                style={[
+                  styles.selectorButtonText,
+                  keyboardType === 'symbols' && styles.selectorButtonTextActive,
+                  activeField === 'phoneNumber' &&
+                    styles.disabledSelectorButtonText,
+                ]}
+              >
                 @#$
               </Text>
             </TouchableOpacity>
@@ -496,30 +855,33 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         </View>
 
         {/* Partie 4: Boutons d'action - 15% de la hauteur */}
-        <View style={[styles.section, styles.actionSection]} onLayout={handleZone4Layout}>
+        <View
+          style={[styles.section, styles.actionSection]}
+          onLayout={handleZone4Layout}
+        >
           <View style={styles.actionButtons}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.cancelButton,
                 {
-                  height: zone4Height > 0 ? zone4Height * 0.90 : 60,
-                  width: zone4Width > 0 ? zone4Width * 0.40 : 150,
-                }
+                  height: zone4Height > 0 ? zone4Height * 0.9 : 60,
+                  width: zone4Width > 0 ? zone4Width * 0.4 : 150,
+                },
               ]}
               onPress={handleCancel}
             >
               <Text style={styles.cancelButtonText}>❌ Annuler</Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.validateButton,
                 {
-                  height: zone4Height > 0 ? zone4Height * 0.90 : 60,
-                  width: zone4Width > 0 ? zone4Width * 0.40 : 150,
-                }
+                  height: zone4Height > 0 ? zone4Height * 0.9 : 60,
+                  width: zone4Width > 0 ? zone4Width * 0.4 : 150,
+                },
               ]}
               onPress={handleValidate}
             >
@@ -533,12 +895,12 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       <Modal
         visible={showTextZoom}
         transparent={true}
-        animationType="fade"
+        animationType='fade'
         onRequestClose={closeTextZoom}
       >
-        <TouchableOpacity 
-          style={styles.zoomOverlay} 
-          activeOpacity={1} 
+        <TouchableOpacity
+          style={styles.zoomOverlay}
+          activeOpacity={1}
           onPress={closeTextZoom}
         >
           <View style={styles.zoomContainer}>
@@ -546,19 +908,22 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
             <View style={styles.zoomHeader}>
               <Text style={styles.zoomTitle}>📝 Texte Saisi</Text>
             </View>
-            
+
             {/* Contenu du texte - 50% de la hauteur */}
             <View style={styles.zoomContent}>
               <Text style={styles.zoomTextValue}>
                 {currentText || 'Aucun texte saisi'}
               </Text>
-              
+
               {/* Bouton pour réécouter */}
-              <TouchableOpacity style={styles.zoomRelistenButton} onPress={speakText}>
+              <TouchableOpacity
+                style={styles.zoomRelistenButton}
+                onPress={speakText}
+              >
                 <Text style={styles.zoomRelistenButtonText}>🔊 Relire</Text>
               </TouchableOpacity>
             </View>
-            
+
             {/* Instructions - 20% de la hauteur */}
             <View style={styles.zoomInstructions}>
               <Text style={styles.zoomInstructionsText}>
@@ -577,18 +942,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  
+
   mainContainer: {
     flex: 1,
     padding: 10,
   },
-  
+
   section: {
     paddingVertical: 10,
     paddingHorizontal: 10,
     marginBottom: 10,
   },
-  
+
   // Partie 1: En-tête (15% de la hauteur)
   headerSection: {
     height: height * 0.15, // 15% de la hauteur
@@ -665,10 +1030,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
-  
+
   // Partie 2: Clavier principal (60% de la hauteur)
   keyboardSection: {
-    height: height * 0.60, // 60% de la hauteur
+    height: height * 0.6, // 60% de la hauteur
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
     padding: 20,
@@ -738,7 +1103,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  
+
   mainText: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -749,16 +1114,16 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-  
+
   mainSubtext: {
     fontSize: 18,
     color: '#666666',
     textAlign: 'center',
   },
-  
+
   // Partie 3: Zone secondaire (10% de la hauteur)
   secondarySection: {
-    height: height * 0.10, // 10% de la hauteur
+    height: height * 0.1, // 10% de la hauteur
     backgroundColor: '#E8F5E8',
     justifyContent: 'center',
     alignItems: 'center',
@@ -927,7 +1292,7 @@ const styles = StyleSheet.create({
   disabledSelectorButtonText: {
     color: '#999999', // Couleur du texte pour le bouton désactivé
   },
-  
+
   numberKey: {
     width: Math.min(60, (width - 120) / 3), // 3 touches par ligne avec marges
     height: Math.min(60, (height * 0.6 - 100) / 5), // 5 rangées avec espacement

@@ -13,6 +13,9 @@
 - 📞 **Gestion des contacts** - Liste, création et appels
 - 🎨 **Design responsive** - Adapté à tous les écrans
 - ⚡ **Performance optimisée** - React Native avec TypeScript
+- ⌨️ **Clavier virtuel intelligent** - Saisie adaptative par type de champ
+- 🔢 **Clavier téléphone automatique** - Mode chiffres forcé pour les numéros
+- ✅ **Validation intelligente** - Sauvegarde ou annulation selon l'action
 
 ## Installation
 
