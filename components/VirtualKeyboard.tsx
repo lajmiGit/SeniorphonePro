@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 import { VirtualKeyboardProps } from '../types';
 
@@ -28,8 +28,59 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = () => {
 
         {/* Partie 2: Zone principale - 60% de la hauteur */}
         <View style={[styles.section, styles.mainSection]}>
-          <Text style={styles.mainText}>Zone principale du clavier</Text>
-          <Text style={styles.mainSubtext}>60% de l'écran</Text>
+          <View style={styles.keyboardContainer}>
+            {/* Première rangée : 1, 2, 3 */}
+            <View style={styles.keyboardRow}>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>2</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>3</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Deuxième rangée : 4, 5, 6 */}
+            <View style={styles.keyboardRow}>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>4</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>5</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>6</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Troisième rangée : 7, 8, 9 */}
+            <View style={styles.keyboardRow}>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>7</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>8</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>9</Text>
+              </TouchableOpacity>
+            </View>
+            
+            {/* Quatrième rangée : *, 0, # */}
+            <View style={styles.keyboardRow}>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>*</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>0</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.keyboardKey}>
+                <Text style={styles.keyboardKeyText}>#</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
 
         {/* Partie 3: Zone secondaire - 10% de la hauteur */}
@@ -128,6 +179,51 @@ const styles = StyleSheet.create({
     borderLeftColor: 'rgba(255, 255, 255, 1.0)',
     borderRightColor: 'rgba(255, 255, 255, 0.3)',
     borderBottomColor: 'rgba(255, 255, 255, 0.3)',
+  },
+
+  keyboardContainer: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+
+  keyboardRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    alignItems: 'center',
+  },
+
+  keyboardKey: {
+    width: Math.min(80, (width - 80) / 3), // 3 touches par ligne avec marges
+    height: Math.min(80, (height * 0.6 - 120) / 4), // 4 rangées avec espacement
+    backgroundColor: '#FFFFFF',
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 8,
+    borderWidth: 3,
+    borderColor: '#E0E0E0',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    // Effet 3D avec bordures contrastées
+    borderTopColor: 'rgba(255, 255, 255, 1.0)',
+    borderLeftColor: 'rgba(255, 255, 255, 1.0)',
+    borderRightColor: 'rgba(224, 224, 224, 0.6)',
+    borderBottomColor: 'rgba(224, 224, 224, 0.6)',
+  },
+
+  keyboardKeyText: {
+    fontSize: Math.max(24, Math.min(80, (height * 0.6 - 120) / 4) * 0.4),
+    fontWeight: 'bold',
+    color: '#333333',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   
   mainText: {
