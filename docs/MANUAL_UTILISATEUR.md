@@ -172,19 +172,21 @@ L'écran est divisé en **5 parties** :
 
 **Partie 1 (10%)** : Bouton Accueil
 **Partie 2 (15%)** : Informations système (réseau, batterie, heure)
-**Partie 3 (15%)** : Affichage du numéro composé
+**Partie 3 (10%)** : Affichage du numéro composé
 **Partie 4 (55%)** : Pavé numérique
-**Partie 5 (5%)** : Bouton Appeler
+**Partie 5 (10%)** : Bouton Appeler
 
 ##### **Pavé numérique :**
 - **Chiffres** : 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 - **Comment faire** : Appuyez sur les chiffres pour composer
 - **Affichage** : Le numéro s'affiche en haut de l'écran
+- **Effet 3D** : Les boutons ont un effet de profondeur subtil et élégant
 
-#### 🗑️ **Effacer le numéro**
-- **Bouton** : "×" (petit bouton rond à côté du numéro)
-- **À quoi ça sert** : Effacer le dernier chiffre composé
-- **Comment faire** : Appuyez sur le bouton avec la croix
+#### 🗑️ **Effacer le numéro (NOUVEAU !)**
+- **Bouton** : "⌫" (bouton rond rouge à côté du numéro)
+- **À quoi ça sert** : Effacer le dernier chiffre composé (un à la fois)
+- **Comment faire** : Appuyez sur le bouton rouge avec l'icône ⌫
+- **Avantage** : Plus besoin d'effacer tout le numéro, juste le dernier chiffre !
 
 #### 📞 **Appeler le numéro composé**
 - **Bouton** : "Appeler" (vert, en bas)
@@ -198,6 +200,38 @@ En haut de l'écran, vous voyez :
 - **🔋 Batterie** : Niveau de batterie avec pourcentage
 - **🕐 Heure** : Heure actuelle
 
+#### 🔍 **Zoom sur les informations (NOUVEAU !)**
+- **Comment faire** : Appuyez sur l'une des informations (réseau, batterie, heure)
+- **Ce qui se passe** : Un zoom s'affiche avec plus de détails
+- **Fermer** : Appuyez n'importe où sur le zoom pour le fermer
+
+---
+
+## 🆕 Nouvelles Fonctionnalités
+
+### 🗑️ **Bouton Supprimer Intelligent**
+- **Icône** : ⌫ (retour arrière) au lieu de ×
+- **Couleur** : Rouge pour une meilleure visibilité
+- **Fonction** : Supprime un seul chiffre à la fois
+- **Avantage** : Plus pratique pour corriger des erreurs
+
+### 🎨 **Effet 3D des Boutons**
+- **Pavé numérique** : Boutons avec effet de profondeur subtil
+- **Android** : Effet 3D natif optimisé
+- **iOS** : Ombres douces et naturelles
+- **Résultat** : Interface moderne et élégante
+
+### 🔇 **Plus de Voix Automatique**
+- **Avant** : Chaque chiffre était lu automatiquement
+- **Maintenant** : Plus de lecture vocale automatique
+- **Conservé** : Le son de touche reste pour le feedback
+- **Avantage** : Interface plus silencieuse et discrète
+
+### 📱 **Status Bar Optimisée**
+- **Problème résolu** : Le contenu n'est plus caché par la barre de statut
+- **Adaptatif** : S'ajuste automatiquement à votre téléphone
+- **Résultat** : Toute l'interface est parfaitement visible
+
 ---
 
 ## 🔧 Conseils d'Utilisation
@@ -207,16 +241,20 @@ En haut de l'écran, vous voyez :
 2. **Appuyez doucement** sur les boutons (pas besoin d'appuyer fort)
 3. **Regardez les couleurs** : vert = action, rouge = annuler
 4. **Utilisez le clavier virtuel** pour saisir les noms
+5. **Utilisez le bouton ⌫** pour corriger les erreurs de frappe
+6. **Appuyez sur les informations système** pour voir plus de détails
 
 ### ⚠️ **En cas de problème :**
 - **L'application ne répond pas** : Fermez et rouvrez l'application
 - **Les contacts ne se chargent pas** : Vérifiez que vous avez donné l'autorisation d'accès aux contacts
 - **Vous êtes perdu** : Appuyez sur le bouton "🏠 Accueil" pour revenir au début
+- **Le contenu est caché** : L'application s'adapte automatiquement à votre téléphone
 
 ### 📱 **Adaptation à votre téléphone :**
 - L'application s'adapte automatiquement à la taille de votre écran
 - Les boutons sont suffisamment grands pour être faciles à utiliser
 - Les couleurs sont choisies pour une bonne lisibilité
+- La barre de statut est automatiquement gérée
 
 ---
 
@@ -240,8 +278,12 @@ En haut de l'écran, vous voyez :
 - **Les couleurs** sont choisies pour une bonne visibilité
 - **L'interface** s'adapte à la taille de votre écran
 - **Les boutons** sont suffisamment grands pour être faciles à utiliser
+- **L'effet 3D** est subtil et élégant, sans être agressif
+- **Le bouton supprimer** efface un chiffre à la fois pour plus de précision
+- **Plus de voix automatique** pour une interface plus discrète
 
 ---
 
-*Manuel utilisateur - SeniorPhonePro v1.0*
+*Manuel utilisateur - SeniorPhonePro v1.1*
+*Dernière mise à jour : Bouton supprimer intelligent, effet 3D des boutons, Status Bar optimisée*
 *Conçu pour offrir une expérience simple et accessible aux seniors*

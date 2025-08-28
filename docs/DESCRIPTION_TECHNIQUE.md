@@ -127,15 +127,21 @@ height: height * 0.3,    // Boutons : 30% de la hauteur
 **Layout en 5 parties :**
 - **Partie 1** : Bouton Accueil (10% hauteur)
 - **Partie 2** : Informations système (15% hauteur)
-- **Partie 3** : Affichage numéro (15% hauteur)
+- **Partie 3** : Affichage numéro (10% hauteur)
 - **Partie 4** : Pavé numérique (55% hauteur)
-- **Partie 5** : Bouton Appeler (5% hauteur)
+- **Partie 5** : Bouton Appeler (10% hauteur)
 
 #### Composants Techniques
-- **SystemInfo** : Affichage réseau, batterie, heure avec effets 3D
-- **PhoneDisplay** : Affichage du numéro composé
-- **DialPad** : Pavé numérique avec boutons 3D
+- **SystemInfo** : Affichage réseau, batterie, heure avec effets 3D et zooms interactifs
+- **PhoneDisplay** : Affichage du numéro composé avec bouton supprimer intelligent
+- **DialPad** : Pavé numérique avec boutons 3D optimisés
 - **Navigation** : Gestion des écrans via `currentScreen`
+
+#### Nouvelles Fonctionnalités
+- **Bouton supprimer intelligent** : `onDeleteDigit: () => void` ajoutée à `PhoneDisplayProps`
+- **Icône supprimer** : Changée de `×` à `⌫` (retour arrière) avec couleur rouge
+- **Status Bar optimisée** : Configuration `translucent={true}` et padding adaptatif par plateforme
+- **Effet 3D des boutons** : `elevation: 2` sur Android + ombres sur iOS
 
 ---
 
@@ -145,16 +151,21 @@ height: height * 0.3,    // Boutons : 30% de la hauteur
 - **Hooks** : `useState`, `useEffect`, `useRef`
 - **Navigation** : Gestion d'état locale avec `currentScreen`
 - **Animations** : `Animated` API pour effets de clic
+- **Platform** : Détection iOS/Android pour styles adaptatifs
 
 ### Bibliothèques Externes
 - **expo-contacts** : Gestion des contacts du téléphone
+- **expo-speech** : Synthèse vocale pour les zooms (désactivée sur le pavé)
+- **expo-av** : Audio pour les sons de touche
+- **expo-linking** : Lancement des appels téléphoniques
 - **Dimensions** : Responsive design adaptatif
 - **Vibration** : Feedback tactile pour les interactions
 
 ### Styling
-- **StyleSheet** : Styles optimisés avec effets 3D
+- **StyleSheet** : Styles optimisés avec effets 3D adaptatifs
 - **Responsive** : Calculs dynamiques basés sur `Dimensions.get('window')`
-- **Effets 3D** : `elevation`, `shadow`, bordures contrastées
+- **Effets 3D** : `elevation` (Android) + `shadow` (iOS) + bordures contrastées
+- **Platform-specific** : Styles différents selon iOS/Android
 
 ## Gestion d'État
 
@@ -162,8 +173,14 @@ height: height * 0.3,    // Boutons : 30% de la hauteur
 ```typescript
 const [currentScreen, setCurrentScreen] = useState<'navigation' | 'contacts' | 'phone' | 'createContact'>('navigation');
 const [phoneNumber, setPhoneNumber] = useState('');
+const [showCallConfirmZoom, setShowCallConfirmZoom] = useState(false);
 const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 ```
+
+### Nouvelles Fonctions
+- **`deleteDigit()`** : Supprime le dernier chiffre du numéro avec animation et vibration
+- **`confirmCall()`** : Lance l'appel via `Linking.openURL` avec gestion d'erreur
+- **Status Bar** : Configuration `translucent={true}` et padding adaptatif
 
 ### Navigation entre Écrans
 - **Conditionnel** : Rendu basé sur `currentScreen`
@@ -187,6 +204,11 @@ const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 - Adaptation automatique à toutes les tailles d'écran
 - Styles optimisés pour seniors (grands boutons, contrastes)
 
+### Status Bar
+- **Padding adaptatif** : iOS (50px) vs Android (30px)
+- **Configuration optimisée** : `translucent={true}`, `backgroundColor="transparent"`
+- **SafeAreaView** : Gestion automatique des zones sûres
+
 ## Sécurité et Permissions
 
 ### Permissions Android
@@ -204,6 +226,11 @@ const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 - Fallbacks pour les cas d'erreur
 - Messages utilisateur informatifs
 
+### Appels Téléphoniques
+- **Sécurité** : Utilisation de `Linking.openURL` pour respecter les limitations de sécurité
+- **Fallback** : Gestion des erreurs avec `Alert.alert`
+- **Logs** : Console logs détaillés pour le débogage
+
 ## Structure des Fichiers
 
 ```
@@ -215,14 +242,39 @@ SeniorPhonePro/
 │   ├── CreateContactScreen.tsx # Création de contact
 │   ├── CallScreen.tsx         # Écran d'appel
 │   ├── VirtualKeyboard.tsx    # Clavier virtuel
-│   ├── SystemInfo.tsx         # Informations système
-│   ├── PhoneDisplay.tsx       # Affichage numéro
-│   └── DialPad.tsx            # Pavé numérique
+│   ├── SystemInfo.tsx         # Informations système avec zooms
+│   ├── PhoneDisplay.tsx       # Affichage numéro avec bouton supprimer
+│   └── DialPad.tsx            # Pavé numérique avec effet 3D optimisé
 ├── constants/
 │   ├── Colors.ts              # Palette de couleurs
 │   └── Accessibility.ts       # Constantes d'accessibilité
 └── docs/                      # Documentation
 ```
+
+## Nouvelles Fonctionnalités Techniques
+
+### Bouton Supprimer Intelligent
+- **Interface** : `onDeleteDigit: () => void` ajoutée à `PhoneDisplayProps`
+- **Fonction** : `deleteDigit()` supprime un chiffre à la fois avec `slice(0, -1)`
+- **Feedback** : Animation de clic + vibration tactile (100ms)
+- **Style** : Icône `⌫` rouge avec effet 3D
+
+### Status Bar Optimisée
+- **Configuration** : `translucent={true}`, `backgroundColor="transparent"`
+- **Padding adaptatif** : `Platform.OS === 'ios' ? 50 : 30`
+- **SafeAreaView** : Gestion automatique des zones sûres
+- **Compatibilité** : Fonctionne sur iOS et Android
+
+### Effet 3D des Boutons de Numérotation
+- **Android** : `elevation: 2` pour effet 3D natif subtil
+- **iOS** : `shadow` properties pour ombres douces
+- **Bordures contrastées** : Effet de profondeur avec bordures claires/sombres
+- **Performance** : Optimisé pour éviter les conflits visuels
+
+### Désactivation de la Voix Automatique
+- **Pavé numérique** : Plus de lecture vocale automatique des chiffres
+- **Son conservé** : Feedback audio des touches maintenu
+- **Fonction disponible** : `speakNumber()` reste disponible pour usage manuel
 
 ## Points d'Extension
 
@@ -240,4 +292,5 @@ SeniorPhonePro/
 
 ---
 
-*Document généré automatiquement - SeniorPhonePro v1.0*
+*Document généré automatiquement - SeniorPhonePro v1.1*
+*Dernière mise à jour : Ajout du bouton supprimer intelligent, optimisation de la Status Bar, effet 3D des boutons*
