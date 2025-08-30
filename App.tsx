@@ -59,18 +59,21 @@ export default function App() {
   // Fonction pour gérer la synthèse vocale de manière propre
   const speakCallConfirmation = () => {
     try {
-      // Arrêter toute synthèse vocale en cours
+      // Arrêter toute synthèse vocale en cours avec délai pour s'assurer qu'elle s'arrête
       Speech.stop();
       
-      const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
-      const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
-      
-      console.log('📞 Fonction speakCallConfirmation appelée');
-      console.log('📞 Numéro reçu:', phoneNumber);
-      console.log('📞 Message généré:', message);
-      
-      Speech.speak(message, speechConfig);
-      console.log('📞 Synthèse vocale lancée avec succès');
+      // Attendre un peu avant de relancer pour s'assurer que l'arrêt est effectif
+      setTimeout(() => {
+        const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
+        const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
+        
+        console.log('📞 Fonction speakCallConfirmation appelée');
+        console.log('📞 Numéro reçu:', phoneNumber);
+        console.log('📞 Message généré:', message);
+        
+        Speech.speak(message, speechConfig);
+        console.log('📞 Synthèse vocale lancée avec succès');
+      }, 100); // Délai de 100ms pour s'assurer que l'arrêt est effectif
     } catch (error) {
       console.error('📞 Erreur lors de la synthèse vocale:', error);
     }
@@ -191,10 +194,16 @@ export default function App() {
     console.log('Type du numéro:', typeof phoneNumber);
     console.log('Longueur du numéro:', phoneNumber.length);
 
-    // Arrêter la synthèse vocale
+    // Arrêter la synthèse vocale de manière robuste
     try {
       Speech.stop();
       console.log('🔇 Synthèse vocale arrêtée');
+      
+      // Attendre un peu pour s'assurer que l'arrêt est effectif
+      setTimeout(() => {
+        Speech.stop(); // Double arrêt pour s'assurer
+        console.log('🔇 Double arrêt de la synthèse vocale');
+      }, 50);
     } catch (error) {
       console.error('❌ Erreur lors de l\'arrêt de la synthèse vocale:', error);
     }
@@ -224,10 +233,16 @@ export default function App() {
   // Annuler l'appel
   const cancelCall = () => {
     console.log('Appel annulé');
-    // Arrêter la synthèse vocale
+    // Arrêter la synthèse vocale de manière robuste
     try {
       Speech.stop();
       console.log('🔇 Synthèse vocale arrêtée');
+      
+      // Attendre un peu pour s'assurer que l'arrêt est effectif
+      setTimeout(() => {
+        Speech.stop(); // Double arrêt pour s'assurer
+        console.log('🔇 Double arrêt de la synthèse vocale');
+      }, 50);
     } catch (error) {
       console.error('❌ Erreur lors de l\'arrêt de la synthèse vocale:', error);
     }
