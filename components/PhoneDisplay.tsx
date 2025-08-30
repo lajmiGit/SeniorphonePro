@@ -103,7 +103,11 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
   // Fermer le zoom du numéro
   const closePhoneZoom = () => {
     // Arrêter la parole
-    Speech.stop();
+    try {
+      Speech.stop();
+    } catch (error) {
+      console.error('📞 Erreur lors de l\'arrêt de la synthèse vocale:', error);
+    }
 
     // Animation de sortie
     Animated.parallel([
@@ -125,7 +129,11 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
   // Fermer le zoom de confirmation d'appel
   const closeCallConfirmZoom = () => {
     // Arrêter la parole
-    Speech.stop();
+    try {
+      Speech.stop();
+    } catch (error) {
+      console.error('📞 Erreur lors de l\'arrêt de la synthèse vocale:', error);
+    }
 
     // Animation de sortie
     Animated.parallel([
@@ -170,7 +178,12 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
       console.log('📞 Message généré:', message);
       console.log('📞 Configuration voix:', speechConfig);
 
-      Speech.speak(message, speechConfig);
+      // Synthèse vocale pour annoncer le numéro
+      try {
+        Speech.speak(message, speechConfig);
+      } catch (error) {
+        console.error('📞 Erreur lors de la synthèse vocale:', error);
+      }
       console.log('📞 Synthèse vocale lancée avec succès');
     } catch (error) {
       console.error('📞 Erreur lors de la synthèse vocale:', error);
@@ -354,7 +367,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '80%',
+    height: '90%',
   },
   phoneInput: {
     flex: 1,
@@ -367,6 +380,8 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     marginRight: 15,
+    borderWidth: 2,
+    borderColor: '#000000', // Bordure noire
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: {
