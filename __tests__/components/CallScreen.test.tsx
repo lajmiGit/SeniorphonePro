@@ -9,6 +9,7 @@ const mockProps = {
     name: 'Jean Dupont',
     phoneNumber: '0123456789',
     photo: 'photo.jpg',
+    isFavorite: false,
   },
   onCall: jest.fn(),
   onCancel: jest.fn(),

@@ -9,14 +9,35 @@ jest.mock('expo-contacts', () => ({
   getContactsAsync: jest.fn().mockResolvedValue({
     data: [
       {
+        ID: '1',
         id: '1',
-        name: 'Test Contact',
+        name: 'Jean Dupont',
         phoneNumbers: [{ number: '0123456789' }],
+        image: null,
+      },
+      {
+        ID: '2',
+        id: '2',
+        name: 'Marie Martin',
+        phoneNumbers: [{ number: '0987654321' }],
+        image: null,
+      },
+      {
+        ID: '3',
+        id: '3',
+        name: 'Pierre Durand',
+        phoneNumbers: [{ number: '0555666777' }],
         image: null,
       },
     ],
   }),
   addContactAsync: jest.fn().mockResolvedValue({ id: 'new-id' }),
+  Fields: {
+    ID: 'id',
+    Name: 'name',
+    PhoneNumbers: 'phoneNumbers',
+    Image: 'image',
+  },
 }));
 
 jest.mock('expo-battery', () => ({
@@ -36,6 +57,18 @@ jest.mock('react-native/Libraries/Vibration/Vibration', () => ({
 // Mock de StatusBar
 jest.mock('expo-status-bar', () => ({
   StatusBar: 'StatusBar',
+}));
+
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn().mockResolvedValue(undefined),
+  getItem: jest.fn().mockResolvedValue(null),
+  removeItem: jest.fn().mockResolvedValue(undefined),
+  clear: jest.fn().mockResolvedValue(undefined),
+  getAllKeys: jest.fn().mockResolvedValue([]),
+  multiGet: jest.fn().mockResolvedValue([]),
+  multiSet: jest.fn().mockResolvedValue(undefined),
+  multiRemove: jest.fn().mockResolvedValue(undefined),
 }));
 
 // Mock global de Dimensions

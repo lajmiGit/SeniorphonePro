@@ -24,23 +24,6 @@ describe('PhoneDisplay Component - Audit Fonctionnel et Technique', () => {
     Dimensions.get = originalDimensions;
   });
 
-  // Tailles d'écran de téléphone courantes
-  const phoneScreenSizes = [
-    { name: 'iPhone SE (1ère génération)', width: 320, height: 568 },
-    { name: 'iPhone SE (2ème génération)', width: 375, height: 667 },
-    { name: 'iPhone 8', width: 375, height: 667 },
-    { name: 'iPhone 12/13/14', width: 390, height: 844 },
-    { name: 'iPhone 12/13/14 Pro', width: 393, height: 852 },
-    { name: 'iPhone 12/13/14 Pro Max', width: 428, height: 926 },
-    { name: 'iPhone 14 Plus', width: 428, height: 926 },
-    { name: 'iPhone 15/15 Pro', width: 393, height: 852 },
-    { name: 'iPhone 15 Plus/Pro Max', width: 430, height: 932 },
-    { name: 'Samsung Galaxy S21', width: 360, height: 800 },
-    { name: 'Samsung Galaxy S22', width: 360, height: 780 },
-    { name: 'Google Pixel 6', width: 393, height: 851 },
-    { name: 'OnePlus 9', width: 412, height: 915 },
-  ];
-
   describe('Audit Fonctionnel - Fonctionnalités de Base', () => {
     it('affiche correctement un numéro de téléphone vide', () => {
       Dimensions.get = jest.fn().mockReturnValue({ width: 375, height: 667 });
@@ -242,6 +225,23 @@ describe('PhoneDisplay Component - Audit Fonctionnel et Technique', () => {
       expect(getByText('Appuyez n\'importe où pour fermer')).toBeTruthy();
     });
   });
+
+  // Tailles d'écran de téléphone courantes
+  const phoneScreenSizes = [
+    { name: 'iPhone SE (1ère génération)', width: 320, height: 568 },
+    { name: 'iPhone SE (2ème génération)', width: 375, height: 667 },
+    { name: 'iPhone 8', width: 375, height: 667 },
+    { name: 'iPhone 12/13/14', width: 390, height: 844 },
+    { name: 'iPhone 12/13/14 Pro', width: 393, height: 852 },
+    { name: 'iPhone 12/13/14 Pro Max', width: 428, height: 926 },
+    { name: 'iPhone 14 Plus', width: 428, height: 926 },
+    { name: 'iPhone 15/15 Pro', width: 393, height: 852 },
+    { name: 'iPhone 15 Plus/Pro Max', width: 430, height: 932 },
+    { name: 'Samsung Galaxy S21', width: 360, height: 800 },
+    { name: 'Samsung Galaxy S22', width: 360, height: 780 },
+    { name: 'Google Pixel 6', width: 393, height: 851 },
+    { name: 'OnePlus 9', width: 412, height: 915 },
+  ];
 
   describe('Audit Technique - Performance et Responsive', () => {
     phoneScreenSizes.forEach(({ name, width, height }) => {

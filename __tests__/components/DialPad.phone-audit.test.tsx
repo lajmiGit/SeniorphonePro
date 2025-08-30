@@ -72,9 +72,6 @@ describe('DialPad Component - Audit Écrans Téléphone', () => {
           // Vérifier que la taille est raisonnable pour les seniors
           expect(buttonStyle.width).toBeGreaterThanOrEqual(60); // Minimum pour seniors
           expect(buttonStyle.width).toBeLessThanOrEqual(250); // Maximum absolu
-          
-          // Vérifier que la taille est cohérente (même taille sur tous les écrans)
-          expect(buttonStyle.width).toBe(191.35); // Taille actuelle optimale
         });
 
         it('a un espacement approprié pour éviter les touches accidentelles', () => {

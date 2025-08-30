@@ -15,6 +15,7 @@ import {
 import * as Contacts from 'expo-contacts';
 import { CallScreen } from './CallScreen';
 import { Contact, ContactListProps } from '../types';
+import { CacheService } from '../services/CacheService';
 
 const { height } = Dimensions.get('window');
 
@@ -27,6 +28,7 @@ export const ContactList: React.FC<ContactListProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [showCallScreen, setShowCallScreen] = useState(false);
+  const [cacheStatus, setCacheStatus] = useState<'loading' | 'valid' | 'invalid' | 'error'>('loading');
 
   useEffect(() => {
     requestContactsPermission();
@@ -70,6 +72,21 @@ export const ContactList: React.FC<ContactListProps> = ({
   const loadContacts = async () => {
     try {
       setLoading(true);
+      setCacheStatus('loading');
+
+      // Essayer de charger depuis le cache d'abord
+      const cachedContacts = await CacheService.getContacts();
+      
+      if (cachedContacts && cachedContacts.length > 0) {
+        console.log('📖 Chargement depuis le cache:', cachedContacts.length, 'contacts');
+        setContacts(cachedContacts);
+        setCacheStatus('valid');
+        setLoading(false);
+        return;
+      }
+
+      console.log('🔄 Cache invalide ou vide, chargement depuis l\'API');
+      setCacheStatus('invalid');
 
       // Récupérer tous les contacts avec des noms, numéros de téléphone et photos
       const { data } = await Contacts.getContactsAsync({
@@ -111,13 +128,20 @@ export const ContactList: React.FC<ContactListProps> = ({
         console.log(
           `Contacts avec photos: ${formattedContacts.filter(c => c.photo).length}`
         );
+        
+        // Sauvegarder les contacts dans le cache
+        await CacheService.saveContacts(formattedContacts);
+        
         setContacts(formattedContacts);
+        setCacheStatus('valid');
       } else {
         setError('Aucun contact trouvé');
+        setCacheStatus('error');
       }
     } catch (err) {
       console.error('Erreur chargement contacts:', err);
       setError('Erreur lors du chargement des contacts');
+      setCacheStatus('error');
     } finally {
       setLoading(false);
     }
@@ -275,16 +299,33 @@ export const ContactList: React.FC<ContactListProps> = ({
         <Text style={styles.headerSubtitle}>
           {contacts.length} contact{contacts.length > 1 ? 's' : ''} chargé
           {contacts.length > 1 ? 's' : ''}
+          {cacheStatus === 'valid' && ' (cache)'}
+          {cacheStatus === 'invalid' && ' (API)'}
         </Text>
 
-        {/* Bouton de création */}
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={onCreateContact}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.createButtonText}>➕ Nouveau</Text>
-        </TouchableOpacity>
+        {/* Boutons d'action */}
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={onCreateContact}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.createButtonText}>➕ Nouveau</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={async () => {
+              await CacheService.clearContactsCache();
+              await loadContacts();
+            }}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.refreshButtonText}>
+              {cacheStatus === 'valid' ? '🔄' : '📖'} Rafraîchir
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Liste des contacts */}
@@ -399,6 +440,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     marginTop: 5,
     opacity: 0.9,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 15,
+    gap: 10,
   },
   listContainer: {
     padding: 15,
@@ -558,6 +606,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   createButtonText: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  refreshButton: {
+    backgroundColor: '#2196F3',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  refreshButtonText: {
     fontSize: 16,
     color: '#FFFFFF',
     fontWeight: 'bold',

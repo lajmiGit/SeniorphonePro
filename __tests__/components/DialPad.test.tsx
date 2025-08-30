@@ -2,180 +2,414 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { DialPad } from '../../components/DialPad';
 
-// Mock des props
-const mockOnNumberPress = jest.fn();
+// Les mocks sont déjà définis dans jest.setup.js
 
-describe('DialPad Component', () => {
+describe('DialPad', () => {
+  const mockOnNumberPress = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe('Rendu de base', () => {
-    it('affiche tous les boutons numériques (0-9)', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      // Vérifier tous les chiffres
+    it('affiche tous les boutons numériques de 0 à 9', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
       for (let i = 0; i <= 9; i++) {
-        expect(getByText(i.toString())).toBeTruthy();
+        expect(getByTestId(`dial-button-${i}`)).toBeTruthy();
       }
     });
 
-    it('affiche les symboles spéciaux (* et #)', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      expect(getByText('*')).toBeTruthy();
-      expect(getByText('#')).toBeTruthy();
-    });
-
-    it('a 12 boutons au total (0-9, *, #)', () => {
-      const { getAllByTestId } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const buttons = getAllByTestId(/dial-button-/);
-      expect(buttons).toHaveLength(12);
-    });
-  });
-
-  describe('Interactions des boutons', () => {
-    it('appelle onNumberPress avec le bon numéro quand on clique sur un bouton', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const button5 = getByText('5');
-      fireEvent.press(button5);
-
-      expect(mockOnNumberPress).toHaveBeenCalledWith('5');
-      expect(mockOnNumberPress).toHaveBeenCalledTimes(1);
-    });
-
-    it('appelle onNumberPress avec * quand on clique sur le bouton *', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const buttonStar = getByText('*');
-      fireEvent.press(buttonStar);
-
-      expect(mockOnNumberPress).toHaveBeenCalledWith('*');
-    });
-
-    it('appelle onNumberPress avec # quand on clique sur le bouton #', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const buttonHash = getByText('#');
-      fireEvent.press(buttonHash);
-
-      expect(mockOnNumberPress).toHaveBeenCalledWith('#');
-    });
-
-    it('appelle onNumberPress avec 0 quand on clique sur le bouton 0', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const button0 = getByText('0');
-      fireEvent.press(button0);
-
-      expect(mockOnNumberPress).toHaveBeenCalledWith('0');
-    });
-  });
-
-  describe('Effets visuels', () => {
-    it('a des boutons avec des testID uniques', () => {
-      const { getByTestId } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      expect(getByTestId('dial-button-1')).toBeTruthy();
-      expect(getByTestId('dial-button-5')).toBeTruthy();
-      expect(getByTestId('dial-button-9')).toBeTruthy();
-      expect(getByTestId('dial-button-0')).toBeTruthy();
+    it('affiche les boutons spéciaux * et #', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
       expect(getByTestId('dial-button-star')).toBeTruthy();
       expect(getByTestId('dial-button-hash')).toBeTruthy();
     });
 
-    it('a des boutons avec des styles appropriés', () => {
-      const { getByTestId } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
+    it('affiche le bouton 0 au centre de la dernière ligne', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const zeroButton = getByTestId('dial-button-0');
+      expect(zeroButton).toBeTruthy();
+    });
 
+    it('a un conteneur principal avec testID', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      expect(getByTestId('dial-pad-container')).toBeTruthy();
+    });
+
+    it('affiche 12 boutons au total (4x3)', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const buttons = [
+        'dial-button-1', 'dial-button-2', 'dial-button-3',
+        'dial-button-4', 'dial-button-5', 'dial-button-6',
+        'dial-button-7', 'dial-button-8', 'dial-button-9',
+        'dial-button-star', 'dial-button-0', 'dial-button-hash'
+      ];
+      
+      buttons.forEach(testId => {
+        expect(getByTestId(testId)).toBeTruthy();
+      });
+    });
+  });
+
+  describe('Interactions de base', () => {
+    it('appelle onNumberPress avec le bon numéro quand on clique sur un bouton', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
       const button1 = getByTestId('dial-button-1');
-      expect(button1).toBeTruthy();
+      fireEvent.press(button1);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledWith('1');
+    });
 
-      // Vérifier que le bouton a des styles de base
-      expect(button1.props.style).toBeDefined();
+    it('appelle onNumberPress avec * quand on clique sur le bouton étoile', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const starButton = getByTestId('dial-button-star');
+      fireEvent.press(starButton);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledWith('*');
+    });
+
+    it('appelle onNumberPress avec # quand on clique sur le bouton hash', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const hashButton = getByTestId('dial-button-hash');
+      fireEvent.press(hashButton);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledWith('#');
+    });
+
+    it('appelle onNumberPress avec 0 quand on clique sur le bouton zéro', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const zeroButton = getByTestId('dial-button-0');
+      fireEvent.press(zeroButton);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledWith('0');
+    });
+
+    it('appelle onNumberPress plusieurs fois pour des pressions multiples', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      const button2 = getByTestId('dial-button-2');
+      const button3 = getByTestId('dial-button-3');
+      
+      fireEvent.press(button1);
+      fireEvent.press(button2);
+      fireEvent.press(button3);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledTimes(3);
+      expect(mockOnNumberPress).toHaveBeenNthCalledWith(1, '1');
+      expect(mockOnNumberPress).toHaveBeenNthCalledWith(2, '2');
+      expect(mockOnNumberPress).toHaveBeenNthCalledWith(3, '3');
+    });
+  });
+
+  describe('Retour haptique (Vibration)', () => {
+    it('active la vibration quand on clique sur un bouton', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const Vibration = require('react-native/Libraries/Vibration/Vibration');
+      const button1 = getByTestId('dial-button-1');
+      
+      fireEvent.press(button1);
+      
+      expect(Vibration.vibrate).toHaveBeenCalledWith(50);
+    });
+
+    it('active la vibration pour tous les boutons', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const Vibration = require('react-native/Libraries/Vibration/Vibration');
+      const buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '*', '#'];
+      
+      buttons.forEach(num => {
+        const testId = num === '*' ? 'dial-button-star' : 
+                      num === '#' ? 'dial-button-hash' : 
+                      `dial-button-${num}`;
+        const button = getByTestId(testId);
+        fireEvent.press(button);
+      });
+      
+      expect(Vibration.vibrate).toHaveBeenCalledTimes(12);
+    });
+
+    it('gère les erreurs de vibration gracieusement', () => {
+      const Vibration = require('react-native/Libraries/Vibration/Vibration');
+      Vibration.vibrate.mockImplementation(() => {
+        throw new Error('Erreur de vibration');
+      });
+
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      
+      // Ne devrait pas planter
+      fireEvent.press(button1);
+      
+      expect(mockOnNumberPress).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('Structure de la grille', () => {
+    it('affiche une grille 4x3 correcte', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      // Première ligne: 1, 2, 3
+      expect(getByTestId('dial-button-1')).toBeTruthy();
+      expect(getByTestId('dial-button-2')).toBeTruthy();
+      expect(getByTestId('dial-button-3')).toBeTruthy();
+      
+      // Deuxième ligne: 4, 5, 6
+      expect(getByTestId('dial-button-4')).toBeTruthy();
+      expect(getByTestId('dial-button-5')).toBeTruthy();
+      expect(getByTestId('dial-button-6')).toBeTruthy();
+      
+      // Troisième ligne: 7, 8, 9
+      expect(getByTestId('dial-button-7')).toBeTruthy();
+      expect(getByTestId('dial-button-8')).toBeTruthy();
+      expect(getByTestId('dial-button-9')).toBeTruthy();
+      
+      // Quatrième ligne: *, 0, #
+      expect(getByTestId('dial-button-star')).toBeTruthy();
+      expect(getByTestId('dial-button-0')).toBeTruthy();
+      expect(getByTestId('dial-button-hash')).toBeTruthy();
+    });
+
+    it('a un conteneur de grille avec les bonnes dimensions', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const container = getByTestId('dial-pad-container');
+      expect(container).toBeTruthy();
+    });
+  });
+
+  describe('Styles et apparence', () => {
+    it('a des boutons avec des bordures noires', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.style).toEqual(
+        expect.objectContaining({
+          borderColor: '#000000',
+        })
+      );
+    });
+
+    it('a des boutons avec un fond semi-transparent', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.style).toEqual(
+        expect.objectContaining({
+          backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        })
+      );
+    });
+
+    it('a des boutons avec des coins arrondis', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.style).toEqual(
+        expect.objectContaining({
+          borderRadius: 12,
+        })
+      );
+    });
+
+    it('a des boutons avec des ombres', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.style).toEqual(
+        expect.objectContaining({
+          shadowColor: '#000',
+          shadowOffset: expect.objectContaining({
+            width: 0,
+            height: 4,
+          }),
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+        })
+      );
+    });
+
+    it('a des boutons avec une élévation sur Android', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.style).toEqual(
+        expect.objectContaining({
+          elevation: 2,
+        })
+      );
     });
   });
 
   describe('Accessibilité', () => {
-    it('a des testID appropriés pour tous les éléments', () => {
-      const { getByTestId } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      expect(getByTestId('dial-pad-container')).toBeTruthy();
-      expect(getByTestId('dial-pad-grid')).toBeTruthy();
+    it('a des testID appropriés pour tous les boutons', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const expectedTestIds = [
+        'dial-button-1', 'dial-button-2', 'dial-button-3',
+        'dial-button-4', 'dial-button-5', 'dial-button-6',
+        'dial-button-7', 'dial-button-8', 'dial-button-9',
+        'dial-button-star', 'dial-button-0', 'dial-button-hash'
+      ];
+      
+      expectedTestIds.forEach(testId => {
+        expect(getByTestId(testId)).toBeTruthy();
+      });
     });
 
-    it('a des boutons accessibles avec des textes lisibles', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      // Vérifier que tous les boutons ont du texte visible
-      expect(getByText('1')).toBeTruthy();
-      expect(getByText('2')).toBeTruthy();
-      expect(getByText('3')).toBeTruthy();
-      expect(getByText('4')).toBeTruthy();
-      expect(getByText('5')).toBeTruthy();
-      expect(getByText('6')).toBeTruthy();
-      expect(getByText('7')).toBeTruthy();
-      expect(getByText('8')).toBeTruthy();
-      expect(getByText('9')).toBeTruthy();
-      expect(getByText('0')).toBeTruthy();
-      expect(getByText('*')).toBeTruthy();
-      expect(getByText('#')).toBeTruthy();
+    it('a des boutons avec activeOpacity approprié', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.activeOpacity).toBe(0.5);
     });
-  });
 
-  describe('Performance', () => {
-    it('ne re-rend pas inutilement avec la même fonction onNumberPress', () => {
-      const { rerender, getByTestId } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
-
-      const initialRender = getByTestId('dial-pad-container');
-
-      rerender(<DialPad onNumberPress={mockOnNumberPress} />);
-
-      const rerendered = getByTestId('dial-pad-container');
-      expect(rerendered).toBe(initialRender);
+    it('a des boutons avec pressRetentionOffset', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      expect(button1.props.pressRetentionOffset).toEqual({
+        top: 20,
+        left: 20,
+        right: 20,
+        bottom: 20,
+      });
     });
   });
 
-  describe('Gestion des erreurs', () => {
-    it('gère correctement les clics multiples rapides', () => {
-      const { getByText } = render(
-        <DialPad onNumberPress={mockOnNumberPress} />
-      );
+  describe('Responsive Design', () => {
+    it('calcule correctement les dimensions de la grille', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const container = getByTestId('dial-pad-container');
+      expect(container).toBeTruthy();
+    });
 
-      const button5 = getByText('5');
+    it('adapte la taille de police selon la taille de l\'écran', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      const buttonText = button1.findByType('Text');
+      expect(buttonText).toBeTruthy();
+    });
+  });
 
-      // Clics multiples rapides
-      fireEvent.press(button5);
-      fireEvent.press(button5);
-      fireEvent.press(button5);
+  describe('Performance et réactivité', () => {
+    it('réagit rapidement aux pressions multiples', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      
+      // Pressions rapides multiples
+      for (let i = 0; i < 10; i++) {
+        fireEvent.press(button1);
+      }
+      
+      expect(mockOnNumberPress).toHaveBeenCalledTimes(10);
+    });
 
+    it('gère les pressions simultanées sur différents boutons', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      const button2 = getByTestId('dial-button-2');
+      const button3 = getByTestId('dial-button-3');
+      
+      // Pressions simultanées
+      fireEvent.press(button1);
+      fireEvent.press(button2);
+      fireEvent.press(button3);
+      
       expect(mockOnNumberPress).toHaveBeenCalledTimes(3);
-      expect(mockOnNumberPress).toHaveBeenCalledWith('5');
+    });
+
+    it('ne provoque pas de fuites mémoire avec les animations', () => {
+      const { getByTestId, unmount } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      fireEvent.press(button1);
+      
+      // Démonter le composant
+      unmount();
+      
+      // Ne devrait pas y avoir d'erreurs
+      expect(mockOnNumberPress).toHaveBeenCalledWith('1');
+    });
+  });
+
+  describe('Gestion des cas limites', () => {
+    it('fonctionne avec un callback onNumberPress null', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={null as any} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      
+      // Ne devrait pas planter
+      fireEvent.press(button1);
+    });
+
+    it('fonctionne avec un callback onNumberPress undefined', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={undefined as any} />);
+      
+      const button1 = getByTestId('dial-button-1');
+      
+      // Ne devrait pas planter
+      fireEvent.press(button1);
+    });
+
+    it('gère les changements de dimensions d\'écran', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const container = getByTestId('dial-pad-container');
+      expect(container).toBeTruthy();
+    });
+  });
+
+  describe('Tests d\'intégration', () => {
+    it('fonctionne correctement avec des pressions séquentielles', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const sequence = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+      
+      sequence.forEach(num => {
+        const button = getByTestId(`dial-button-${num}`);
+        fireEvent.press(button);
+      });
+      
+      expect(mockOnNumberPress).toHaveBeenCalledTimes(10);
+      sequence.forEach((num, index) => {
+        expect(mockOnNumberPress).toHaveBeenNthCalledWith(index + 1, num);
+      });
+    });
+
+    it('fonctionne avec les caractères spéciaux dans la séquence', () => {
+      const { getByTestId } = render(<DialPad onNumberPress={mockOnNumberPress} />);
+      
+      const sequence = ['1', '*', '2', '#', '3'];
+      
+      sequence.forEach(char => {
+        const testId = char === '*' ? 'dial-button-star' : 
+                      char === '#' ? 'dial-button-hash' : 
+                      `dial-button-${char}`;
+        const button = getByTestId(testId);
+        fireEvent.press(button);
+      });
+      
+      expect(mockOnNumberPress).toHaveBeenCalledTimes(5);
+      sequence.forEach((char, index) => {
+        expect(mockOnNumberPress).toHaveBeenNthCalledWith(index + 1, char);
+      });
     });
   });
 });

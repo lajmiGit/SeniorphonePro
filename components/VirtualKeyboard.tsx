@@ -161,6 +161,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
           >
             {/* Champ d'affichage des caractères saisis */}
             <TouchableOpacity
+              testID="input-field"
               style={[styles.textDisplayField, { width: width * 0.6 }]}
               onPress={handleTextZoom}
               activeOpacity={0.7}
@@ -190,6 +191,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
 
             {/* Bouton de suppression */}
             <TouchableOpacity
+              testID="delete-button"
               style={[styles.deleteButton, { width: zone1Width * 0.2 }]}
               onPress={handleDeleteText}
             >
@@ -861,6 +863,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
         >
           <View style={styles.actionButtons}>
             <TouchableOpacity
+              testID="cancel-button"
               style={[
                 styles.actionButton,
                 styles.cancelButton,
@@ -875,6 +878,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
             </TouchableOpacity>
 
             <TouchableOpacity
+              testID="validate-button"
               style={[
                 styles.actionButton,
                 styles.validateButton,

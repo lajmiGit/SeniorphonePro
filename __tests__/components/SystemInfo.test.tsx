@@ -4,8 +4,8 @@ import { SystemInfo } from '../../components/SystemInfo';
 
 // Mock des props
 const mockProps = {
-  networkLevel: 0.8,
-  batteryLevel: 0.75,
+  networkLevel: 4,
+  batteryLevel: 75,
 };
 
 describe('SystemInfo Component', () => {
