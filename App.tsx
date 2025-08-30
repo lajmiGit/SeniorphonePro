@@ -56,6 +56,26 @@ export default function App() {
     voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
   };
 
+  // Fonction pour gérer la synthèse vocale de manière propre
+  const speakCallConfirmation = () => {
+    try {
+      // Arrêter toute synthèse vocale en cours
+      Speech.stop();
+      
+      const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
+      const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
+      
+      console.log('📞 Fonction speakCallConfirmation appelée');
+      console.log('📞 Numéro reçu:', phoneNumber);
+      console.log('📞 Message généré:', message);
+      
+      Speech.speak(message, speechConfig);
+      console.log('📞 Synthèse vocale lancée avec succès');
+    } catch (error) {
+      console.error('📞 Erreur lors de la synthèse vocale:', error);
+    }
+  };
+
   const addNumber = (num: string) => {
     if (phoneNumber.length < 15) {
       // Limite à 15 chiffres
@@ -159,19 +179,7 @@ export default function App() {
 
       // Synthèse vocale automatique après 350ms
       setTimeout(() => {
-        try {
-          const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
-          const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
-
-          console.log('📞 Fonction makeCall - Synthèse vocale');
-          console.log('📞 Numéro reçu:', phoneNumber);
-          console.log('📞 Message généré:', message);
-
-          Speech.speak(message, speechConfig);
-          console.log('📞 Synthèse vocale lancée avec succès');
-        } catch (error) {
-          console.error('📞 Erreur lors de la synthèse vocale:', error);
-        }
+        speakCallConfirmation();
       }, 350);
     }
   };
@@ -182,6 +190,14 @@ export default function App() {
     console.log('Numéro à appeler:', phoneNumber);
     console.log('Type du numéro:', typeof phoneNumber);
     console.log('Longueur du numéro:', phoneNumber.length);
+
+    // Arrêter la synthèse vocale
+    try {
+      Speech.stop();
+      console.log('🔇 Synthèse vocale arrêtée');
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'arrêt de la synthèse vocale:', error);
+    }
 
     setShowCallConfirmZoom(false);
 
@@ -208,6 +224,13 @@ export default function App() {
   // Annuler l'appel
   const cancelCall = () => {
     console.log('Appel annulé');
+    // Arrêter la synthèse vocale
+    try {
+      Speech.stop();
+      console.log('🔇 Synthèse vocale arrêtée');
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'arrêt de la synthèse vocale:', error);
+    }
     setShowCallConfirmZoom(false);
   };
 
@@ -383,15 +406,7 @@ export default function App() {
               <View style={styles.zoomCallConfirmVoiceSection}>
                 <TouchableOpacity
                   style={styles.zoomCallConfirmVoiceButton}
-                  onPress={() => {
-                    try {
-                      const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
-                      const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
-                      Speech.speak(message, speechConfig);
-                    } catch (error) {
-                      console.error('📞 Erreur lors de la synthèse vocale:', error);
-                    }
-                  }}
+                  onPress={speakCallConfirmation}
                   activeOpacity={0.8}
                 >
                   <Text style={styles.zoomCallConfirmVoiceButtonText}>
