@@ -14,6 +14,7 @@ import {
   Platform,
 } from 'react-native';
 import * as Battery from 'expo-battery';
+import * as Speech from 'expo-speech';
 
 import * as Linking from 'expo-linking';
 import { SystemInfo } from './components/SystemInfo';
@@ -45,6 +46,15 @@ export default function App() {
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
   const homeButtonScale = useRef(new Animated.Value(1)).current;
+
+  // Configuration de la voix pour les seniors (claire et douce)
+  const speechConfig = {
+    language: 'fr-FR',
+    pitch: 1.0, // Voix naturelle
+    rate: 0.8, // Vitesse à 80% (un peu plus rapide)
+    volume: 0.8, // Volume confortable
+    voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
+  };
 
   const addNumber = (num: string) => {
     if (phoneNumber.length < 15) {
@@ -146,6 +156,23 @@ export default function App() {
 
       // Ouvrir le zoom de confirmation d'appel
       setShowCallConfirmZoom(true);
+
+      // Synthèse vocale automatique après 350ms
+      setTimeout(() => {
+        try {
+          const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
+          const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
+
+          console.log('📞 Fonction makeCall - Synthèse vocale');
+          console.log('📞 Numéro reçu:', phoneNumber);
+          console.log('📞 Message généré:', message);
+
+          Speech.speak(message, speechConfig);
+          console.log('📞 Synthèse vocale lancée avec succès');
+        } catch (error) {
+          console.error('📞 Erreur lors de la synthèse vocale:', error);
+        }
+      }, 350);
     }
   };
 
@@ -350,6 +377,27 @@ export default function App() {
                 <Text style={styles.zoomCallConfirmQuestion}>
                   Voulez-vous lancer cet appel ?
                 </Text>
+              </View>
+
+              {/* Section Synthèse Vocale */}
+              <View style={styles.zoomCallConfirmVoiceSection}>
+                <TouchableOpacity
+                  style={styles.zoomCallConfirmVoiceButton}
+                  onPress={() => {
+                    try {
+                      const formattedNumber = phoneNumber.replace(/(\d{2})(?=\d)/g, '$1 ');
+                      const message = `Voulez-vous appeler ${formattedNumber} ? Si oui, appuyez sur le bouton vert. Sinon, appuyez sur le bouton rouge.`;
+                      Speech.speak(message, speechConfig);
+                    } catch (error) {
+                      console.error('📞 Erreur lors de la synthèse vocale:', error);
+                    }
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.zoomCallConfirmVoiceButtonText}>
+                    🔊 Relire les instructions
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               {/* Section Boutons */}
@@ -590,59 +638,97 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   zoomCallConfirmTitleSection: {
-    height: '20%', // 20% de la hauteur du zoom (réduit de 25% à 20%)
+    height: '10%', // 10% de la hauteur du zoom
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   zoomCallConfirmIcon: {
-    fontSize: 48,
-    marginBottom: 10,
+    fontSize: Math.min(36, Math.max(24, Dimensions.get('window').width * 0.08)),
+    marginRight: 10,
   },
   zoomCallConfirmTitle: {
-    fontSize: 24,
+    fontSize: Math.min(20, Math.max(16, Dimensions.get('window').width * 0.05)),
     fontWeight: 'bold',
     color: '#333',
     textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   zoomCallConfirmNumberSection: {
-    height: '20%', // 20% de la hauteur du zoom (réduit de 25% à 20%)
+    height: '20%', // 20% de la hauteur du zoom
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
+    paddingHorizontal: 10,
+    width: '100%',
   },
   zoomCallConfirmNumber: {
-    fontSize: 28,
+    fontSize: Math.min(72, Math.max(48, Dimensions.get('window').width * 0.15)),
     fontWeight: 'bold',
     color: '#2196F3',
     textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    lineHeight: Math.min(80, Math.max(56, Dimensions.get('window').width * 0.17)),
   },
   zoomCallConfirmQuestionSection: {
-    height: '10%', // 10% de la hauteur du zoom (réduit de 20% à 10%)
+    height: '10%', // 10% de la hauteur du zoom
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   zoomCallConfirmQuestion: {
-    fontSize: 20,
+    fontSize: Math.min(18, Math.max(14, Dimensions.get('window').width * 0.045)),
     color: '#666',
     textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  zoomCallConfirmVoiceSection: {
+    height: '15%', // 15% de la hauteur du zoom
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  zoomCallConfirmVoiceButton: {
+    backgroundColor: '#2196F3',
+    paddingHorizontal: Math.min(20, Math.max(15, Dimensions.get('window').width * 0.05)),
+    paddingVertical: Math.min(10, Math.max(8, Dimensions.get('window').height * 0.01)),
+    borderRadius: Math.min(20, Math.max(15, Dimensions.get('window').width * 0.05)),
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  zoomCallConfirmVoiceButtonText: {
+    color: 'white',
+    fontSize: Math.min(16, Math.max(12, Dimensions.get('window').width * 0.04)),
+    fontWeight: 'bold',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   zoomCallConfirmButtonsSection: {
-    height: '35%', // 35% de la hauteur du zoom
+    height: '30%', // 30% de la hauteur du zoom
     flexDirection: 'row',
     justifyContent: 'center', // Centrage parfait des éléments
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 5,
     paddingHorizontal: 0, // Pas de padding pour éviter les décalages
     width: '100%', // Assure que la section prend toute la largeur disponible
   },
   zoomCallConfirmButton: {
-    paddingVertical: 25,
-    paddingHorizontal: 20, // Padding adapté
-    borderRadius: 15,
+    paddingVertical: Math.min(25, Math.max(20, Dimensions.get('window').height * 0.03)),
+    paddingHorizontal: Math.min(20, Math.max(15, Dimensions.get('window').width * 0.05)),
+    borderRadius: Math.min(15, Math.max(12, Dimensions.get('window').width * 0.04)),
     width: '40%', // Chaque bouton occupe exactement 40% de la largeur du zoom
-    minHeight: 80,
+    minHeight: Math.min(80, Math.max(60, Dimensions.get('window').height * 0.1)),
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 5,
@@ -661,7 +747,7 @@ const styles = StyleSheet.create({
   },
   zoomCallConfirmButtonText: {
     color: '#FFFFFF',
-    fontSize: 14, // Taille plus petite pour s'assurer que ça tient
+    fontSize: Math.min(14, Math.max(12, Dimensions.get('window').width * 0.035)),
     fontWeight: 'bold',
     textAlign: 'center', // Centrage du texte
     includeFontPadding: false, // Supprime le padding automatique
@@ -669,7 +755,7 @@ const styles = StyleSheet.create({
     flexShrink: 1, // Permet au texte de se rétrécir si nécessaire
     flexWrap: 'nowrap', // Empêche le retour à la ligne
     // Propriétés supplémentaires pour forcer une ligne
-    lineHeight: 16, // Hauteur de ligne fixe
+    lineHeight: Math.min(16, Math.max(14, Dimensions.get('window').width * 0.04)),
     maxWidth: '100%', // Largeur maximale du texte
   },
   zoomCallConfirmButtonSpacer: {
@@ -679,15 +765,12 @@ const styles = StyleSheet.create({
     width: '5%', // Espace de 5% de la largeur du zoom
   },
   zoomCallConfirmCloseSection: {
-    height: '15%', // 15% de la hauteur du zoom (réduit de 25% à 15%)
+    height: '15%', // 15% de la hauteur du zoom
     justifyContent: 'center',
     alignItems: 'center',
   },
   zoomInfoText: {
-    fontSize: Math.min(
-      18,
-      Math.max(14, Dimensions.get('window').width * 0.045)
-    ),
+    fontSize: Math.min(18, Math.max(14, Dimensions.get('window').width * 0.045)),
     color: '#999',
     textAlign: 'center',
     fontStyle: 'italic',
