@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,16 +20,13 @@ import * as Linking from 'expo-linking';
 import { SystemInfo } from './components/SystemInfo';
 import { PhoneDisplay } from './components/PhoneDisplay';
 import { DialPad } from './components/DialPad';
-import { LoadingSpinner } from './components/LoadingSpinner';
+import * as Network from 'expo-network';
+import * as Cellular from 'expo-cellular';
+import WifiManager from 'react-native-wifi-reborn';
 
-// Lazy Loading des composants lourds
-const ContactList = React.lazy(() => 
-  import('./components/ContactList').then(module => ({ default: module.ContactList }))
-);
-const NavigationScreen = React.lazy(() => import('./components/NavigationScreen'));
-const CreateContactScreen = React.lazy(() => 
-  import('./components/CreateContactScreen').then(module => ({ default: module.CreateContactScreen }))
-);
+import { ContactList } from './components/ContactList';
+import { NavigationScreen } from './components/NavigationScreen';
+import { CreateContactScreen } from './components/CreateContactScreen';
 
 const { height } = Dimensions.get('window');
 
@@ -42,6 +39,16 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<
     'navigation' | 'contacts' | 'phone' | 'createContact'
   >('navigation');
+  const [networkType, setNetworkType] = useState<'wifi' | 'mobile' | 'none'>('none');
+  const [networkInfo, setNetworkInfo] = useState({
+    wifi: { available: false, level: 0, type: 'wifi' },
+    mobile: { available: false, level: 0, type: 'mobile' },
+    primary: 'none' as 'wifi' | 'mobile' | 'none',
+    mobileDataEnabled: false
+  });
+  
+  // État pour contrôler la MAJ pendant la lecture vocale
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   // Animation pour l'effet de clic
   const callButtonScale = useRef(new Animated.Value(1)).current;
@@ -268,16 +275,20 @@ export default function App() {
 
     // Récupération immédiate de la batterie
     getInitialBattery();
+    detectNetworkState();
   }, []);
 
   useEffect(() => {
+    // Timer pour la détection réseau (toutes les 5 secondes) - PAUSE si lecture vocale
     const networkTimer = setInterval(() => {
-      setNetworkLevel(prev => {
-        const newLevel = prev + (Math.random() > 0.5 ? 1 : -1);
-        return Math.max(1, Math.min(4, newLevel));
-      });
-    }, 10000);
+      if (!isSpeaking) {
+        detectNetworkState();
+      } else {
+        console.log('🔇 MAJ réseau ignorée (lecture vocale en cours)');
+      }
+    }, 5000);
 
+    // Timer pour la batterie (toutes les 10 secondes)
     const batteryTimer = setInterval(async () => {
       try {
         const batteryLevel = await Battery.getBatteryLevelAsync();
@@ -292,7 +303,264 @@ export default function App() {
       clearInterval(networkTimer);
       clearInterval(batteryTimer);
     };
-  }, []);
+  }, [isSpeaking]);
+
+  // Fonction pour récupérer le niveau de signal WiFi réel (version simplifiée)
+  const getRealWifiSignal = async () => {
+    try {
+      // Vérifier d'abord si on est sur WiFi
+      const networkState = await Network.getNetworkStateAsync();
+      if (networkState.type !== Network.NetworkStateType.WIFI) {
+        console.log('📶 Pas sur WiFi, retour niveau 0');
+        return 0;
+      }
+
+      // Essayer d'utiliser react-native-wifi-reborn
+      try {
+        const signalStrength = await WifiManager.getCurrentSignalStrength();
+        console.log('📶 Force du signal WiFi:', signalStrength, 'dBm');
+        
+        // Convertir RSSI en niveau 0-4
+        if (signalStrength >= -30) return 4; // Excellent
+        if (signalStrength >= -50) return 3; // Bon
+        if (signalStrength >= -70) return 2; // Moyen
+        if (signalStrength >= -90) return 1; // Faible
+        return 0; // Très faible
+      } catch (wifiError) {
+        console.log('❌ react-native-wifi-reborn non disponible, utilisation simulation');
+        
+        // Fallback : simulation basée sur la qualité de connexion
+        if (networkState.isConnected && networkState.isInternetReachable) {
+          return 4; // Excellent si connecté + internet
+        } else if (networkState.isConnected) {
+          return 2; // Moyen si connecté mais pas internet
+        } else {
+          return 1; // Faible si pas connecté
+        }
+      }
+    } catch (error) {
+      console.log('❌ Erreur générale getRealWifiSignal:', error);
+      return 0;
+    }
+  };
+
+  // Fonction pour mesurer la latence réseau
+  const measureLatency = async () => {
+    const startTime = Date.now();
+    try {
+      // Créer un AbortController pour gérer le timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 secondes max
+      
+      await fetch('https://www.google.com', { 
+        method: 'HEAD',
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      return Date.now() - startTime;
+    } catch (error) {
+      console.log('❌ Erreur mesure latence:', error);
+      return 1000; // Latence élevée en cas d'erreur
+    }
+  };
+
+  // Fonction pour détecter si les données mobiles sont activées
+  const getMobileDataStatus = async () => {
+    try {
+      const cellularState = await Cellular.getCellularGenerationAsync();
+      console.log('📱 Génération cellulaire:', cellularState);
+      
+      // Si cellularState existe, les données mobiles sont activées par l'utilisateur
+      const isEnabled = cellularState !== null;
+      console.log('📱 Données mobiles (paramètres utilisateur):', isEnabled ? 'Activées' : 'Désactivées');
+      return isEnabled;
+    } catch (error) {
+      console.log('❌ Erreur détection statut données mobiles:', error);
+      return false; // Par défaut, considérer comme désactivé
+    }
+  };
+
+  // Fonction pour obtenir le niveau physique 4G/5G (toujours mesuré)
+  const getPhysicalMobileSignal = async () => {
+    try {
+      // Vérifier si 4G/5G est physiquement disponible
+      const carrierName = await Cellular.getCarrierNameAsync();
+      console.log('📱 Opérateur détecté:', carrierName);
+      
+      if (carrierName === null) {
+        // 4G/5G non disponible physiquement
+        console.log('📱 4G/5G non disponible physiquement');
+        return -1; // Non disponible
+      }
+      
+      // 4G/5G est physiquement disponible (carrierName existe)
+      // Toujours mesurer le niveau physique même si désactivée
+      const latency = await measureLatency();
+      console.log('📱 Latence physique 4G/5G:', latency, 'ms');
+      
+      // Convertir la latence en niveau 0-4
+      if (latency < 150) return 4; // Excellent
+      if (latency < 300) return 3; // Bon
+      if (latency < 600) return 2; // Moyen
+      if (latency < 1000) return 1; // Faible
+      return 0; // Très faible
+      
+    } catch (error) {
+      console.log('❌ Erreur mesure niveau physique 4G/5G:', error);
+      return -1;
+    }
+  };
+
+  // Fonction pour récupérer le niveau de signal mobile basé sur la performance réseau
+  const getMobileSignalByPerformance = async () => {
+    try {
+      // Vérifier d'abord si on est sur Mobile
+      const networkState = await Network.getNetworkStateAsync();
+      if (networkState.type !== Network.NetworkStateType.CELLULAR) {
+        console.log('📱 Pas sur Mobile, retour niveau 0');
+        return 0;
+      }
+
+      // VOTRE RÈGLE : Si pas d'Internet = croix rouge (0)
+      if (!networkState.isInternetReachable) {
+        return 0; // Affiche ❌
+      }
+
+      // Mesurer la performance réseau réelle
+      const latency = await measureLatency();
+      console.log('📱 Latence mesurée:', latency, 'ms');
+      
+      // Convertir la latence en niveau 0-4 (4 niveaux + X)
+      if (latency < 150) return 4; // Excellent
+      if (latency < 300) return 3; // Bon
+      if (latency < 600) return 2; // Moyen
+      if (latency < 1000) return 1; // Faible
+      return 0; // Très faible (X)
+
+    } catch (error) {
+      console.log('❌ Erreur générale getMobileSignalByPerformance:', error);
+      return 0;
+    }
+  };
+
+  // Fonction pour détecter le type et le niveau de réseau
+  const detectNetworkState = async () => {
+    try {
+      const networkState = await Network.getNetworkStateAsync();
+      console.log('🔍 État réseau détecté:', networkState);
+
+      if (networkState.isConnected) {
+        let wifiAvailable = false;
+        let mobileAvailable = false;
+        let wifiLevel = 0;
+        let mobileLevel = 0;
+
+        // Détecter WiFi avec niveau réel
+        if (networkState.type === Network.NetworkStateType.WIFI) {
+          wifiAvailable = true;
+          
+          // VOTRE RÈGLE : Si pas d'Internet = croix rouge (0)
+          if (!networkState.isInternetReachable) {
+            wifiLevel = 0; // Affiche ❌
+          } else {
+            // Si Internet OK, utiliser le niveau de signal WiFi réel
+            try {
+              wifiLevel = await getRealWifiSignal();
+            } catch (error) {
+              console.log('❌ Erreur getRealWifiSignal, utilisation niveau par défaut');
+              wifiLevel = 4; // Niveau par défaut si erreur
+            }
+          }
+        } else {
+          // WiFi non disponible
+          wifiAvailable = false;
+          wifiLevel = 0;
+        }
+
+        // NOUVELLE LOGIQUE : Toujours mesurer le niveau physique 4G/5G
+        const physicalMobileLevel = await getPhysicalMobileSignal();
+        const mobileDataEnabled = await getMobileDataStatus();
+        
+        // Détecter Mobile (4G/5G) avec niveau basé sur la performance
+        if (networkState.type === Network.NetworkStateType.CELLULAR) {
+          mobileAvailable = true;
+          
+          // VOTRE RÈGLE : Si pas d'Internet = croix rouge (0)
+          if (!networkState.isInternetReachable) {
+            mobileLevel = 0; // Affiche ❌
+          } else {
+            // Si Internet OK, utiliser la performance réseau réelle
+            try {
+              mobileLevel = await getMobileSignalByPerformance();
+            } catch (error) {
+              console.log('❌ Erreur getMobileSignalByPerformance, utilisation niveau par défaut');
+              mobileLevel = 4; // Niveau par défaut si erreur
+            }
+          }
+        } else {
+          // Mobile non utilisé actuellement mais peut être disponible physiquement
+          mobileAvailable = false; // Pas utilisé pour la connexion
+          mobileLevel = physicalMobileLevel; // Utiliser le niveau physique pour l'affichage
+        }
+
+        console.log('📶 WiFi:', wifiAvailable ? `Niveau ${wifiLevel}` : 'Non disponible');
+        console.log('📱 Mobile:', mobileAvailable ? `Niveau ${mobileLevel}` : 'Non disponible');
+        console.log('🔍 Type réseau détecté:', networkState.type);
+        console.log('🔍 WiFi disponible:', wifiAvailable);
+        console.log('🔍 Mobile disponible:', mobileAvailable);
+
+        // RÈGLE ÉCRAN PHONE : Priorité 4G/5G
+        if (mobileAvailable) {
+          console.log('📱 4G/5G prioritaire pour l\'écran phone');
+          setNetworkType('mobile');
+          setNetworkLevel(mobileLevel);
+        } else if (wifiAvailable) {
+          console.log('📶 WiFi utilisé pour l\'écran phone (pas de 4G/5G)');
+          setNetworkType('wifi');
+          setNetworkLevel(wifiLevel);
+        } else {
+          console.log('❌ Aucun réseau disponible');
+          setNetworkType('none');
+          setNetworkLevel(0);
+        }
+
+        // Stocker les infos complètes pour le zoom
+        const newNetworkInfo = {
+          wifi: {
+            available: wifiAvailable,
+            level: wifiLevel,
+            type: 'wifi' as const
+          },
+          mobile: {
+            available: mobileAvailable,
+            level: mobileLevel,
+            type: 'mobile' as const
+          },
+          primary: (mobileAvailable ? 'mobile' : wifiAvailable ? 'wifi' : 'none') as 'wifi' | 'mobile' | 'none',
+          mobileDataEnabled: mobileDataEnabled
+        };
+
+        setNetworkInfo(newNetworkInfo);
+        console.log('🌐 Info réseaux complète:', newNetworkInfo);
+
+      } else {
+        console.log('❌ Pas de connexion réseau');
+        setNetworkType('none');
+        setNetworkLevel(0);
+        setNetworkInfo({
+          wifi: { available: false, level: 0, type: 'wifi' },
+          mobile: { available: false, level: 0, type: 'mobile' },
+          primary: 'none',
+          mobileDataEnabled: false
+        });
+      }
+    } catch (error) {
+      console.log('❌ Erreur détection réseau:', error);
+      setNetworkType('none');
+      setNetworkLevel(0);
+    }
+  };
 
   // Surveiller les changements de showFloatingButton pour déboguer
   // useEffect(() => {
@@ -310,15 +578,11 @@ export default function App() {
       {/* Écran de contacts */}
       {currentScreen === 'contacts' && (
         <View style={styles.contactsContainer}>
-          <Suspense
-            fallback={<LoadingSpinner message='Chargement des contacts...' />}
-          >
-            <ContactList
-              onContactSelect={handleContactSelect}
-              onCreateContact={navigateToCreateContact}
-              onHomePress={() => setCurrentScreen('navigation')}
-            />
-          </Suspense>
+          <ContactList
+            onContactSelect={handleContactSelect}
+            onCreateContact={navigateToCreateContact}
+            onHomePress={() => setCurrentScreen('navigation')}
+          />
         </View>
       )}
 
@@ -342,10 +606,16 @@ export default function App() {
 
           {/* Partie 2: Informations système (15% de la hauteur) */}
           <View style={[styles.section, styles.infoSection]}>
-            <SystemInfo
-              networkLevel={networkLevel}
-              batteryLevel={batteryLevel}
-            />
+                          <SystemInfo
+                networkLevel={networkType === 'wifi' ? networkInfo.wifi.level : networkLevel}
+                wifiLevel={networkInfo.wifi.level} // Utilise le niveau WiFi réel calculé
+                mobileLevel={networkInfo.mobile.level} // Utilise le niveau mobile réel calculé
+                mobileDataEnabled={networkInfo.mobileDataEnabled} // Statut des données mobiles
+                networkType={networkType} // Type de réseau utilisé
+                networkInfo={networkInfo}
+                batteryLevel={batteryLevel}
+                onSpeakingChange={setIsSpeaking}
+              />
           </View>
 
           {/* Partie 3: Champ téléphone (10% de la hauteur) */}
@@ -478,26 +748,20 @@ export default function App() {
 
       {/* Écran de navigation */}
       {currentScreen === 'navigation' && (
-        <Suspense fallback={<LoadingSpinner message='Chargement du menu...' />}>
-          <NavigationScreen
-            onNavigateToContacts={navigateToContacts}
-            onNavigateToPhone={navigateToPhone}
-            onNavigateToCreateContact={navigateToCreateContact}
-          />
-        </Suspense>
+        <NavigationScreen
+          onNavigateToContacts={navigateToContacts}
+          onNavigateToPhone={navigateToPhone}
+          onNavigateToCreateContact={navigateToCreateContact}
+        />
       )}
 
       {/* Écran de création de contact */}
       {currentScreen === 'createContact' && (
-        <Suspense
-          fallback={<LoadingSpinner message='Chargement du formulaire...' />}
-        >
-          <CreateContactScreen
-            onContactCreated={handleContactCreated}
-            onCancel={() => setCurrentScreen('contacts')}
-            onHomePress={() => setCurrentScreen('navigation')}
-          />
-        </Suspense>
+        <CreateContactScreen
+          onContactCreated={handleContactCreated}
+          onCancel={() => setCurrentScreen('contacts')}
+          onHomePress={() => setCurrentScreen('navigation')}
+        />
       )}
       
     </SafeAreaView>

@@ -104,20 +104,11 @@ export const ContactList: React.FC<ContactListProps> = ({
       if (data.length > 0) {
         // Transformer les contacts en format utilisable - plus efficace
         const formattedContacts: Contact[] = data
-          .filter(contact => {
-            // Filtrage plus strict et rapide
-            return (
-              contact.name &&
-              contact.phoneNumbers &&
-              contact.phoneNumbers.length > 0 &&
-              contact.phoneNumbers[0]?.number
-            );
-          })
           .map(contact => ({
-            id: contact.id || `contact_${Date.now()}_${Math.random()}`,
-            name: contact.name || 'Sans nom',
+            id: contact.id,
+            name: contact.name,
             phoneNumber: contact.phoneNumbers?.[0]?.number || 'Numéro inconnu',
-            photo: contact.image?.uri, // Récupérer l'URI de la photo si elle existe
+            photo: contact.image?.uri || null,
             isFavorite: false,
           }))
           .sort((a, b) => a.name.localeCompare(b.name, 'fr'));

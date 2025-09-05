@@ -4,12 +4,18 @@ export interface Contact {
   id: string;
   name: string;
   phoneNumber: string;
-  photo: string | undefined;
+  photo?: string | null;
   isFavorite: boolean;
 }
 
 export interface SystemInfoProps {
   networkLevel?: number;
+  networkType?: 'wifi' | 'mobile' | 'none';
+  networkInfo?: {
+    wifi: { available: boolean; level: number; type: string };
+    mobile: { available: boolean; level: number; type: string };
+    primary: 'wifi' | 'mobile' | 'none';
+  };
   batteryLevel?: number;
 }
 

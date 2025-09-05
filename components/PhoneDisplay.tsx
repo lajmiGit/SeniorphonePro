@@ -46,11 +46,8 @@ import { PhoneDisplayProps } from '../types';
  * - Animations fluides pour les modals
  * - Synthèse vocale pour l'accessibilité
  */
-export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
-  phoneNumber,
-  onDeleteDigit,
-  onCall,
-}) => {
+export const PhoneDisplay: React.FC<PhoneDisplayProps> = React.memo(
+  ({ phoneNumber, onDeleteDigit }) => {
   const [showPhoneZoom, setShowPhoneZoom] = useState(false);
   const phoneZoomScale = useRef(new Animated.Value(0)).current;
   const phoneZoomOpacity = useRef(new Animated.Value(0)).current;
@@ -252,7 +249,7 @@ export const PhoneDisplay: React.FC<PhoneDisplayProps> = ({
 
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

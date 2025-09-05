@@ -16,26 +16,28 @@ import {
 } from 'react-native';
 import * as Speech from 'expo-speech';
 
-// Déclaration des types globaux pour setTimeout et setInterval
-// Déclarations globales pour les fonctions manquantes
-declare global {
-  function setTimeout(callback: (...args: any[]) => void, ms: number): number;
-  function clearTimeout(id: number): void;
-  function setInterval(callback: (...args: any[]) => void, ms: number): number;
-  function clearInterval(id: number): void;
-}
-
 const { width, height } = Dimensions.get('window');
 
 /**
  * Interface des propriétés du composant SystemInfo
  * @interface SystemInfoProps
  * @property {number} [networkLevel] - Niveau de signal réseau (0-5, défaut: 4)
+ * @property {number} [wifiLevel] - Niveau de signal WiFi (0-4, défaut: 4)
+ * @property {number} [mobileLevel] - Niveau de signal mobile 4G/5G (0-4, défaut: 4)
  * @property {number} [batteryLevel] - Niveau de batterie (0-100, défaut: 85)
+ * @property {string} [networkType] - Type de réseau ('wifi' | 'mobile' | 'none')
+ * @property {object} [networkInfo] - Informations détaillées du réseau
+ * @property {function} [onSpeakingChange] - Callback pour changement de synthèse vocale
  */
 interface SystemInfoProps {
   networkLevel?: number;
+  wifiLevel?: number;
+  mobileLevel?: number;
+  mobileDataEnabled?: boolean;
   batteryLevel?: number;
+  networkType?: 'wifi' | 'mobile' | 'none';
+  networkInfo?: any;
+  onSpeakingChange?: (isSpeaking: boolean) => void;
 }
 
 /**
@@ -59,7 +61,16 @@ interface SystemInfoProps {
  * - Optimisé avec React.memo, useCallback et useMemo
  */
 export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
-  ({ networkLevel = 4, batteryLevel = 85 }) => {
+  ({ 
+    networkLevel = 4, 
+    wifiLevel = 4, 
+    mobileLevel = 4, 
+    mobileDataEnabled = true,
+    batteryLevel = 85,
+    networkType, // eslint-disable-line @typescript-eslint/no-unused-vars
+    networkInfo, // eslint-disable-line @typescript-eslint/no-unused-vars
+    onSpeakingChange // eslint-disable-line @typescript-eslint/no-unused-vars
+  }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
     const [showTimeZoom, setShowTimeZoom] = useState(false);
     const [showNetworkZoom, setShowNetworkZoom] = useState(false);
@@ -77,6 +88,104 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       }, 1000);
 
       return () => clearInterval(timer);
+    }, []);
+
+    // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
+
+    // Configuration de la voix pour les seniors (claire et douce)
+    const speechConfig = useMemo(
+      () => ({
+        language: 'fr-FR',
+        pitch: 1.0, // Voix naturelle
+        rate: 0.8, // Vitesse lente pour les seniors
+        volume: 1.0, // Volume maximum
+        voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
+      }),
+      []
+    );
+
+    // Fonction pour lire l'heure
+    const speakTime = useCallback(() => {
+      const timeString = currentTime.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const message = `Il est ${timeString}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch {
+        // Gestion silencieuse des erreurs
+      }
+    }, [currentTime, speechConfig]);
+
+    // Fonction pour lire les informations du réseau
+    const speakNetwork = useCallback(() => {
+      // Détermination de la qualité avec plus de détails
+      let qualityText = '';
+      let descriptionText = '';
+
+      if (networkLevel >= 4) {
+        qualityText = 'excellente';
+        descriptionText = 'signal très fort';
+      } else if (networkLevel >= 3) {
+        qualityText = 'bonne';
+        descriptionText = 'signal fort';
+      } else if (networkLevel >= 2) {
+        qualityText = 'même';
+        descriptionText = 'signal moyen';
+      } else {
+        qualityText = 'faible';
+        descriptionText = 'signal faible';
+      }
+
+      const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch {
+        // Gestion silencieuse des erreurs
+      }
+    }, [networkLevel, speechConfig]);
+
+    // Fonction pour lire les informations de la batterie
+    const speakBattery = useCallback(() => {
+      // Détermination du niveau avec plus de détails
+      let levelText = '';
+      let statusText = '';
+
+      if (batteryLevel >= 80) {
+        levelText = 'excellent';
+        statusText = 'excellent';
+      } else if (batteryLevel >= 60) {
+        levelText = 'bon';
+        statusText = 'bon';
+      } else if (batteryLevel >= 40) {
+        levelText = 'moyen';
+        statusText = 'moyen';
+      } else if (batteryLevel >= 20) {
+        levelText = 'faign';
+        statusText = 'faign';
+      } else {
+        levelText = 'critique';
+        statusText = 'critique';
+      }
+
+      const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
+
+      // Lecture avec gestion d'erreur
+      try {
+        Speech.speak(message, speechConfig);
+      } catch {
+        // Gestion silencieuse des erreurs
+      }
+    }, [batteryLevel, speechConfig]);
+
+    // Fonction pour arrêter la parole
+    const stopSpeaking = useCallback(() => {
+      Speech.stop();
     }, []);
 
     const handleTimePress = useCallback(() => {
@@ -97,7 +206,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
 
       // Lecture automatique de l'heure
       setTimeout(() => speakTime(), 350); // Délai pour laisser l'animation se terminer
-    }, [zoomScale, zoomOpacity]);
+    }, [zoomScale, zoomOpacity, speakTime]);
 
     const closeTimeZoom = useCallback(() => {
       // Arrêter la parole
@@ -118,7 +227,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       ]).start(() => {
         setShowTimeZoom(false);
       });
-    }, [zoomScale, zoomOpacity]);
+    }, [zoomScale, zoomOpacity, stopSpeaking]);
 
     const handleNetworkPress = useCallback(() => {
       setShowNetworkZoom(true);
@@ -138,7 +247,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
 
       // Lecture automatique des informations de réseau
       setTimeout(() => speakNetwork(), 350); // Délai pour laisser l'animation se terminer
-    }, [networkZoomScale, networkZoomOpacity]);
+    }, [networkZoomScale, networkZoomOpacity, speakNetwork]);
 
     const closeNetworkZoom = useCallback(() => {
       // Arrêter la parole
@@ -159,7 +268,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       ]).start(() => {
         setShowNetworkZoom(false);
       });
-    }, [networkZoomScale, networkZoomOpacity]);
+    }, [networkZoomScale, networkZoomOpacity, stopSpeaking]);
 
     const handleBatteryPress = useCallback(() => {
       setShowBatteryZoom(true);
@@ -179,7 +288,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
 
       // Lecture automatique des informations de batterie
       setTimeout(() => speakBattery(), 350); // Délai pour laisser l'animation se terminer
-    }, [batteryZoomScale, batteryZoomOpacity]);
+    }, [batteryZoomScale, batteryZoomOpacity, speakBattery]);
 
     const closeBatteryZoom = useCallback(() => {
       // Arrêter la parole
@@ -200,7 +309,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
       ]).start(() => {
         setShowBatteryZoom(false);
       });
-    }, [batteryZoomScale, batteryZoomOpacity]);
+    }, [batteryZoomScale, batteryZoomOpacity, stopSpeaking]);
 
     /**
      * Détermine la couleur appropriée pour le niveau de batterie
@@ -259,12 +368,26 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
     // Fonction pour afficher le niveau de réseau avec effet 3D
     const renderNetworkLevel3D = useCallback(
       (level: number) => {
-        const maxBars = 5;
+        // Si niveau 0, afficher croix rouge (même règle que zoom WiFi)
+        if (level === 0) {
+          return (
+            <TouchableOpacity
+              style={styles.network3DContainer}
+              onPress={handleNetworkPress}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.noSignalText}>❌</Text>
+            </TouchableOpacity>
+          );
+        }
+
+        // Sinon, afficher les barres (4 barres comme le zoom WiFi)
+        const maxBars = 4; // Même nombre de barres que le zoom WiFi
         const bars = [];
 
-        for (let i = 1; i <= maxBars; i++) {
-          const isActive = i <= level;
-          const barHeight = 20 + i * 8; // Hauteur encore plus grande pour remplir le cadre
+        for (let i = 0; i < maxBars; i++) {
+          const isActive = i < level; // Même logique que le zoom WiFi
+          const barHeight = 20 + (i + 1) * 8;
           const opacity = isActive ? 1 : 0.15;
           const color = getNetworkColor(level);
 
@@ -349,101 +472,6 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
         </TouchableOpacity>
       );
     }, [currentTime, handleTimePress]);
-
-    // ===== FONCTIONS DE SYNTHÈSE VOCALE =====
-
-    // Configuration de la voix pour les seniors (claire et douce)
-    const speechConfig = {
-      language: 'fr-FR',
-      pitch: 1.0, // Voix naturelle
-      rate: 0.8, // Vitesse lente pour les seniors
-      volume: 1.0, // Volume maximum
-      voice: 'com.apple.ttsbundle.Samantha-compact', // Voix claire sur iOS
-    };
-
-    // Fonction pour lire l'heure
-    const speakTime = useCallback(() => {
-      const timeString = currentTime.toLocaleTimeString('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-      const message = `Il est ${timeString}`;
-
-      // Lecture avec gestion d'erreur
-      try {
-        Speech.speak(message, speechConfig);
-      } catch {
-        // Gestion silencieuse des erreurs
-      }
-    }, [currentTime]);
-
-    // Fonction pour lire les informations du réseau
-    const speakNetwork = useCallback(() => {
-      // Détermination de la qualité avec plus de détails
-      let qualityText = '';
-      let descriptionText = '';
-
-      if (networkLevel >= 4) {
-        qualityText = 'excellente';
-        descriptionText = 'signal très fort';
-      } else if (networkLevel >= 3) {
-        qualityText = 'bonne';
-        descriptionText = 'signal fort';
-      } else if (networkLevel >= 2) {
-        qualityText = 'même';
-        descriptionText = 'signal moyen';
-      } else {
-        qualityText = 'faible';
-        descriptionText = 'signal faible';
-      }
-
-      const message = `Réseau mobile. Niveau ${networkLevel} sur 5. Qualité ${qualityText}. ${descriptionText}`;
-
-      // Lecture avec gestion d'erreur
-      try {
-        Speech.speak(message, speechConfig);
-      } catch {
-        // Gestion silencieuse des erreurs
-      }
-    }, [networkLevel]);
-
-    // Fonction pour lire les informations de la batterie
-    const speakBattery = useCallback(() => {
-      // Détermination du niveau avec plus de détails
-      let levelText = '';
-      let statusText = '';
-
-      if (batteryLevel >= 80) {
-        levelText = 'excellent';
-        statusText = 'excellent';
-      } else if (batteryLevel >= 60) {
-        levelText = 'bon';
-        statusText = 'bon';
-      } else if (batteryLevel >= 40) {
-        levelText = 'moyen';
-        statusText = 'moyen';
-      } else if (batteryLevel >= 20) {
-        levelText = 'faign';
-        statusText = 'faign';
-      } else {
-        levelText = 'critique';
-        statusText = 'critique';
-      }
-
-      const message = `Batterie à ${batteryLevel} pour cent. Niveau ${levelText}. État de charge ${statusText}`;
-
-      // Lecture avec gestion d'erreur
-      try {
-        Speech.speak(message, speechConfig);
-      } catch {
-        // Gestion silencieuse des erreurs
-      }
-    }, [batteryLevel]);
-
-    // Fonction pour arrêter la parole
-    const stopSpeaking = useCallback(() => {
-      Speech.stop();
-    }, []);
 
     return (
       <>
@@ -576,61 +604,129 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
               ]}
             >
               <View style={styles.zoomNetworkCard}>
-                {/* Section Titre/Réseau (40% de la largeur) */}
-                <View style={styles.zoomNetworkTitleSection}>
-                  <Text style={styles.zoomNetworkTitle}>📶</Text>
+                {/* Section 4G/5G (30% hauteur) - MAINTENANT EN PREMIER */}
+                <View style={styles.zoomNetworkMobileSection}>
+                  <Text style={styles.zoomNetworkSectionTitle}>📱 Réseaux</Text>
+                  <View style={styles.zoomNetworkBarsContainer}>
+                    {mobileLevel === -1 ? (
+                      // 4G/5G non disponible physiquement
+                      <View style={styles.disabledContainer}>
+                        <Text style={styles.disabledSymbol}>🚫</Text>
+                        <Text style={styles.disabledText}>Non disponible</Text>
+                      </View>
+                    ) : mobileLevel === 0 ? (
+                      // 4G/5G disponible mais pas de signal
+                      <Text style={styles.noSignalText}>❌</Text>
+                    ) : (
+                      // 4G/5G disponible avec niveau physique
+                      <View style={styles.signalBars3D}>
+                        {Array.from({ length: 4 }, (_, i) => {
+                          const isActive = i < mobileLevel;
+                          const barHeight = 20 + (i + 1) * 8;
+                          const opacity = isActive ? 1 : 0.15;
+                          const color = getNetworkColor(mobileLevel);
 
-                  {/* Barres de réseau 3D parfaitement centrées */}
-                  <View style={styles.zoomNetworkVisual}>
-                    <View style={styles.zoomNetworkBars}>
-                      {Array.from({ length: 5 }, (_, i) => {
-                        const isActive = i < networkLevel;
-                        const barHeight = 20 + (i + 1) * 8; // Même logique que dans l'écran phone
-                        const opacity = isActive ? 1 : 0.15;
-                        const color = getNetworkColor(networkLevel);
-
-                        return (
-                          <View
-                            key={i}
-                            style={[
-                              styles.zoomNetworkBar3D,
-                              {
-                                height: barHeight,
-                                backgroundColor: color,
-                                opacity: opacity,
-                                transform: [{ scaleY: isActive ? 1 : 0.2 }],
-                              },
-                            ]}
-                          />
-                        );
-                      })}
-                    </View>
+                          return (
+                            <View
+                              key={`mobile-${i}`}
+                              style={[
+                                styles.networkBar3D,
+                                {
+                                  height: barHeight,
+                                  backgroundColor: color,
+                                  opacity: opacity,
+                                  transform: [{ scaleY: isActive ? 1 : 0.2 }],
+                                },
+                              ]}
+                            />
+                          );
+                        })}
+                      </View>
+                    )}
                   </View>
-                </View>
-
-                {/* Section Qualité du réseau (40% de la hauteur) */}
-                <View style={styles.zoomNetworkQualitySection}>
-                  <Text
-                    style={[
-                      styles.zoomNetworkQualityText,
-                      { color: getNetworkColor(networkLevel) },
-                    ]}
-                  >
-                    {networkLevel >= 4
-                      ? 'Excellent'
-                      : networkLevel >= 3
-                        ? 'Bon'
-                        : networkLevel >= 2
-                          ? 'Moyen'
-                          : 'Faible'}
+                  <Text style={styles.zoomNetworkLevelText}>
+                    {mobileLevel === -1
+                      ? 'Non disponible'
+                      : mobileLevel >= 4
+                        ? 'Niveau 4/4 - Excellent'
+                        : mobileLevel >= 3
+                          ? 'Niveau 3/4 - Bon'
+                          : mobileLevel >= 2
+                            ? 'Niveau 2/4 - Moyen'
+                            : mobileLevel >= 1
+                              ? 'Niveau 1/4 - Faible'
+                              : 'Non disponible'}
+                  </Text>
+                  <Text style={styles.zoomNetworkStatusText}>
+                    {mobileLevel === -1
+                      ? 'Données mobiles: Désactivées'
+                      : mobileDataEnabled
+                        ? 'Données mobiles: Activées'
+                        : 'Données mobiles: Désactivées'}
+                  </Text>
+                  <Text style={styles.zoomNetworkUsedText}>
+                    {networkType === 'wifi'
+                      ? 'Réseau utilisé: WiFi'
+                      : networkType === 'mobile'
+                        ? 'Réseau utilisé: 4G/5G'
+                        : 'Réseau utilisé: Aucun'}
                   </Text>
                 </View>
 
-                {/* Section Bouton relire (25% de la hauteur) */}
+                {/* Section vide (10% hauteur) */}
+                <View style={styles.zoomNetworkEmptySection} />
+
+                {/* Section WiFi (30% hauteur) - MAINTENANT EN SECOND */}
+                <View style={styles.zoomNetworkWifiSection}>
+                  <Text style={styles.zoomNetworkSectionTitle}>📶 WiFi</Text>
+                  <View style={styles.zoomNetworkBarsContainer}>
+                    {wifiLevel === 0 ? (
+                      <Text style={styles.noSignalText}>❌</Text>
+                    ) : (
+                      <View style={styles.signalBars3D}>
+                        {Array.from({ length: 4 }, (_, i) => {
+                          const isActive = i < wifiLevel;
+                          const barHeight = 20 + (i + 1) * 8;
+                          const opacity = isActive ? 1 : 0.15;
+                          const color = getNetworkColor(wifiLevel);
+
+                          return (
+                            <View
+                              key={`wifi-${i}`}
+                              style={[
+                                styles.networkBar3D,
+                                {
+                                  height: barHeight,
+                                  backgroundColor: color,
+                                  opacity: opacity,
+                                  transform: [{ scaleY: isActive ? 1 : 0.2 }],
+                                },
+                              ]}
+                            />
+                          );
+                        })}
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.zoomNetworkLevelText}>
+                    {wifiLevel >= 4
+                      ? 'Niveau 4/4 - Excellent'
+                      : wifiLevel >= 3
+                        ? 'Niveau 3/4 - Bon'
+                        : wifiLevel >= 2
+                          ? 'Niveau 2/4 - Moyen'
+                          : wifiLevel >= 1
+                            ? 'Niveau 1/4 - Faible'
+                            : 'Non disponible'}
+                  </Text>
+                </View>
+
+                {/* Section Bouton Relire (20% hauteur) */}
                 <View style={styles.zoomNetworkButtonSection}>
                   <TouchableOpacity
                     style={styles.zoomVoiceButton}
                     onPress={speakNetwork}
+                    
                     activeOpacity={0.8}
                   >
                     <Text
@@ -643,7 +739,7 @@ export const SystemInfo: React.FC<SystemInfoProps> = React.memo(
                   </TouchableOpacity>
                 </View>
 
-                {/* Section Instructions (25% de la hauteur) */}
+                {/* Section Instructions (20% hauteur) */}
                 <View style={styles.zoomNetworkCloseSection}>
                   <Text style={styles.zoomInfoText}>
                     Appuyez n'importe où pour fermer
@@ -908,7 +1004,8 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     position: 'absolute',
     bottom: 0,
-    elevation: 3,
+    elevation: 5, // Augmenté pour éviter d'être caché
+    zIndex: 1, // Ajouté pour s'assurer que l'élément reste visible
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1166,7 +1263,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     position: 'absolute',
     bottom: 0,
-    elevation: 4,
+    elevation: 6, // Augmenté pour éviter d'être caché
+    zIndex: 1, // Ajouté pour s'assurer que l'élément reste visible
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1187,8 +1285,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 30,
     padding: Math.min(50, Math.max(35, width * 0.12)), // Padding réduit : 35 à 50
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center',   
+    justifyContent: 'center', 
     // flexDirection: 'row' supprimé pour revenir à la disposition verticale
     elevation: 20,
     shadowColor: '#000',
@@ -1213,28 +1311,105 @@ const styles = StyleSheet.create({
     // Assure que le contenu reste dans les limites
     overflow: 'hidden',
   },
-  zoomNetworkTitleSection: {
-    height: '30%', // 30% de la hauteur du cadre zoom (au lieu de 40%)
+  zoomNetworkWifiSection: {
+    height: '30%', // 30% de la hauteur du cadre zoom
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10, // Marge entre les sections
+    marginBottom: 0,
+    marginTop: 0, // Pas d'espacement
   },
-  zoomNetworkTitle: {
-    fontSize: Math.min(50, Math.max(35, width * 0.12)), // +20% : 40→50, 30→35, 0.1→0.12
-    marginBottom: 10, // Marge entre l'icône et le texte
+  zoomNetworkEmptySection: {  // Section vide (10% hauteur)
+    height: '10%',   // 10% de la hauteur du cadre zoom 
+    width: '100%',  // 100% de la largeur du cadre zoom     
   },
-  zoomNetworkVisual: {
+  zoomNetworkMobileSection: {
+    height: '30%', // 30% de la hauteur du cadre zoom
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    marginTop: 0, // Marge entre les sections
+  },
+  zoomNetworkBarsContainer: {
     width: '100%',
-    height: '100%',
+    height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
+    //marginBottom: 0,
+    //marginTop: 0,
   },
-  zoomNetworkBars: {
-    flexDirection: 'row',
+  zoomNetworkSectionTitle: {
+    fontSize: Math.min(40, Math.max(28, width * 0.108)),
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    height: '30%',
+    width: '100%',
+   // marginBottom: 0,
+    //marginTop: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  zoomNetworkLevelText: {
+    height: '20%',
+    width: '100%',
+    fontSize: Math.min(24, Math.max(18, width * 0.06)),
+    color: '#666',
+    textAlign: 'center',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+   
+  },
+  noSignalText: {
+    fontSize: Math.min(50, Math.max(35, width * 0.12)),
+    color: '#F44336',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  disabledContainer: {
+    flexDirection: 'column',
     alignItems: 'center',
-    height: '100%',
     justifyContent: 'center',
-    gap: 6,
+    height: '100%',
+  },
+  disabledSymbol: {
+    fontSize: Math.min(40, Math.max(30, width * 0.1)),
+    color: '#9E9E9E',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  disabledText: {
+    fontSize: Math.min(16, Math.max(12, width * 0.04)),
+    color: '#9E9E9E',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  disabledSymbolRed: {
+    fontSize: Math.min(40, Math.max(30, width * 0.1)),
+    color: '#F44336',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  disabledTextRed: {
+    fontSize: Math.min(16, Math.max(12, width * 0.04)),
+    color: '#F44336',
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  zoomNetworkStatusText: {
+    fontSize: Math.min(14, Math.max(10, width * 0.035)),
+    color: '#B0BEC5',
+    textAlign: 'center',
+    fontWeight: '400',
+    marginTop: 6,
+    fontStyle: 'italic',
+  },
+  zoomNetworkUsedText: {
+    fontSize: Math.min(14, Math.max(10, width * 0.035)),
+    color: '#90A4AE',
+    textAlign: 'center',
+    fontWeight: '400',
+    marginTop: 8,
+    fontStyle: 'italic',
   },
   zoomNetworkBar3D: {
     width: 12,
@@ -1249,27 +1424,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
   },
-  zoomNetworkQualitySection: {
-    height: '30%', // 30% de la hauteur du cadre zoom (au lieu de 40%)
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10, // Marge entre les sections
-  },
-  zoomNetworkQualityText: {
-    fontSize: Math.min(86, Math.max(58, width * 0.144)), // +20% : 72→86, 48→58, 0.12→0.144
-    fontWeight: 'bold',
-    textAlign: 'center',
-    includeFontPadding: false,
-    textAlignVertical: 'center',
-  },
   zoomNetworkButtonSection: {
-    height: '20%', // 20% de la hauteur du cadre zoom (au lieu de 25%)
+    height: '20%', // 20% de la hauteur du cadre zoom
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10, // Marge entre les sections
+    //marginBottom: 20, // Marge entre les sections
   },
   zoomNetworkCloseSection: {
-    height: '20%', // 20% de la hauteur du cadre zoom (au lieu de 25%)
+    height: '20%', // 20% de la hauteur du cadre zoom
     justifyContent: 'center',
     alignItems: 'center',
   },
